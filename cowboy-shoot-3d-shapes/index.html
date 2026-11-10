@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cowboy Shoot: 3D Shapes</title>
+<style>
+*{box-sizing:border-box;margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif}
+body{background:#3b1f0a;color:#fff;min-height:100vh;display:flex;justify-content:center}
+#app{width:100%;max-width:760px;padding:10px;position:relative}
+h1{text-align:center;font-size:clamp(24px,6vw,36px);color:#ffd27a;text-shadow:0 3px 0 #7a3f0e;margin:8px 0}
+.card{background:#5a3112;border:3px solid #a8641f;border-radius:14px;padding:12px;margin:10px 0;font-size:14px;line-height:1.5}
+.btn{background:#d9822b;color:#fff;border:0;border-radius:12px;padding:12px 14px;font-size:17px;font-weight:700;cursor:pointer;width:100%;margin:5px 0;border-bottom:4px solid #8a4a10}
+.btn:active{transform:translateY(2px)}.btn.alt{background:#4c8a3a;border-bottom-color:#2d5a20}.btn.sm{width:auto;padding:6px 12px;font-size:14px}
+.lv{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hide{display:none!important}
+.hud{display:flex;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:6px}
+#q{background:#fff4d6;color:#4a2a08;border:3px solid #a8641f;border-radius:12px;padding:10px;font-size:clamp(16px,4.2vw,21px);font-weight:800;text-align:center;margin-bottom:8px}
+#field{position:relative;height:min(430px,62vh);min-height:340px;border-radius:14px;overflow:hidden;background:linear-gradient(#ffb347 0%,#ffd98a 45%,#e8b96a 45%);border:3px solid #a8641f;touch-action:manipulation}
+#sun{position:absolute;right:8%;top:6%;font-size:48px}
+#gr{position:absolute;left:0;right:0;bottom:0;height:80px;background:#c88a3d;border-top:4px solid #8a5a1f}
+.cx{position:absolute;bottom:70px;font-size:44px;animation:mv 6s linear infinite}
+@keyframes mv{from{left:105%}to{left:-12%}}
+#cow{position:absolute;left:2%;bottom:30px;width:110px;height:100px;animation:gal .3s ease-in-out infinite}
+@keyframes gal{50%{transform:translateY(-8px) rotate(-3deg)}}
+#hs{position:absolute;left:0;bottom:0;font-size:82px;transform:scaleX(-1);line-height:1}
+#rd{position:absolute;left:24px;top:-6px;font-size:46px;line-height:1}
+#fl{position:absolute;right:-18px;top:14px;font-size:30px;opacity:0}
+.sg{position:absolute;width:108px;height:58px;background:#a0662b;border:3px solid #4a2a08;border-radius:8px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:15px;line-height:1.1;padding:2px;cursor:crosshair;box-shadow:0 4px 0 #4a2a08;left:105%;user-select:none}
+.sg.num{font-size:30px}
+#bl{position:absolute;width:14px;height:14px;border-radius:50%;background:#fff200;box-shadow:0 0 10px #ff9d00;transition:left .25s linear,top .25s linear;z-index:5}
+#fb{position:absolute;width:100%;top:44%;text-align:center;font-size:30px;font-weight:900;text-shadow:0 2px 6px #000;z-index:6;pointer-events:none}
+#concept{position:absolute;inset:0;background:#3b1f0af5;padding:14px;z-index:20;overflow:auto}
+#concept p{margin:7px 0;line-height:1.5;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}td,th{border:1px solid #a8641f;padding:4px;text-align:center}th{background:#7a4a1a}
+</style></head><body><div id="app">
+<h1>🤠 Cowboy Shoot 🐎</h1>
+<section id="menu">
+<div class="card"><b>Properties of Three-Dimensional Shapes</b><br>Gallop across the desert and shoot the sign with the <b>correct answer</b>! Tap or click a sign to fire. A wrong shot, or letting the right sign escape, costs you a heart ❤️. Hit 8 correct signs to win each level.</div>
+<div class="lv" id="lvs"></div>
+<button class="btn alt" onclick="showC()">📘 Concept Review</button>
+</section>
+<section id="game" class="hide">
+<div class="hud"><span id="lvn"></span><span id="hr"></span><span id="sc"></span></div>
+<div id="q"></div>
+<div id="field"><div id="sun">☀️</div><div id="gr"></div>
+<div class="cx" style="animation-duration:7s">🌵</div><div class="cx" style="animation-duration:11s;animation-delay:-4s">🌵</div><div class="cx" style="animation-duration:9s;animation-delay:-7s;font-size:30px">🪨</div>
+<div id="cow"><div id="hs">🐎</div><div id="rd">🤠</div><div id="fl">💥</div></div><div id="bl" class="hide"></div><div id="fb"></div></div>
+<div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm alt" onclick="showC()">📘 Concept</button><button class="btn sm" id="mu" onclick="mute()">🔊 Sound</button><button class="btn sm alt" onclick="quit()">⬅ Menu</button></div>
+</section>
+<section id="end" class="hide"><div class="card" style="text-align:center"><div id="et" style="font-size:28px;font-weight:900"></div><p id="es" style="margin:10px 0"></p><button class="btn" onclick="start(L)">🔁 Play again</button><button class="btn alt" onclick="quit()">⬅ Menu</button></div></section>
+<div id="concept" class="hide"><h2>📘 Concept Review</h2>
+<p><b>Face:</b> a flat or curved surface of a 3D shape. <b>Edge:</b> where two faces meet. <b>Vertex</b> (plural: vertices): a corner where edges meet. <i>(sisi, rusuk, titik sudut)</i></p>
+<table><tr><th>Shape</th><th>Faces</th><th>Edges</th><th>Vertices</th></tr>
+<tr><td>Cube</td><td>6</td><td>12</td><td>8</td></tr><tr><td>Cuboid</td><td>6</td><td>12</td><td>8</td></tr>
+<tr><td>Triangular Prism</td><td>5</td><td>9</td><td>6</td></tr><tr><td>Square Pyramid</td><td>5</td><td>8</td><td>5</td></tr>
+<tr><td>Tetrahedron</td><td>4</td><td>6</td><td>4</td></tr><tr><td>Hexagonal Prism</td><td>8</td><td>18</td><td>12</td></tr>
+<tr><td>Cylinder</td><td>2 flat + 1 curved</td><td>2</td><td>0</td></tr><tr><td>Cone</td><td>1 flat + 1 curved</td><td>1</td><td>1</td></tr><tr><td>Sphere</td><td>1 curved</td><td>0</td><td>0</td></tr></table>
+<p>Faces, edges and vertices questions about curved shapes use these values.</p>
+<button class="btn" onclick="document.getElementById('concept').classList.add('hide')">Close</button></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[R(0,a.length-1)];
+const shuf=a=>{for(let i=a.length-1;i>0;i--){let j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const SH={"Cube":[6,12,8],"Cuboid":[6,12,8],"Triangular Prism":[5,9,6],"Square Pyramid":[5,8,5],"Tetrahedron":[4,6,4],"Hexagonal Prism":[8,18,12],"Cylinder":[3,2,0],"Cone":[2,1,1],"Sphere":[1,0,0]};
+const NM=Object.keys(SH),POLY=NM.slice(0,6),PR=["faces","edges","vertices"];
+const DESC=[["I have 6 identical square faces.","Cube"],["All 6 of my faces are rectangles and I am not a cube.","Cuboid"],["I have 2 triangular faces and 3 rectangular faces.","Triangular Prism"],["I have a square base and 4 triangular faces.","Square Pyramid"],["I have 4 triangular faces, 6 edges and 4 vertices.","Tetrahedron"],["I have 2 flat circular faces and 1 curved surface.","Cylinder"],["I have 1 flat circular face, 1 curved surface and 1 vertex.","Cone"],["I have 1 curved surface, no edges and no vertices.","Sphere"],["I have 2 hexagonal faces and 6 rectangular faces.","Hexagonal Prism"]];
+const LV=[["Level 1","Name that shape",10],["Level 2","Faces",9],["Level 3","Edges",8],["Level 4","Vertices",7],["Level 5","Boss Round",6]];
+let L=1,st={},ctx,mg,muted=false,last=0,raf=0,mt=null,tk=0;
+LV.forEach((v,i)=>{const b=document.createElement('button');b.className='btn';b.textContent=v[0]+": "+v[1];b.onclick=()=>start(i+1);$('lvs').appendChild(b)});
+function mk(l){const t=l===5?R(1,4):l;
+ if(t===1){const[d,a]=pick(DESC);return{q:d+" Which shape am I?",a,o:shuf([a,...shuf(NM.filter(n=>n!==a)).slice(0,3)]),num:0}}
+ const pi=t-2,s=pick(t===2?POLY.slice(0):NM),a=SH[s][pi],d=new Set();let n=0;
+ while(d.size<3&&n++<200){const x=a+R(-4,4);if(x>=0&&x!==a)d.add(x)}
+ let k=a+5;while(d.size<3)d.add(k++);
+ return{q:`How many ${PR[pi]} does a ${s} have?`,a,o:shuf([a,...d]),num:1}}
+function AC(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();mg=ctx.createGain();mg.gain.value=muted?0:.6;mg.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume()}
+function tone(f,t,d,ty,v,f2){const o=ctx.createOscillator(),g=ctx.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.02)}
+function noise(t,d,v,fq){const n=ctx.sampleRate*d,b=ctx.createBuffer(1,n,ctx.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=ctx.createBufferSource(),g=ctx.createGain(),f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=fq;s.buffer=b;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(g);g.connect(mg);s.start(t)}
+const TUNE=[164.8,196,220,246.9,329.6,293.7];
+function music(){const t=ctx.currentTime;const m=tk%8;if(m===0||m===1||m===3||m===4||m===6)tone(m%2?70:90,t,.12,'sine',.7,40);
+ if(m===0||m===3||m===6){if(Math.random()<.7)tone(pick(TUNE),t,.35,'sawtooth',.07)}tk++}
+function gun(){const t=ctx.currentTime;noise(t,.25,.9,2500);tone(200,t,.2,'sine',.7,40)}
+function sfx(ok){if(!ctx)return;const t=ctx.currentTime;if(ok)[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.07,.15,'triangle',.3));else{tone(140,t,.4,'sawtooth',.35,50)}}
+function mute(){muted=!muted;if(mg)mg.gain.value=muted?0:.6;$('mu').textContent=muted?'🔇 Sound':'🔊 Sound'}
+function show(id){['menu','game','end'].forEach(s=>$(s).classList.toggle('hide',s!==id))}
+function showC(){$('concept').classList.remove('hide')}
+function quit(){st.on=false;clearInterval(mt);cancelAnimationFrame(raf);clear();show('menu')}
+function clear(){document.querySelectorAll('.sg').forEach(e=>e.remove())}
+function hud(){$('hr').textContent='❤️'.repeat(Math.max(0,st.h))+'🖤'.repeat(3-Math.max(0,st.h))+'  '+st.hits+'/8 hits';$('sc').textContent='Score '+st.sc}
+function start(l){L=l;AC();st={on:true,h:3,hits:0,sc:0,lock:false,t:0,streak:0};clearInterval(mt);mt=setInterval(music,150);$('lvn').textContent=LV[l-1][0];show('game');hud();spawn();last=performance.now();cancelAnimationFrame(raf);raf=requestAnimationFrame(loop)}
+function spawn(){clear();const q=mk(L);st.q=q;st.t=0;st.dur=LV[L-1][2];$('q').textContent=q.q;const ln=shuf([0,1,2,3]);
+ st.tg=q.o.map((v,i)=>{const e=document.createElement('div');e.className='sg'+(q.num?' num':'');e.textContent=v;e.style.top=(4+ln[i]*19)+'%';e.onpointerdown=ev=>{ev.preventDefault();shoot(i)};$('field').appendChild(e);return{v,e,d:i*.9,dead:false}});st.lock=false}
+function loop(ts){if(!st.on)return;raf=requestAnimationFrame(loop);const dt=Math.min(.05,(ts-last)/1000);last=ts;if(st.lock)return;st.t+=dt;const w=$('field').clientWidth;
+ st.tg.forEach(g=>{if(g.dead)return;const p=(st.t-g.d)/st.dur;g.e.style.left=(105-135*Math.max(0,p))+'%'});
+ if(st.t>st.dur+st.tg[3].d+.2){st.lock=true;st.streak=0;st.h--;msg('💨 It got away!','#ffb3b3');sfx(0);hud();setTimeout(nxt,800)}}
+function msg(t,c){const f=$('fb');f.textContent=t;f.style.color=c;setTimeout(()=>f.textContent='',750)}
+function shoot(i){if(!st.on||st.lock)return;AC();st.lock=true;gun();const g=st.tg[i],f=$('field').getBoundingClientRect(),r=g.e.getBoundingClientRect(),c=$('rd').getBoundingClientRect(),b=$('bl');
+ $('fl').style.opacity=1;setTimeout(()=>$('fl').style.opacity=0,120);
+ b.classList.remove('hide');b.style.transition='none';b.style.left=(c.right-f.left)+'px';b.style.top=(c.top+c.height*.5-f.top)+'px';b.offsetWidth;b.style.transition='';
+ b.style.left=(r.left+r.width/2-f.left)+'px';b.style.top=(r.top+r.height/2-f.top)+'px';
+ setTimeout(()=>{b.classList.add('hide');g.dead=true;if(g.v===st.q.a){g.e.textContent='💥';st.hits++;st.streak++;st.sc+=100+st.streak*20;msg('🎯 Bullseye!','#b6ff9e');sfx(1)}else{st.h--;st.streak=0;g.e.textContent='❌';msg('Wrong sign! Answer: '+st.q.a,'#ffb3b3');sfx(0)}hud();setTimeout(nxt,st.v===1?600:1000)},270)}
+function nxt(){if(!st.on)return;if(st.hits>=8||st.h<=0){st.on=false;clearInterval(mt);const w=st.hits>=8;$('et').textContent=w?'🏆 You are the Sheriff!':'💀 Game over, partner';$('es').textContent=`${w?'⭐'.repeat(Math.max(1,st.h)):''} Score: ${st.sc} · Hits: ${st.hits}/8 · Hearts left: ${Math.max(0,st.h)}`;clear();show('end');return}spawn()}
+</script></body></html>
