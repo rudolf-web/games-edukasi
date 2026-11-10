@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dance Battle: Multiples and Factors</title>
+<style>
+*{box-sizing:border-box;margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif}
+body{background:#14082b;color:#fff;min-height:100vh;display:flex;justify-content:center}
+#app{width:100%;max-width:720px;padding:12px;position:relative}
+h1{text-align:center;font-size:clamp(24px,6vw,38px);background:linear-gradient(90deg,#ff3cac,#ffe14d,#28e0ff);-webkit-background-clip:text;background-clip:text;color:transparent;margin:10px 0}
+.card{background:#24104a;border:2px solid #5b2fa8;border-radius:16px;padding:14px;margin:10px 0}
+.btn{background:#ff3cac;color:#fff;border:0;border-radius:12px;padding:12px 16px;font-size:17px;font-weight:700;cursor:pointer;width:100%;margin:5px 0;transition:transform .1s}
+.btn:active{transform:scale(.96)}.btn.alt{background:#28a8e0}.btn.sm{width:auto;padding:6px 12px;font-size:14px}
+.lv{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hide{display:none!important}
+.bars{display:flex;gap:10px}.bar{flex:1;font-size:13px}.bar i{display:block;height:14px;border-radius:8px;background:#0006;overflow:hidden;margin-top:3px}
+.bar b{display:block;height:100%;width:100%;transition:width .3s}
+#hp1{background:#3df08a}#hp2{background:#ff4d6d}
+#stage{display:flex;justify-content:space-around;align-items:flex-end;height:150px;background:radial-gradient(circle at 50% 100%,#7a2cff,#14082b 70%);border-radius:16px;margin:10px 0;position:relative;overflow:hidden}
+.dn{font-size:78px;transition:transform .15s;line-height:1}
+.dn.b{transform:translateY(-14px) rotate(-8deg) scale(1.08)}.dn.b2{transform:translateY(-14px) rotate(8deg) scale(1.08)}
+.dn.hit{filter:hue-rotate(160deg) brightness(1.6);transform:translateX(-10px)}
+#ring{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px;border:4px solid #ffe14d;border-radius:50%;opacity:.8}
+#fb{position:absolute;top:6px;width:100%;text-align:center;font-size:26px;font-weight:900;color:#ffe14d;text-shadow:0 2px 6px #000}
+#q{font-size:clamp(20px,5vw,28px);font-weight:800;text-align:center;margin:8px 0}
+#tm{height:8px;background:#0006;border-radius:6px;overflow:hidden}#tm b{display:block;height:100%;background:#ffe14d;width:100%}
+#opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.o{font-size:clamp(24px,7vw,34px);font-weight:900;padding:18px 6px;border:0;border-radius:14px;color:#fff;cursor:pointer;position:relative}
+.o small{position:absolute;left:8px;top:4px;font-size:12px;opacity:.7}
+.o:nth-child(1){background:#e8384f}.o:nth-child(2){background:#2b8fe8}.o:nth-child(3){background:#1fa862}.o:nth-child(4){background:#d98a00}
+.o:active{transform:scale(.95)}
+.st{display:flex;justify-content:space-between;font-weight:700;font-size:15px}
+#concept{position:absolute;inset:0;background:#14082bf2;padding:16px;z-index:9;overflow:auto}
+#concept p{margin:8px 0;line-height:1.5}
+</style></head><body><div id="app">
+<h1>🎶 Dance Battle 🎶</h1>
+<section id="menu">
+ <div class="card"><b>Multiples and Factors (Unit 9)</b><p style="margin-top:6px;font-size:14px;line-height:1.5">Answer on the beat to power up your dance moves and beat your rival! Press 1–4 on the keyboard or tap the buttons. Perfect timing = bonus damage.</p></div>
+ <div class="lv" id="lvs"></div>
+ <button class="btn alt" onclick="showC()">📘 Concept Review</button>
+</section>
+<section id="game" class="hide">
+ <div class="st"><span id="lvn"></span><span id="sc">Score 0</span><span id="cb">Combo 0</span></div>
+ <div class="bars"><div class="bar">🕺 You<i><b id="hp1"></b></i></div><div class="bar">👾 Rival<i><b id="hp2"></b></i></div></div>
+ <div id="stage"><div class="dn" id="d1">🕺</div><div id="ring"></div><div id="fb"></div><div class="dn" id="d2">👾</div></div>
+ <div id="q"></div><div id="tm"><b id="tb"></b></div>
+ <div id="opts"></div>
+ <div style="display:flex;gap:8px;margin-top:8px"><button class="btn sm alt" onclick="showC()">📘 Concept</button><button class="btn sm" id="mu" onclick="mute()">🔊 Music</button><button class="btn sm alt" onclick="quit()">⬅ Menu</button></div>
+</section>
+<section id="end" class="hide"><div class="card" style="text-align:center"><div id="et" style="font-size:30px;font-weight:900"></div><p id="es" style="margin:10px 0"></p><button class="btn" onclick="start(L)">🔁 Play again</button><button class="btn alt" onclick="quit()">⬅ Menu</button></div></section>
+<div id="concept" class="hide"><h2>📘 Concept Review</h2>
+<p><b>Multiple:</b> a number you get by multiplying by a whole number. Multiples of 4: 4, 8, 12, 16… <i>(kelipatan)</i></p>
+<p><b>Factor:</b> a number that divides exactly into another. Factors of 12: 1, 2, 3, 4, 6, 12. <i>(faktor)</i></p>
+<p><b>LCM (Lowest Common Multiple):</b> the smallest number that is a multiple of both. LCM of 4 and 6 = 12. <i>(KPK)</i></p>
+<p><b>HCF (Highest Common Factor):</b> the biggest number that is a factor of both. HCF of 12 and 18 = 6. <i>(FPB)</i></p>
+<p><b>Tip:</b> a factor is always ≤ the number; a multiple is always ≥ the number.</p>
+<button class="btn" onclick="document.getElementById('concept').classList.add('hide')">Close</button></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),pick=a=>a[R(0,a.length-1)];
+const gcd=(a,b)=>b?gcd(b,a%b):a,lcm=(a,b)=>a*b/gcd(a,b);
+const shuf=a=>{for(let i=a.length-1;i>0;i--){let j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const LV=[["Level 1","Multiples",100],["Level 2","Factors",108],["Level 3","LCM",116],["Level 4","HCF",124],["Level 5","Mixed Boss",134]];
+let L=1,ctx,mg,muted=false,bi=.5,t0=0,nxt=0,step=0,timer=null,raf=0,st={};
+LV.forEach((v,i)=>{const b=document.createElement('button');b.className='btn';b.textContent=v[0]+": "+v[1];b.onclick=()=>start(i+1);$('lvs').appendChild(b)});
+function fill(ans,gen,ok){const s=new Set();let n=0;while(s.size<3&&n++<300){const x=gen();if(x>0&&x!==ans&&(!ok||ok(x)))s.add(x)}let k=1;while(s.size<3){k++;if(k!==ans)s.add(k+100)}return[...s]}
+function mk(l){const t=l===5?R(1,4):l;let q,c,d;
+ if(t===1){const n=R(3,9);c=n*R(2,12);q=`Which number is a multiple of ${n}?`;d=fill(c,()=>c+R(-7,7),x=>x%n)}
+ else if(t===2){const N=pick([12,18,20,24,28,30,36,40,42,48]);const f=[];for(let i=2;i<N;i++)if(N%i===0)f.push(i);c=pick(f);q=`Which number is a factor of ${N}?`;d=fill(c,()=>R(2,N-1),x=>N%x)}
+ else if(t===3){const[a,b]=pick([[4,6],[3,5],[6,8],[4,10],[6,9],[5,10],[8,12],[3,7],[9,12]]);c=lcm(a,b);q=`What is the LCM of ${a} and ${b}?`;d=fill(c,()=>pick([a*b,c+a,c+b,c-a,c*2,c+R(1,5)]))}
+ else{const[a,b]=pick([[12,18],[16,24],[20,30],[18,27],[24,36],[28,42],[15,25],[32,48]]);c=gcd(a,b);q=`What is the HCF of ${a} and ${b}?`;d=fill(c,()=>pick([c*2,c+1,c+2,c-1,c/2,a-b>0?a-b:b-a,c+R(1,4)]))}
+ const o=shuf([c,...d]);return{q,o,i:o.indexOf(c)}}
+function AC(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();mg=ctx.createGain();mg.gain.value=muted?0:.5;mg.connect(ctx.destination)}if(ctx.state==='suspended')ctx.resume()}
+function tone(f,t,d,type,v,f2){const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(mg);o.start(t);o.stop(t+d+.02)}
+function noise(t,d,v,hp){const n=ctx.sampleRate*d,b=ctx.createBuffer(1,n,ctx.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=Math.random()*2-1;const s=ctx.createBufferSource(),g=ctx.createGain(),f=ctx.createBiquadFilter();f.type='highpass';f.frequency.value=hp;s.buffer=b;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(g);g.connect(mg);s.start(t)}
+const SC=[0,3,5,7,10,12,15],BASS=[55,55,65.4,49];
+function sched(){while(nxt<ctx.currentTime+.15){const s=step,t=nxt,e=bi/2;
+ if(s%2===0){tone(120,t,.2,'sine',.9,40)}
+ if(s%4===2)noise(t,.15,.5,1500);
+ noise(t,.04,.18,7000);
+ if(s%2===0)tone(BASS[Math.floor(s/8)%4],t,e*1.8,'sawtooth',.25);
+ if(Math.random()<.75){const n=pick(SC);tone(440*Math.pow(2,n/12),t,e*.9,'square',.07)}
+ step++;nxt+=e}}
+function startMusic(l){AC();bi=60/LV[l-1][2];step=0;nxt=ctx.currentTime+.2;t0=nxt;clearInterval(timer);timer=setInterval(sched,40)}
+function sfx(ok){if(!ctx)return;const t=ctx.currentTime;if(ok)[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.06,.15,'triangle',.3));else tone(150,t,.35,'sawtooth',.35,60)}
+function mute(){muted=!muted;if(mg)mg.gain.value=muted?0:.5;$('mu').textContent=muted?'🔇 Music':'🔊 Music'}
+function show(id){['menu','game','end'].forEach(s=>$(s).classList.toggle('hide',s!==id))}
+function showC(){$('concept').classList.remove('hide')}
+function quit(){clearInterval(timer);cancelAnimationFrame(raf);st.on=false;show('menu')}
+function start(l){L=l;st={p:100,r:100,sc:0,cb:0,best:0,on:true,n:0};startMusic(l);show('game');$('lvn').textContent=LV[l-1][0]+" · "+LV[l-1][1];upd();next();cancelAnimationFrame(raf);loop()}
+function upd(){$('hp1').style.width=Math.max(0,st.p)+'%';$('hp2').style.width=Math.max(0,st.r)+'%';$('sc').textContent='Score '+st.sc;$('cb').textContent='Combo '+st.cb}
+function next(){st.q=mk(L);st.ans=true;st.qs=ctx.currentTime;st.dur=bi*16;$('q').textContent=st.q.q;const o=$('opts');o.innerHTML='';st.q.o.forEach((v,i)=>{const b=document.createElement('button');b.className='o';b.innerHTML='<small>'+(i+1)+'</small>'+v;b.onclick=()=>ans(i);o.appendChild(b)})}
+function fb(t){$('fb').textContent=t}
+function ans(i){if(!st.on||!st.ans)return;AC();st.ans=false;const ph=((ctx.currentTime-t0)/bi)%1,dist=Math.min(ph,1-ph)*bi;
+ if(i===st.q.i){const perf=dist<.13;st.cb++;st.best=Math.max(st.best,st.cb);st.r-=perf?18:12;st.sc+=(perf?150:100)+st.cb*10;fb(perf?'✨ PERFECT! ✨':'👍 GOOD');sfx(1);hit('d2')}
+ else bad('❌ Not quite!');
+ upd();setTimeout(fin,650)}
+function bad(m){st.cb=0;st.p-=20;fb(m);sfx(0);hit('d1')}
+function hit(id){const e=$(id);e.classList.add('hit');setTimeout(()=>e.classList.remove('hit'),300)}
+function fin(){if(!st.on)return;fb('');if(st.r<=0||st.p<=0){st.on=false;clearInterval(timer);const w=st.r<=0;$('et').textContent=w?'🏆 You win the battle!':'💀 The rival wins…';$('es').textContent=`Score: ${st.sc} · Best combo: ${st.best} · Questions: ${st.n}`;show('end');return}
+ next()}
+let lb=-1;
+function loop(){if(!st.on)return;raf=requestAnimationFrame(loop);const x=(ctx.currentTime-t0)/bi,b=Math.floor(x),ph=x-b;
+ if(b!==lb&&x>=0){lb=b;[['d1','b'],['d2','b2']].forEach(([id,c],k)=>{const e=$(id);e.classList.toggle(c,(b+k)%2===0);e.classList.toggle(k?'b':'b2',false)})}
+ $('ring').style.transform=`scale(${1+(1-ph)*1.6})`;$('ring').style.opacity=.3+ph*.6;
+ if(st.ans){const f=1-(ctx.currentTime-st.qs)/st.dur;$('tb').style.width=Math.max(0,f*100)+'%';if(f<=0){st.ans=false;st.n++;bad('⏰ Time up!');upd();setTimeout(fin,650)}}else{}}
+const _a=ans;ans=function(i){if(st.on&&st.ans)st.n++;_a(i)};
+document.addEventListener('keydown',e=>{const k=parseInt(e.key);if(k>=1&&k<=4&&!$('game').classList.contains('hide'))ans(k-1)});
+</script></body></html>
