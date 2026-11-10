@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Multiples and Factors Battle Dance — Grade 7</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8EE; --panel:#FFFFFF; --ink:#1E1B2E; --muted:#6B6478; --line:#F0E4D3;
+  --coral:#FF5A5F; --coral-d:#E63E42; --teal:#00BFA6; --teal-d:#009E88; --yellow:#FFC531; --yellow-d:#E8A800;
+  --pink:#FF7BAC; --stage:#161423; --stage2:#221E38; --floor:#2A2547;
+  --good:#16B364; --bad:#F04438; --radius:20px;
+  --shadow:0 10px 30px rgba(30,27,46,.12);
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#12101E; --panel:#1D1A30; --ink:#F6F1E7; --muted:#B9B2CC; --line:#322C52; --shadow:0 10px 30px rgba(0,0,0,.4); }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Nunito',system-ui,sans-serif;background:var(--bg);color:var(--ink);-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif;line-height:1.05;margin:0}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:1060px;margin:0 auto;padding:18px 16px 40px}
+
+/* ---------- HERO ---------- */
+.hero{text-align:center;padding:14px 6px 6px}
+.badge{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#FFD93D;font-weight:900;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;padding:7px 14px;border-radius:999px}
+.hero h1{font-size:clamp(2.1rem,6.5vw,3.6rem);font-weight:800;margin:14px 0 4px}
+.hero h1 .c1{color:var(--coral)} .hero h1 .c2{color:var(--teal-d)} @media(prefers-color-scheme:dark){.hero h1 .c2{color:var(--teal)}}
+.hero p.sub{font-size:clamp(1rem,2.6vw,1.2rem);font-weight:800;color:var(--muted);margin:6px 0 2px}
+.hero p.id{font-weight:700;color:var(--muted);margin:2px 0 0;font-size:.95rem}
+.beat-dots{display:flex;gap:8px;justify-content:center;margin:14px 0 2px}
+.beat-dots span{width:12px;height:12px;border-radius:50%;animation:pulse 1s infinite}
+.beat-dots span:nth-child(1){background:var(--coral)} .beat-dots span:nth-child(2){background:var(--yellow);animation-delay:.2s}
+.beat-dots span:nth-child(3){background:var(--teal);animation-delay:.4s} .beat-dots span:nth-child(4){background:var(--pink);animation-delay:.6s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.55)}}
+
+/* ---------- STAGE ---------- */
+.stage{position:relative;margin-top:16px;border-radius:26px;background:var(--stage);overflow:hidden;box-shadow:var(--shadow);border:3px solid #00000022}
+.spot{position:absolute;top:-40px;width:180px;height:340px;opacity:.35;pointer-events:none;filter:blur(2px)}
+.spot.l{left:6%;background:linear-gradient(to bottom,#FFC531,transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.spot.r{right:6%;background:linear-gradient(to bottom,#FF7BAC,transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.spot.c{left:50%;transform:translateX(-50%);background:linear-gradient(to bottom,#4FE3C1,transparent 75%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)}
+.stage-top{position:relative;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:14px 16px 0;color:#fff;flex-wrap:wrap}
+.mode-pill{background:#ffffff1c;border:1.5px solid #ffffff30;color:#fff;font-weight:900;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.stage-top .right{display:flex;gap:8px;align-items:center}
+.icon-btn{background:#ffffff1c;border:1.5px solid #ffffff30;color:#fff;border-radius:999px;font-weight:900;padding:6px 12px;font-size:13px}
+.icon-btn.on{background:var(--yellow);color:#221a00;border-color:var(--yellow)}
+.arena{position:relative;display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:6px;padding:26px 14px 0;min-height:250px}
+.fighter{text-align:center;color:#fff}
+.fighter .avatar{width:clamp(104px,24vw,150px);height:clamp(104px,24vw,150px);margin:0 auto;border-radius:50%;display:grid;place-items:center;border:4px solid #ffffff2e;position:relative;animation:bob 1s ease-in-out infinite}
+.fighter.player .avatar{background:radial-gradient(circle at 32% 28%,#5EEAD4,#00BFA6 62%,#00806D)}
+.fighter.enemy .avatar{background:radial-gradient(circle at 32% 28%,#FDA4AF,#FF5A5F 60%,#C22E33)}
+.fighter.enemy .avatar{animation-delay:.5s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-10px) rotate(1.5deg)}}
+.fighter .avatar svg{width:72%;height:72%}
+.fighter.attack .avatar{animation:attackMove .55s ease}
+.fighter.enemy.attack .avatar{animation:attackMoveR .55s ease}
+@keyframes attackMove{0%{transform:translateX(0)}30%{transform:translateX(34px) rotate(9deg) scale(1.08)}60%{transform:translateX(10px) rotate(-6deg)}100%{transform:translateX(0)}}
+@keyframes attackMoveR{0%{transform:translateX(0)}30%{transform:translateX(-34px) rotate(-9deg) scale(1.08)}60%{transform:translateX(-10px) rotate(6deg)}100%{transform:translateX(0)}}
+.fighter.hurt .avatar{animation:hurtShake .5s ease}
+@keyframes hurtShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.fighter.dance-win .avatar{animation:winDance .5s ease 3}
+@keyframes winDance{0%,100%{transform:rotate(0) translateY(0)}25%{transform:rotate(-10deg) translateY(-14px)}75%{transform:rotate(10deg) translateY(-14px)}}
+.fighter .fname{font-family:'Baloo 2';font-weight:800;font-size:clamp(1rem,3vw,1.3rem);margin-top:10px}
+.fighter .ftag{font-size:12px;font-weight:800;color:#CFC9E8;letter-spacing:.06em;text-transform:uppercase}
+.hpwrap{max-width:220px;margin:9px auto 0;text-align:left}
+.hp-label{display:flex;justify-content:space-between;font-size:11.5px;font-weight:900;letter-spacing:.08em;color:#E7E2F7}
+.hpbar{height:14px;background:#ffffff22;border-radius:999px;overflow:hidden;border:1.5px solid #ffffff33;margin-top:4px}
+.hpfill{height:100%;border-radius:999px;transition:width .5s ease}
+.hp-player{background:linear-gradient(90deg,#34D399,#A3E635)}
+.hp-enemy{background:linear-gradient(90deg,#FB7185,#FBBF24)}
+.vs{align-self:center;width:58px;height:58px;border-radius:50%;background:var(--yellow);color:#241B00;display:grid;place-items:center;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;border:3px solid #fff3;box-shadow:0 6px 18px rgba(0,0,0,.35);animation:pulse 1.2s infinite}
+.floor{height:44px;margin-top:20px;background:
+ repeating-linear-gradient(90deg,var(--floor) 0 52px,#342C5C 52px 54px),
+ repeating-linear-gradient(0deg,transparent 0 20px,#ffffff10 20px 22px);border-top:2px solid #ffffff1f;position:relative}
+.floor .tile-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 22% 0%,#00BFA633,transparent 45%),radial-gradient(ellipse at 78% 0%,#FF5A5F33,transparent 45%)}
+.move-banner{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(.6);background:var(--yellow);color:#241B00;font-family:'Baloo 2';font-weight:800;font-size:clamp(1.1rem,4vw,1.7rem);padding:10px 22px;border-radius:16px;opacity:0;pointer-events:none;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:5;text-align:center}
+.move-banner.show{animation:bannerPop 1.15s ease forwards}
+@keyframes bannerPop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6) rotate(-4deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(2deg)}30%{transform:translate(-50%,-50%) scale(1)}78%{opacity:1}100%{opacity:0;transform:translate(-50%,-58%) scale(1)}}
+.note{position:absolute;font-size:22px;pointer-events:none;z-index:6;animation:noteFloat 1s ease-out forwards}
+@keyframes noteFloat{to{transform:translateY(-90px) rotate(24deg);opacity:0}}
+
+/* ---------- HUD ---------- */
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.hud .cell{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:10px 8px;text-align:center;box-shadow:var(--shadow)}
+.hud .k{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hud .v{font-family:'Baloo 2';font-weight:800;font-size:1.45rem;line-height:1.1}
+.hud .v.fever{color:var(--coral)}
+.timer-wrap{margin-top:12px;background:var(--panel);border:2px solid var(--line);border-radius:999px;padding:6px;box-shadow:var(--shadow)}
+.timer-bar{height:12px;border-radius:999px;background:linear-gradient(90deg,var(--teal),var(--yellow));width:100%;transition:width .1s linear}
+.timer-bar.low{background:linear-gradient(90deg,var(--bad),#FF8A3D)}
+.timer-label{display:flex;justify-content:space-between;font-size:12px;font-weight:900;color:var(--muted);padding:2px 8px 0;letter-spacing:.06em;text-transform:uppercase}
+
+/* ---------- PANELS / SCREENS ---------- */
+.panel{background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-top:14px}
+.hidden{display:none !important}
+.center{text-align:center}
+.mode-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+@media(min-width:640px){.mode-grid{grid-template-columns:repeat(5,1fr)}}
+.mode-btn{border:2.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:16px;padding:12px 6px;font-weight:900;font-size:.95rem;transition:transform .12s,border-color .12s}
+.mode-btn small{display:block;font-weight:800;color:var(--muted);font-size:.72rem;margin-top:2px}
+.mode-btn.sel{border-color:var(--coral);background:#FF5A5F14;transform:translateY(-2px)}
+.mode-btn:active{transform:scale(.97)}
+.opp-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:6px 0 2px}
+.opp-chip{display:flex;align-items:center;gap:9px;border:2px solid var(--line);border-radius:999px;padding:7px 14px 7px 8px;font-weight:900;font-size:.9rem;background:var(--bg)}
+.opp-chip .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px}
+.opp-chip.done{border-color:var(--good);color:var(--good)}
+.opp-chip.now{border-color:var(--yellow-d);background:#FFC5311f}
+.big-btn{display:inline-block;border:none;border-radius:999px;padding:15px 36px;font-family:'Baloo 2';font-weight:800;font-size:1.25rem;background:var(--coral);color:#fff;box-shadow:0 6px 0 var(--coral-d);transition:transform .1s,box-shadow .1s}
+.big-btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--coral-d)}
+.big-btn.teal{background:var(--teal);box-shadow:0 6px 0 var(--teal-d)} .big-btn.teal:active{box-shadow:0 2px 0 var(--teal-d)}
+.ghost-btn{border:2.5px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:12px 26px;font-weight:900;font-size:1rem}
+.howto{display:grid;gap:10px;margin:14px 0;text-align:left}
+@media(min-width:640px){.howto{grid-template-columns:repeat(3,1fr)}}
+.howto .step{border:2px dashed var(--line);border-radius:16px;padding:13px}
+.howto .step b{display:block;font-family:'Baloo 2';font-size:1.02rem;margin-bottom:3px}
+.howto .step p{margin:0;color:var(--muted);font-weight:700;font-size:.9rem;line-height:1.45}
+
+/* ---------- QUESTION ---------- */
+.q-tag{display:inline-block;background:#00BFA61c;color:var(--teal-d);font-weight:900;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:999px}
+@media(prefers-color-scheme:dark){.q-tag{color:#4FE3C1}}
+.q-text{font-family:'Baloo 2';font-weight:700;font-size:clamp(1.3rem,4.4vw,1.85rem);line-height:1.3;margin:12px 0 4px;text-align:center}
+.q-sub{text-align:center;color:var(--muted);font-weight:800;margin:0 0 6px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}
+@media(max-width:480px){.answers{grid-template-columns:1fr}}
+.ans{border:2.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:16px;padding:15px 12px;font-family:'Baloo 2';font-weight:700;font-size:clamp(1.02rem,3.4vw,1.25rem);transition:transform .1s,border-color .1s;text-align:center;line-height:1.35}
+.ans:hover{border-color:var(--yellow-d)}
+.ans:active{transform:scale(.97)}
+.ans.correct{border-color:var(--good);background:#16B3641f;color:var(--good)}
+.ans.wrong{border-color:var(--bad);background:#F0443814;color:var(--bad)}
+.ans:disabled{cursor:default;opacity:.92}
+.feedback{margin-top:14px;border-radius:14px;padding:13px 15px;font-weight:800;line-height:1.5;display:none}
+.feedback.show{display:block}
+.feedback.good{background:#16B36416;border:2px solid #16B36455}
+.feedback.bad{background:#F0443810;border:2px solid #F0443855}
+.feedback .why{font-weight:700;color:var(--muted);display:block;margin-top:3px}
+
+/* ---------- RESULTS ---------- */
+.stars{font-size:2.2rem;letter-spacing:6px;text-align:center}
+.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0}
+@media(min-width:640px){.result-grid{grid-template-columns:repeat(4,1fr)}}
+.result-grid .cell{border:2px solid var(--line);border-radius:16px;padding:12px;text-align:center;background:var(--bg)}
+.result-grid .k{font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.result-grid .v{font-family:'Baloo 2';font-weight:800;font-size:1.5rem}
+.review-list{text-align:left;display:grid;gap:9px;margin-top:10px}
+.review-item{border:2px solid var(--line);border-radius:14px;padding:11px 13px;font-weight:700;line-height:1.5;background:var(--bg)}
+.review-item .rq{font-family:'Baloo 2';font-weight:700}
+.review-item .ra{color:var(--good);font-weight:900}
+.review-item .ya{color:var(--bad);font-weight:900}
+
+/* ---------- LEARN ---------- */
+.learn-head{margin:30px 0 4px;text-align:center}
+.learn-head h2{font-size:clamp(1.5rem,4.5vw,2rem);font-weight:800}
+.learn-head p{color:var(--muted);font-weight:800;margin:4px 0 0}
+.learn-grid{display:grid;gap:12px;margin-top:14px}
+@media(min-width:700px){.learn-grid{grid-template-columns:1fr 1fr}}
+.learn-card{background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);padding:17px 18px;box-shadow:var(--shadow)}
+.learn-card h3{font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:9px}
+.learn-card h3 .sw{width:14px;height:14px;border-radius:5px;flex:none}
+.learn-card p{font-weight:700;color:var(--muted);line-height:1.55;margin:7px 0}
+.learn-card .ex{background:var(--bg);border:2px dashed var(--line);border-radius:12px;padding:10px 13px;font-weight:800;line-height:1.6}
+.learn-card .ex b{color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{background:var(--bg);border:2px solid var(--line);border-radius:999px;padding:3px 11px;font-weight:900;font-size:.88rem}
+footer{text-align:center;color:var(--muted);font-weight:800;font-size:.88rem;margin-top:30px;line-height:1.6}
+@media (prefers-reduced-motion: reduce){
+  .fighter .avatar,.vs,.beat-dots span{animation:none !important}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <span class="badge">★ Mathematics • Grade 7 ★</span>
+    <h1><span class="c1">Multiples</span> &amp; <span class="c2">Factors</span><br>Battle Dance</h1>
+    <p class="sub">Answer fast, dance hard, defeat every rival on the floor!</p>
+    <p class="id">Jawab cepat, menari hebat, kalahkan semua lawan di lantai dansa!</p>
+    <div class="beat-dots"><span></span><span></span><span></span><span></span></div>
+  </header>
+
+  <!-- STAGE -->
+  <section class="stage" id="stage" aria-label="Dance battle stage">
+    <div class="spot l"></div><div class="spot c"></div><div class="spot r"></div>
+    <div class="stage-top">
+      <span class="mode-pill" id="stageMode">Mixed Battle</span>
+      <div class="right">
+        <button class="icon-btn" id="soundBtn" type="button" aria-label="Toggle sound">🔊 Sound: ON</button>
+        <button class="icon-btn" id="restartBtn" type="button">↺ Restart</button>
+      </div>
+    </div>
+    <div class="arena">
+      <div class="fighter player" id="playerFighter">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="26" r="13" fill="#fff"/><path d="M50 39 L50 62 M50 46 L28 34 M50 46 L74 30 M50 62 L34 86 M50 62 L68 84" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="fname">You — Dance Star</div>
+        <div class="ftag">Player</div>
+        <div class="hpwrap"><div class="hp-label"><span>HP</span><span id="playerHpText">100</span></div>
+        <div class="hpbar"><div class="hpfill hp-player" id="playerHp" style="width:100%"></div></div></div>
+      </div>
+      <div class="vs">VS</div>
+      <div class="fighter enemy" id="enemyFighter">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none"><circle cx="50" cy="26" r="13" fill="#fff"/><path d="M50 39 L50 62 M50 46 L74 34 M50 46 L26 30 M50 62 L66 86 M50 62 L32 84" stroke="#fff" stroke-width="8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="fname" id="enemyName">Beat Bot</div>
+        <div class="ftag" id="enemyTag">Rival • Level 1</div>
+        <div class="hpwrap"><div class="hp-label"><span>HP</span><span id="enemyHpText">100</span></div>
+        <div class="hpbar"><div class="hpfill hp-enemy" id="enemyHp" style="width:100%"></div></div></div>
+      </div>
+    </div>
+    <div class="floor"><div class="tile-glow"></div></div>
+    <div class="move-banner" id="moveBanner">Spin Move!</div>
+  </section>
+
+  <!-- HUD -->
+  <div class="hud" aria-label="Battle stats">
+    <div class="cell"><div class="k">Score</div><div class="v" id="hudScore">0</div></div>
+    <div class="cell"><div class="k">Combo</div><div class="v" id="hudCombo">×0</div></div>
+    <div class="cell"><div class="k">Round</div><div class="v" id="hudRound">–</div></div>
+    <div class="cell"><div class="k">Best Score</div><div class="v" id="hudBest">0</div></div>
+  </div>
+  <div class="timer-wrap hidden" id="timerWrap">
+    <div class="timer-bar" id="timerBar"></div>
+    <div class="timer-label"><span>⏱ Beat Timer</span><span id="timerText">20s</span></div>
+  </div>
+
+  <!-- START SCREEN -->
+  <section class="panel center" id="startScreen">
+    <h2 style="font-size:1.7rem;font-weight:800">Choose Your Battle Mode</h2>
+    <p style="color:var(--muted);font-weight:800;margin:6px 0 0">Pilih mode latihanmu — atau Mixed Battle untuk semua materi sekaligus.</p>
+    <div class="mode-grid" id="modeGrid" role="group" aria-label="Battle mode">
+      <button class="mode-btn" data-mode="multiples" type="button">✕ Multiples<small>Kelipatan</small></button>
+      <button class="mode-btn" data-mode="factors" type="button">÷ Factors<small>Faktor</small></button>
+      <button class="mode-btn" data-mode="hcf" type="button">HCF<small>FPB</small></button>
+      <button class="mode-btn" data-mode="lcm" type="button">LCM<small>KPK</small></button>
+      <button class="mode-btn sel" data-mode="mixed" type="button">★ Mixed Battle<small>Campuran</small></button>
+    </div>
+    <div class="opp-row" id="oppRow"></div>
+    <div class="howto">
+      <div class="step"><b>1. Answer on the beat</b><p>Each question gives you 20 seconds. Faster answers earn bonus points.</p></div>
+      <div class="step"><b>2. Dance to attack</b><p>A correct answer launches a dance move and cuts your rival's HP. A wrong answer lets your rival attack you!</p></div>
+      <div class="step"><b>3. Build your combo</b><p>3 correct answers in a row triggers FEVER MODE — double damage. Beat all 3 rivals to become Dance Champion!</p></div>
+    </div>
+    <button class="big-btn" id="startBtn" type="button">▶ START BATTLE</button>
+  </section>
+
+  <!-- BATTLE SCREEN -->
+  <section class="panel hidden" id="battleScreen">
+    <div class="center"><span class="q-tag" id="qTag">Multiples</span></div>
+    <p class="q-text" id="qText">Question</p>
+    <p class="q-sub" id="qSub"></p>
+    <div class="answers" id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="center" style="margin-top:16px">
+      <button class="big-btn teal hidden" id="nextBtn" type="button">Next Beat →</button>
+    </div>
+  </section>
+
+  <!-- RESULT SCREEN -->
+  <section class="panel hidden" id="resultScreen">
+    <div class="stars" id="resultStars">★★★</div>
+    <h2 class="center" id="resultTitle" style="font-size:1.9rem;font-weight:800;margin-top:6px">You Win!</h2>
+    <p class="center" id="resultMsg" style="color:var(--muted);font-weight:800;margin:6px 0 0"></p>
+    <div class="result-grid">
+      <div class="cell"><div class="k">Final Score</div><div class="v" id="resScore">0</div></div>
+      <div class="cell"><div class="k">Correct</div><div class="v" id="resCorrect">0</div></div>
+      <div class="cell"><div class="k">Accuracy</div><div class="v" id="resAcc">0%</div></div>
+      <div class="cell"><div class="k">Best Combo</div><div class="v" id="resCombo">×0</div></div>
+    </div>
+    <div id="reviewWrap" class="hidden">
+      <h3 style="font-size:1.15rem;font-weight:800">Review Your Misses — Pelajari Lagi</h3>
+      <div class="review-list" id="reviewList"></div>
+    </div>
+    <div class="center" style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="big-btn hidden" id="nextOppBtn" type="button">Next Rival →</button>
+      <button class="big-btn teal" id="againBtn" type="button">↺ Play Again</button>
+      <button class="ghost-btn" id="menuBtn" type="button">Change Mode</button>
+    </div>
+  </section>
+
+  <!-- LEARN -->
+  <div class="learn-head">
+    <h2>Quick Learn — Belajar Kilat</h2>
+    <p>Review the key ideas before your next battle.</p>
+  </div>
+  <div class="learn-grid">
+    <div class="learn-card">
+      <h3><span class="sw" style="background:var(--coral)"></span>Multiples — Kelipatan</h3>
+      <p>A <b>multiple</b> of a number is the result of multiplying it by 1, 2, 3, 4, … Multiples go on forever and a number is always a multiple of itself.</p>
+      <div class="ex">Multiples of <b>6</b>: 6, 12, 18, 24, 30, 36, …<br>5th multiple of 6 = 5 × 6 = <b>30</b></div>
+    </div>
+    <div class="learn-card">
+      <h3><span class="sw" style="background:var(--teal)"></span>Factors — Faktor</h3>
+      <p>A <b>factor</b> divides a number exactly, with no remainder. Factors always come in pairs that multiply to the number.</p>
+      <div class="ex">Factors of <b>24</b>: 1×24, 2×12, 3×8, 4×6</div>
+      <div class="chips"><span>1</span><span>2</span><span>3</span><span>4</span><span>6</span><span>8</span><span>12</span><span>24</span></div>
+    </div>
+    <div class="learn-card">
+      <h3><span class="sw" style="background:var(--yellow)"></span>HCF — Highest Common Factor (FPB)</h3>
+      <p>The <b>HCF</b> is the largest factor shared by two or more numbers. Using prime factorisation, take the <b>smallest</b> power of each common prime.</p>
+      <div class="ex">12 = 2² × 3 &nbsp;•&nbsp; 18 = 2 × 3²<br>HCF of 12 and 18 = 2 × 3 = <b>6</b></div>
+    </div>
+    <div class="learn-card">
+      <h3><span class="sw" style="background:var(--pink)"></span>LCM — Lowest Common Multiple (KPK)</h3>
+      <p>The <b>LCM</b> is the smallest multiple shared by two or more numbers. Using prime factorisation, take the <b>largest</b> power of each prime.</p>
+      <div class="ex">6 = 2 × 3 &nbsp;•&nbsp; 8 = 2³<br>LCM of 6 and 8 = 2³ × 3 = <b>24</b></div>
+    </div>
+  </div>
+
+  <footer>
+    Multiples and Factors Battle Dance • Mathematics Grade 7<br>
+    By Rudolf A. Luhukay — keep practising, keep dancing!
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ============ HELPERS ============ */
+function ri(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function gcd(a,b){while(b){var t=b;b=a%b;a=t;}return a;}
+function lcm(a,b){return a/gcd(a,b)*b;}
+function factorsOf(n){var f=[];for(var i=1;i<=n;i++){if(n%i===0)f.push(i);}return f;}
+function isPrime(n){if(n<2)return false;for(var i=2;i*i<=n;i++){if(n%i===0)return false;}return true;}
+function primeFacts(n){var res=[],d=2,m=n;while(d*d<=m){var c=0;while(m%d===0){m/=d;c++;}if(c)res.push([d,c]);d++;}if(m>1)res.push([m,1]);return res;}
+function sup(base,exp){if(exp===1)return ''+base;var map={'2':'\u00B2','3':'\u00B3','4':'\u2074','5':'\u2075'};return base+(map[''+exp]||'^'+exp);}
+function pfText(n){return primeFacts(n).map(function(p){return sup(p[0],p[1]);}).join(' × ');}
+function distractors(correct,count,spread){
+  var s=new Set([correct]);var out=[];
+  var tries=0;
+  while(out.length<count&&tries<200){tries++;
+    var d=correct+pick([-spread,-Math.ceil(spread/2),-2,-1,1,2,Math.ceil(spread/2),spread,correct>4?Math.round(correct/2):3]);
+    if(d>0&&!s.has(d)){s.add(d);out.push(d);}
+  }
+  while(out.length<count){var d2=correct+out.length+7;if(!s.has(d2)){s.add(d2);out.push(d2);}}
+  return out;
+}
+function makeQ(tag,label,question,sub,correct,options,why){
+  return {tag:tag,label:label,question:question,sub:sub||'',correct:''+correct,options:shuffle(options.map(String)),why:why};
+}
+
+/* ============ QUESTION GENERATORS ============ */
+function genMultiple(lv){
+  var kind=ri(0,2);
+  if(kind===0){
+    var n=pick([3,4,5,6,7,8,9,11,12,13,15]);
+    var k=ri(3,9+lv*2); var ans=n*k;
+    var opts=[ans].concat(distractors(ans,3, n));
+    return makeQ('multiples','Multiples','What is the '+ord(k)+' multiple of '+n+'?','Kelipatan ke-'+k+' dari '+n,ans,opts,n+' × '+k+' = '+ans);
+  } else if(kind===1){
+    var n2=pick([4,6,7,8,9,12,14,15]);
+    var mult=n2*ri(3,11);
+    var non1=mult+1, non2=mult+ri(2, n2-1>2?n2-1:2), non3=n2*ri(2,9)+ (n2>3?ri(1,n2-2):1);
+    var opts=shuffle([mult,non1,non2,non3].filter(function(v,i,a){return a.indexOf(v)===i;}));
+    while(opts.length<4)opts.push(mult+opts.length*3+5);
+    return makeQ('multiples','Multiples','Which number is a multiple of '+n2+'?','Bilangan mana yang merupakan kelipatan '+n2+'?',mult,opts.slice(0,4),mult+' ÷ '+n2+' = '+(mult/n2)+' exactly, so '+mult+' is a multiple of '+n2+'.');
+  } else {
+    var a=pick([4,5,6,8,9,10,12]);
+    var list=[];for(var i=1;i<=5;i++)list.push(a*i);
+    var missing=ri(2,5); var ans2=list[missing-1]; var shown=list.map(function(v,idx){return idx===missing-1?'?':v;}).join(', ');
+    var opts2=[ans2].concat(distractors(ans2,3,a));
+    return makeQ('multiples','Multiples','Complete the pattern: '+shown,'Lengkapi pola kelipatan '+a,ans2,opts2,'The multiples of '+a+' increase by '+a+' each time, so the missing number is '+ans2+'.');
+  }
+}
+function ord(k){var s=['th','st','nd','rd'],v=k%100;return k+(s[(v-20)%10]||s[v]||s[0]);}
+function genFactor(lv){
+  var kind=ri(0,2);
+  if(kind===0){
+    var n=pick([18,20,24,28,30,32,36,40,42,44,45,48,50,54,56,60,64,72,80,84,90,96,100]);
+    var facs=factorsOf(n); var f=pick(facs.filter(function(x){return x>1&&x<n;}));
+    var non=[];var tries=0;
+    while(non.length<3&&tries<100){tries++;var c=ri(2,Math.max(12,n/2));if(n%c!==0&&non.indexOf(c)===-1&&c!==f)non.push(c);}
+    return makeQ('factors','Factors','Which number is a factor of '+n+'?','Bilangan mana yang merupakan faktor dari '+n+'?',f,[f].concat(non),n+' ÷ '+f+' = '+(n/f)+' exactly, so '+f+' is a factor of '+n+'.');
+  } else if(kind===1){
+    var n2=pick([12,16,18,20,24,27,28,32,36,40,45,48,49,54,60,64,72,81]);
+    var cnt=factorsOf(n2).length;
+    var opts=[cnt].concat(distractors(cnt,3,3));
+    return makeQ('factors','Factors','How many factors does '+n2+' have?','Berapa banyak faktor dari '+n2+'?',cnt,opts,'Factors of '+n2+': '+factorsOf(n2).join(', ')+' — that is '+cnt+' factors.');
+  } else {
+    var n3=pick([18,24,30,36,42,48,56,60,72,84,90]);
+    var facs3=factorsOf(n3);
+    var correctList=facs3.join(', ');
+    var wrong1=facs3.slice(0,-1).join(', ');
+    var extra=facs3.concat([n3+ri(2,9)]).join(', ');
+    var swap=facs3.slice(); swap[Math.floor(swap.length/2)]=swap[Math.floor(swap.length/2)]+1; var wrong3=swap.join(', ');
+    return makeQ('factors','Factors','Which list shows ALL the factors of '+n3+'?','Daftar mana yang menunjukkan SEMUA faktor dari '+n3+'?',correctList,[correctList,wrong1,extra,wrong3],'Factors of '+n3+': '+correctList+'.');
+  }
+}
+function genHCF(lv){
+  var base=pick([2,3,4,5,6]);
+  var a,b,tries=0;
+  do{a=base*ri(2,5+lv);b=base*ri(2,6+lv);tries++;}while((a===b||gcd(a,b)!==base)&&tries<60);
+  if(gcd(a,b)!==base){a=base*3;b=base*4;}
+  var ans=gcd(a,b);
+  var opts=[ans].concat(distractors(ans,3,6));
+  return makeQ('hcf','HCF • FPB','What is the HCF of '+a+' and '+b+'?','Berapa FPB dari '+a+' dan '+b+'?',ans,opts,'Common factors of '+a+' and '+b+': '+factorsOf(a).filter(function(x){return b%x===0;}).join(', ')+'. The highest is '+ans+'.');
+}
+function genLCM(lv){
+  var a=pick([3,4,5,6,8,9,10,12]); var b=pick([4,5,6,7,8,9,10,12,15]);
+  if(a===b)b=a+2;
+  var ans=lcm(a,b);
+  var opts=[ans].concat(distractors(ans,3,Math.max(4,Math.round(ans/3))));
+  return makeQ('lcm','LCM • KPK','What is the LCM of '+a+' and '+b+'?','Berapa KPK dari '+a+' dan '+b+'?',ans,opts,'Multiples of '+a+': '+[1,2,3,4,5,6].map(function(i){return a*i;}).join(', ')+'… The first one also in the multiples of '+b+' is '+ans+'.');
+}
+function genPrimeQ(lv){
+  var primes=[11,13,17,19,23,29,31,37];
+  var p=pick(primes); var nonP=pick([15,21,25,27,33,35,39,49,51,57]);
+  var which=ri(0,1);
+  if(which===0){
+    var opts2=shuffle([p,nonP,pick(primes.filter(function(x){return x!==p;})),nonP+2]);
+    return makeQ('mixed','Prime Numbers','Which number is a prime number?','Bilangan mana yang merupakan bilangan prima?',p,opts2,p+' has exactly two factors: 1 and '+p+'.');
+  }
+  var opts3=shuffle([nonP,p,pick(primes.filter(function(x){return x!==p;})),p+10]);
+  return makeQ('mixed','Prime Numbers','Which number is NOT prime?','Bilangan mana yang BUKAN bilangan prima?',nonP,opts3,nonP+' can be divided by other numbers, e.g. '+nonP+' = '+factorsOf(nonP)[1]+' × '+(nonP/factorsOf(nonP)[1])+'.');
+}
+/* fix prime factorisation question construction */
+function genPrimeFixed(lv){
+  var n=pick([12,18,20,24,27,28,32,36,40,45,48,50,54,56,60,64,72,80,84,90,96,100]);
+  var correct=n+' = '+pfText(n);
+  var wrongA=n+' = '+primeFacts(n).map(function(p){return sup(p[0],p[1]+1);}).join(' × ');
+  var flat=primeFacts(n).map(function(p){var r=[];for(var i=0;i<p[1];i++)r.push(p[0]);return r;});
+  var flatArr=[];primeFacts(n).forEach(function(p){for(var i=0;i<p[1];i++)flatArr.push(p[0]);});
+  var wrongB=n+' = '+flatArr.slice(0,-1).join(' × ');
+  var altArr=flatArr.slice(); altArr[0]=(altArr[0]===2?3:2); var wrongC=n+' = '+altArr.join(' × ');
+  var opts=shuffle([correct,wrongA,wrongB,wrongC].filter(function(v,i,a){return a.indexOf(v)===i;}));
+  while(opts.length<4)opts.push(n+' = '+n+' × 2');
+  return {tag:'mixed',label:'Prime Factorisation',question:'What is the prime factorisation of '+n+'?',sub:'Apa faktorisasi prima dari '+n+'?',correct:correct,options:opts,why:correct+' — check: '+flatArr.join(' × ')+' = '+n+'.'};
+}
+
+/* ============ GAME STATE ============ */
+var OPPONENTS=[
+  {name:'Beat Bot', tag:'Rival • Level 1', level:0, color:'#FDA4AF'},
+  {name:'Disco Diva', tag:'Rival • Level 2', level:1, color:'#F0ABFC'},
+  {name:'Factor Boss', tag:'Rival • Final Boss', level:2, color:'#FCA5A5'}
+];
+var MOVES=['Spin Move!','Moonwalk Math!','Robot Groove!','Split Jump!','Twist & Solve!','Disco Point!','Power Shuffle!','Victory Kick!'];
+var NOTES=['♪','♫','♬','♩'];
+var state={mode:'mixed',oppIndex:0,playerHp:100,enemyHp:100,score:0,best:0,combo:0,bestCombo:0,round:0,correctCount:0,totalCount:0,misses:[],current:null,locked:false,fever:false,sound:true,timerId:null,timeLeft:20,playing:false};
+var TIME_PER_Q=20;
+
+var $=function(id){return document.getElementById(id);};
+var startScreen=$('startScreen'),battleScreen=$('battleScreen'),resultScreen=$('resultScreen');
+
+/* ============ AUDIO (WebAudio, created on user tap) ============ */
+var actx=null;
+function ac(){ if(!actx){ try{actx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } if(actx&&actx.state==='suspended')actx.resume(); return actx; }
+function tone(freq,dur,type,vol,delay){
+  if(!state.sound)return; var c=ac(); if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(); o.type=type||'sine'; o.frequency.value=freq;
+  var t=c.currentTime+(delay||0); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+dur+0.05);
+}
+function sfxCorrect(){tone(523,.14,'sine',.16,0);tone(659,.14,'sine',.16,.09);tone(784,.22,'sine',.18,.18); if(state.fever)tone(1046,.25,'triangle',.16,.27);}
+function sfxWrong(){tone(196,.25,'sawtooth',.10,0);tone(147,.3,'sawtooth',.10,.12);}
+function sfxClick(){tone(660,.06,'triangle',.08,0);}
+function sfxWin(){[523,659,784,1046,784,1046].forEach(function(f,i){tone(f,.22,'triangle',.15,i*.13);});}
+function sfxLose(){[392,330,262,196].forEach(function(f,i){tone(f,.25,'sine',.13,i*.16);});}
+
+/* ============ UI HELPERS ============ */
+function setHp(){
+  $('playerHp').style.width=Math.max(0,state.playerHp)+'%';
+  $('enemyHp').style.width=Math.max(0,state.enemyHp)+'%';
+  $('playerHpText').textContent=Math.max(0,state.playerHp);
+  $('enemyHpText').textContent=Math.max(0,state.enemyHp);
+}
+function setHud(){
+  $('hudScore').textContent=state.score;
+  var c=$('hudCombo'); c.textContent='×'+state.combo+(state.fever?' 🔥':''); c.className='v'+(state.fever?' fever':'');
+  $('hudRound').textContent=state.playing? state.round : '–';
+  $('hudBest').textContent=state.best;
+}
+function renderOpps(){
+  var row=$('oppRow'); row.innerHTML='';
+  OPPONENTS.forEach(function(o,i){
+    var d=document.createElement('div'); d.className='opp-chip'+(i<state.oppIndex?' done':(i===state.oppIndex?' now':''));
+    d.innerHTML='<span class="dot" style="background:'+o.color+'22;border:2px solid '+o.color+'">'+(i<state.oppIndex?'✓':(i+1))+'</span> '+o.name+(i===state.oppIndex?' • Now':'');
+    row.appendChild(d);
+  });
+}
+function showBanner(text){
+  var b=$('moveBanner'); b.textContent=text; b.classList.remove('show'); void b.offsetWidth; b.classList.add('show');
+}
+function spawnNotes(fighter){
+  var stage=$('stage');
+  for(var i=0;i<6;i++){
+    var s=document.createElement('span'); s.className='note'; s.textContent=pick(NOTES);
+    s.style.left=(fighter==='player'? (12+Math.random()*18) : (66+Math.random()*18))+'%';
+    s.style.top=(38+Math.random()*14)+'%'; s.style.color=pick(['#FFC531','#4FE3C1','#FF7BAC','#fff']);
+    stage.appendChild(s); (function(el){setTimeout(function(){el.remove();},1050);})(s);
+  }
+}
+function animate(fighterEl,cls){ fighterEl.classList.remove(cls); void fighterEl.offsetWidth; fighterEl.classList.add(cls); setTimeout(function(){fighterEl.classList.remove(cls);},650); }
+
+/* ============ TIMER ============ */
+function startTimer(){
+  stopTimer(); state.timeLeft=TIME_PER_Q; updateTimer();
+  state.timerId=setInterval(function(){
+    state.timeLeft-=0.1; updateTimer();
+    if(state.timeLeft<=0){ stopTimer(); onTimeout(); }
+  },100);
+}
+function stopTimer(){ if(state.timerId){clearInterval(state.timerId);state.timerId=null;} }
+function updateTimer(){
+  var pct=Math.max(0,state.timeLeft/TIME_PER_Q*100);
+  var bar=$('timerBar'); bar.style.width=pct+'%'; bar.className='timer-bar'+(state.timeLeft<=6?' low':'');
+  $('timerText').textContent=Math.max(0,Math.ceil(state.timeLeft))+'s';
+}
+
+/* ============ QUESTION FLOW ============ */
+function nextQuestion(){
+  if(state.mode==='multiples')return genMultiple(OPPONENTS[state.oppIndex].level);
+  if(state.mode==='factors')return genFactor(OPPONENTS[state.oppIndex].level);
+  if(state.mode==='hcf')return genHCF(OPPONENTS[state.oppIndex].level);
+  if(state.mode==='lcm')return genLCM(OPPONENTS[state.oppIndex].level);
+  var r=ri(0,4);
+  if(r===0)return genMultiple(OPPONENTS[state.oppIndex].level);
+  if(r===1)return genFactor(OPPONENTS[state.oppIndex].level);
+  if(r===2)return genHCF(OPPONENTS[state.oppIndex].level);
+  if(r===3)return genLCM(OPPONENTS[state.oppIndex].level);
+  return Math.random()<0.5? genPrimeFixed(OPPONENTS[state.oppIndex].level) : (function(){
+    var q=genPrimeQ(OPPONENTS[state.oppIndex].level); return q;
+  })();
+}
+function ask(){
+  state.locked=false; state.round++; state.totalCount++;
+  state.current=nextQuestion();
+  var q=state.current;
+  $('qTag').textContent=q.label;
+  $('qText').textContent=q.question;
+  $('qSub').textContent=q.sub||'';
+  var fb=$('feedback'); fb.className='feedback'; fb.innerHTML='';
+  $('nextBtn').classList.add('hidden');
+  var box=$('answers'); box.innerHTML='';
+  q.options.forEach(function(opt){
+    var b=document.createElement('button'); b.type='button'; b.className='ans'; b.textContent=opt;
+    b.addEventListener('click',function(){answer(b,opt);});
+    box.appendChild(b);
+  });
+  setHud(); startTimer();
+}
+function lockAnswers(chosenBtn){
+  var btns=document.querySelectorAll('#answers .ans');
+  btns.forEach(function(b){
+    b.disabled=true;
+    if(b.textContent===state.current.correct)b.classList.add('correct');
+    else if(chosenBtn&&b===chosenBtn)b.classList.add('wrong');
+  });
+}
+function showFeedback(good,html){
+  var fb=$('feedback'); fb.className='feedback show '+(good?'good':'bad'); fb.innerHTML=html;
+  $('nextBtn').classList.remove('hidden');
+  $('nextBtn').textContent=(state.playerHp<=0||state.enemyHp<=0)?'See Result →':'Next Beat →';
+}
+function answer(btn,opt){
+  if(state.locked)return; state.locked=true; stopTimer();
+  var q=state.current; var correct=opt===q.correct;
+  lockAnswers(btn);
+  if(correct){
+    state.correctCount++; state.combo++; state.bestCombo=Math.max(state.bestCombo,state.combo);
+    state.fever=state.combo>=3;
+    var timeBonus=Math.round(state.timeLeft*2);
+    var dmg=state.fever?26:14;
+    state.enemyHp-=dmg;
+    var gained=100+timeBonus+state.combo*15+(state.fever?50:0);
+    state.score+=gained;
+    sfxCorrect(); animate($('playerFighter'),'attack'); animate($('enemyFighter'),'hurt'); spawnNotes('player');
+    showBanner(state.fever?'🔥 FEVER: '+pick(MOVES):pick(MOVES));
+    showFeedback(true,'<b>Correct! +' +gained+' points</b> — your dance move hits '+OPPONENTS[state.oppIndex].name+' for '+dmg+' damage!'+(state.fever?' FEVER MODE is ON — double damage!':'')+'<span class="why">'+q.why+'</span>');
+  } else {
+    state.combo=0; state.fever=false;
+    var dmg2=12; state.playerHp-=dmg2;
+    state.misses.push({q:q.question,yours:opt,right:q.correct,why:q.why});
+    sfxWrong(); animate($('enemyFighter'),'attack'); animate($('playerFighter'),'hurt'); spawnNotes('enemy');
+    showBanner(OPPONENTS[state.oppIndex].name+' strikes back!');
+    showFeedback(false,'<b>Not quite!</b> '+OPPONENTS[state.oppIndex].name+' dances back and you lose '+dmg2+' HP. The correct answer is <b>'+q.correct+'</b>.<span class="why">'+q.why+'</span>');
+  }
+  setHp(); setHud();
+}
+function onTimeout(){
+  if(state.locked)return; state.locked=true;
+  var q=state.current; lockAnswers(null);
+  state.combo=0; state.fever=false; state.playerHp-=12;
+  state.misses.push({q:q.question,yours:'(no answer — time out)',right:q.correct,why:q.why});
+  sfxWrong(); animate($('enemyFighter'),'attack'); animate($('playerFighter'),'hurt');
+  showBanner('Too slow! ⏱');
+  showFeedback(false,'<b>Time\'s up!</b> The beat moved on and you lose 12 HP. The correct answer is <b>'+q.correct+'</b>.<span class="why">'+q.why+'</span>');
+  setHp(); setHud();
+}
+
+/* ============ BATTLE LIFECYCLE ============ */
+function startBattle(keepScore){
+  if(!keepScore){state.score=0;state.oppIndex=0;}
+  state.playerHp=100; state.enemyHp=100; state.combo=0; state.bestCombo=0; state.fever=false;
+  state.round=0; state.correctCount=0; state.totalCount=0; state.misses=[]; state.playing=true;
+  var o=OPPONENTS[state.oppIndex];
+  $('enemyName').textContent=o.name; $('enemyTag').textContent=o.tag;
+  var modeNames={multiples:'Multiples',factors:'Factors',hcf:'HCF • FPB',lcm:'LCM • KPK',mixed:'Mixed Battle'};
+  $('stageMode').textContent=modeNames[state.mode];
+  renderOpps(); setHp(); setHud();
+  startScreen.classList.add('hidden'); resultScreen.classList.add('hidden'); battleScreen.classList.remove('hidden');
+  $('timerWrap').classList.remove('hidden');
+  ask();
+}
+function endBattle(){
+  state.playing=false; stopTimer(); $('timerWrap').classList.add('hidden');
+  battleScreen.classList.add('hidden'); resultScreen.classList.remove('hidden');
+  var won=state.enemyHp<=0&&state.playerHp>0;
+  var isFinal=state.oppIndex===OPPONENTS.length-1;
+  state.best=Math.max(state.best,state.score); setHud();
+  if(won){
+    animate($('playerFighter'),'dance-win'); sfxWin();
+    if(isFinal){
+      $('resultStars').textContent='★★★'; $('resultTitle').textContent='🏆 DANCE CHAMPION!';
+      $('resultMsg').textContent='You defeated all 3 rivals — Factor Boss included! You are the Multiples & Factors Dance Champion of Grade 7!';
+      $('nextOppBtn').classList.add('hidden');
+    } else {
+      $('resultStars').textContent='★★★'; $('resultTitle').textContent='You Win This Battle! 🎉';
+      $('resultMsg').textContent=OPPONENTS[state.oppIndex].name+' is defeated! One more rival is waiting on the dance floor…';
+      $('nextOppBtn').classList.remove('hidden');
+    }
+  } else {
+    sfxLose();
+    $('resultStars').textContent='★☆☆'; $('resultTitle').textContent='Battle Lost — Keep Dancing!';
+    $('resultMsg').textContent=OPPONENTS[state.oppIndex].name+' wins this round. Review your misses below, learn the moves, and challenge again!';
+    $('nextOppBtn').classList.add('hidden');
+  }
+  $('resScore').textContent=state.score;
+  $('resCorrect').textContent=state.correctCount+' / '+state.totalCount;
+  $('resAcc').textContent=(state.totalCount?Math.round(state.correctCount/state.totalCount*100):0)+'%';
+  $('resCombo').textContent='×'+state.bestCombo;
+  var rw=$('reviewWrap'),rl=$('reviewList'); rl.innerHTML='';
+  if(state.misses.length){
+    rw.classList.remove('hidden');
+    state.misses.forEach(function(m){
+      var d=document.createElement('div'); d.className='review-item';
+      d.innerHTML='<span class="rq"></span><br>Your answer: <span class="ya"></span> • Correct answer: <span class="ra"></span><br><span style="color:var(--muted)"></span>';
+      d.querySelector('.rq').textContent=m.q; d.querySelector('.ya').textContent=m.yours; d.querySelector('.ra').textContent=m.right; d.lastElementChild.textContent=m.why;
+      rl.appendChild(d);
+    });
+  } else rw.classList.add('hidden');
+  resultScreen.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ============ EVENTS ============ */
+document.querySelectorAll('.mode-btn').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('.mode-btn').forEach(function(x){x.classList.remove('sel');});
+    b.classList.add('sel'); state.mode=b.getAttribute('data-mode'); sfxClick(); ac();
+  });
+});
+$('startBtn').addEventListener('click',function(){ ac(); sfxClick(); startBattle(false); });
+$('nextBtn').addEventListener('click',function(){
+  sfxClick();
+  if(state.playerHp<=0||state.enemyHp<=0){ endBattle(); }
+  else ask();
+});
+$('againBtn').addEventListener('click',function(){ ac(); startBattle(false); });
+$('nextOppBtn').addEventListener('click',function(){
+  ac(); state.oppIndex=Math.min(state.oppIndex+1,OPPONENTS.length-1);
+  var keep=state.score; startBattle(true); state.score=keep; setHud();
+});
+$('menuBtn').addEventListener('click',function(){
+  stopTimer(); state.playing=false; $('timerWrap').classList.add('hidden');
+  resultScreen.classList.add('hidden'); battleScreen.classList.add('hidden'); startScreen.classList.remove('hidden');
+  renderOpps(); startScreen.scrollIntoView({behavior:'smooth'});
+});
+$('restartBtn').addEventListener('click',function(){
+  stopTimer(); state.playing=false; state.score=0; state.combo=0; state.playerHp=100; state.enemyHp=100; setHp(); setHud();
+  $('timerWrap').classList.add('hidden'); battleScreen.classList.add('hidden'); resultScreen.classList.add('hidden'); startScreen.classList.remove('hidden');
+  renderOpps();
+});
+$('soundBtn').addEventListener('click',function(){
+  state.sound=!state.sound; this.textContent=state.sound?'🔊 Sound: ON':'🔇 Sound: OFF'; this.classList.toggle('on',!state.sound);
+  if(state.sound){ac(); sfxClick();}
+});
+
+renderOpps(); setHp(); setHud();
+})();
+</script>
+</body>
+</html>
