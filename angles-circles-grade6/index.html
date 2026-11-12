@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angles &amp; Circles — Grade 6 Practice Game | SD MIMI Surabaya</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#6a11cb,#2575fc);min-height:100vh;color:#333}
+.container{max-width:760px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 10px 40px rgba(0,0,0,.25);margin-top:30px}
+h1{font-size:30px;color:#6a11cb;text-align:center;line-height:1.3}
+h2{font-size:24px;color:#6a11cb;margin-bottom:14px}
+.sub{text-align:center;color:#666;font-size:17px;margin-top:8px}
+.badge{display:inline-block;background:#ffe082;color:#5d4037;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:4px}
+input[type=text]{width:100%;padding:13px 16px;font-size:17px;border:2px solid #ddd;border-radius:12px;margin:8px 0}
+.btn{display:block;width:100%;padding:15px;font-size:19px;font-weight:700;border:none;border-radius:14px;cursor:pointer;margin-top:12px;color:#fff;background:linear-gradient(135deg,#6a11cb,#2575fc)}
+.btn.green{background:linear-gradient(135deg,#43a047,#66bb6a)}
+.btn.orange{background:linear-gradient(135deg,#fb8c00,#ffb74d)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;padding:15px 18px;font-size:18px;border:2px solid #ddd;border-radius:14px;background:#f9f9ff;margin:9px 0;cursor:pointer}
+.opt:hover{border-color:#6a11cb;background:#f3e5f5}
+.opt.correct{background:#c8e6c9;border-color:#43a047}
+.opt.wrong{background:#ffcdd2;border-color:#e53935}
+.opt:disabled{cursor:default}
+.progress{height:14px;background:#e0e0e0;border-radius:10px;overflow:hidden;margin:14px 0}
+.progress>div{height:100%;background:linear-gradient(90deg,#6a11cb,#2575fc);width:0%;transition:width .3s}
+.feedback{padding:16px;border-radius:12px;margin-top:14px;font-size:17px;line-height:1.5;display:none}
+.feedback.ok{background:#e8f5e9;border:2px solid #43a047}
+.feedback.no{background:#fce4ec;border:2px solid #e53935}
+textarea{width:100%;min-height:90px;padding:12px;font-size:16px;border:2px solid #ddd;border-radius:12px;font-family:inherit;margin:8px 0}
+.score-big{font-size:72px;font-weight:900;color:#6a11cb;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:16px;margin:10px 0}
+td,th{border:1px solid #ddd;padding:9px 10px;text-align:left}
+th{background:#ede7f6;color:#6a11cb}
+.formula{background:#fff8e1;border-left:5px solid #ffb300;padding:12px 16px;border-radius:8px;margin:12px 0;font-size:18px}
+.concept h3{color:#2575fc;margin:16px 0 6px;font-size:19px}
+.concept p,.concept li{font-size:17px;line-height:1.55}
+.concept ul{margin-left:22px}
+.hidden{display:none}
+.coin{position:fixed;font-size:46px;z-index:999;pointer-events:none;animation:coinFall 2.2s ease-in forwards}
+@keyframes coinFall{0%{top:-60px;transform:rotate(0deg) scale(1);opacity:1}70%{opacity:1}100%{top:105vh;transform:rotate(720deg) scale(.8);opacity:0}}
+@media print{.navbtns,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;margin-top:0}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- START SCREEN -->
+<div class="card" id="startScreen">
+<h1>📐 Angles &amp; Circles<br>Practice Game</h1>
+<p class="sub">SD “MIMI” School Surabaya • Grade 6<br>Angles in Geometric Figures • Circles • Composite Shapes</p>
+<p style="text-align:center;margin-top:14px">
+<span class="badge">20 Multiple Choice</span>
+<span class="badge">5 Essay</span>
+<span class="badge">Score / 20</span>
+</p>
+<input type="text" id="stuName" placeholder="Your name">
+<input type="text" id="stuClass" placeholder="Your class (e.g. Grade 6)">
+<label style="font-size:16px"><input type="checkbox" id="soundToggle" checked style="width:18px;height:18px"> 🔊 Sound ON</label>
+<button class="btn orange" onclick="showConcept()">📖 Baca Konsep Dulu</button>
+<button class="btn" onclick="startQuiz()">▶ Start the Quiz</button>
+<p style="text-align:center;margin-top:16px;font-size:15px;color:#888">Teacher: Rudolf A. Luhukay, S.T.</p>
+</div>
+
+<!-- CONCEPT SCREEN -->
+<div class="card concept hidden" id="conceptScreen">
+<h2>📖 Konsep — Baca Dulu!</h2>
+
+<h3>1. Angle Properties (Sifat-Sifat Sudut)</h3>
+<ul>
+<li>Angles on a <b>straight line</b> = <b>180°</b></li>
+<li>Angles <b>around a point</b> = <b>360°</b></li>
+<li>Angles in a <b>triangle</b> = <b>180°</b></li>
+<li>Angles in a <b>quadrilateral</b> = <b>360°</b></li>
+<li><b>Isosceles</b> triangle: two equal base angles.</li>
+<li><b>Equilateral</b> triangle: each angle = <b>60°</b>.</li>
+<li><b>Rectangle:</b> all angles are 90°. <b>Parallelogram:</b> opposite angles are equal. <b>Rhombus:</b> all sides equal, opposite angles equal. <b>Trapezium:</b> one pair of parallel sides.</li>
+</ul>
+
+<h3>2. Circle (Lingkaran)</h3>
+<div class="formula">Area: A = πr² &nbsp;•&nbsp; Circumference: C = 2πr &nbsp;•&nbsp; Use π = 22/7</div>
+<p>Example: r = 7 cm → A = 22/7 × 7 × 7 = <b>154 cm²</b> • C = 2 × 22/7 × 7 = <b>44 cm</b></p>
+
+<h3>3. Semicircle (Setengah Lingkaran)</h3>
+<div class="formula">Area: A = ½πr² &nbsp;•&nbsp; Perimeter: P = πr + 2r (arc + diameter!)</div>
+<p>Example: r = 7 cm → A = ½ × 154 = <b>77 cm²</b> • P = 22 + 14 = <b>36 cm</b></p>
+
+<h3>4. Quarter Circle (Seperempat Lingkaran)</h3>
+<div class="formula">Area: A = ¼πr² &nbsp;•&nbsp; Perimeter: P = ½πr + 2r (arc + two radii!)</div>
+<p>Example: r = 14 cm → A = ¼ × 616 = <b>154 cm²</b> • P = 22 + 28 = <b>50 cm</b></p>
+
+<h3>5. Composite Shapes (Bangun Gabungan)</h3>
+<p>Split the shape into parts you know, then <b>add</b> (or <b>subtract</b> for a cut-out)!</p>
+<ul>
+<li>Rectangle + semicircle: A = l×w + ½πr²</li>
+<li>Capsule (rectangle + 2 semicircles): A = l×w + πr²</li>
+<li>Semicircle on top of a rectangle: A = l×w + ½πr²</li>
+<li>Rectangle with a semicircular cut-out: A = l×w − ½πr²</li>
+<li>Quarter circle + rectangle: A = l×w + ¼πr²</li>
+<li>Circle + rectangle (“key”): A = πr² + l×w</li>
+</ul>
+<p style="margin-top:10px">⚠️ <b>Remember:</b> Area uses square units (cm²). Perimeter uses linear units (cm). A semicircle perimeter <b>includes</b> the diameter; a quarter-circle perimeter <b>includes</b> two radii.</p>
+
+<button class="btn" onclick="backToStart()">← Back</button>
+<button class="btn green" onclick="startQuiz()">▶ Saya Sudah Paham — Start the Quiz</button>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="card hidden" id="quizScreen">
+<div style="display:flex;justify-content:space-between;font-size:16px;color:#666"><span id="qLabel">Question 1 / 20</span><span id="scoreLabel">Score: 0</span></div>
+<div class="progress"><div id="progBar"></div></div>
+<h2 id="qText" style="color:#333"></h2>
+<div id="opts"></div>
+<div class="feedback" id="fb"></div>
+<button class="btn hidden" id="nextBtn" onclick="nextQ()">Next →</button>
+</div>
+
+<!-- ESSAY SCREEN -->
+<div class="card hidden" id="essayScreen">
+<h2>✍️ Essay Questions (26–30)</h2>
+<p class="sub">Write your working and answer. Essays are <b>not auto-graded</b> — your teacher will check them.</p>
+<div id="essayList"></div>
+<button class="btn green" onclick="finishQuiz()">✅ Finish &amp; See My Score</button>
+</div>
+
+<!-- RESULT SCREEN -->
+<div class="card hidden" id="resultScreen">
+<h1>🎉 Your Result</h1>
+<p style="text-align:center;font-size:20px;margin-top:8px"><span id="resName"></span> • <span id="resClass"></span></p>
+<div class="score-big"><span id="finalScore">0</span> / 20</div>
+<p style="text-align:center;font-size:20px" id="resMsg"></p>
+<h2 style="margin-top:20px">📋 Review — Multiple Choice</h2>
+<div id="reviewList"></div>
+<h2 style="margin-top:20px">✍️ Your Essay Answers</h2>
+<div id="essayReview"></div>
+<div class="navbtns">
+<button class="btn" onclick="window.print()">🖨️ Print My Result</button>
+<button class="btn orange" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+</div>
+<script>
+const MCQ=[
+{q:"What is the sum of the angles on a straight line?",o:["90°","180°","270°","360°"],a:1,e:"Angles on a straight line add up to 180°."},
+{q:"What is the sum of the angles around a point?",o:["180°","270°","360°","90°"],a:2,e:"Angles around a point add up to 360°."},
+{q:"Find x. On a straight line: x° + 65° = 180°.",o:["x = 65°","x = 90°","x = 115°","x = 125°"],a:2,e:"x = 180° − 65° = 115°."},
+{q:"Find x. Around a point: x° + 90° + 120° + 80° = 360°.",o:["x = 60°","x = 70°","x = 80°","x = 90°"],a:1,e:"x + 290° = 360°, so x = 360° − 290° = 70°."},
+{q:"In a triangle, two angles are 50° and 60°. What is the third angle, x?",o:["x = 60°","x = 70°","x = 80°","x = 50°"],a:1,e:"x + 50° + 60° = 180°, so x = 180° − 110° = 70°."},
+{q:"In a quadrilateral, three angles are 80°, 90° and 100°. What is the fourth angle, x?",o:["x = 80°","x = 100°","x = 90°","x = 70°"],a:2,e:"80° + 90° + 100° + x = 360°, so x = 360° − 270° = 90°."},
+{q:"In an equilateral triangle, each angle is…",o:["45°","90°","60°","30°"],a:2,e:"All three angles are equal: 180° ÷ 3 = 60°."},
+{q:"Which quadrilateral has ALL its angles equal to 90°?",o:["Parallelogram","Rhombus","Trapezium","Rectangle"],a:3,e:"A rectangle has four right angles (90° each)."},
+{q:"Find the area of a circle with radius 7 cm. (π = 22/7)",o:["44 cm²","154 cm²","77 cm²","616 cm²"],a:1,e:"A = πr² = 22/7 × 7 × 7 = 22 × 7 = 154 cm²."},
+{q:"Find the circumference of a circle with radius 7 cm. (π = 22/7)",o:["154 cm","44 cm","77 cm","22 cm"],a:1,e:"C = 2πr = 2 × 22/7 × 7 = 2 × 22 = 44 cm."},
+{q:"Find the area of a semicircle with radius 7 cm. (π = 22/7)",o:["154 cm²","44 cm²","77 cm²","36 cm²"],a:2,e:"A = ½πr² = ½ × 154 = 77 cm²."},
+{q:"Find the perimeter of a semicircle with radius 7 cm. (π = 22/7)",o:["22 cm","44 cm","36 cm","50 cm"],a:2,e:"P = πr + 2r = 22 + 14 = 36 cm. Remember: the diameter is included!"},
+{q:"Find the area of a quarter circle with radius 14 cm. (π = 22/7)",o:["77 cm²","154 cm²","616 cm²","50 cm²"],a:1,e:"A = ¼πr² = ¼ × 22/7 × 14 × 14 = ¼ × 616 = 154 cm²."},
+{q:"Find the perimeter of a quarter circle with radius 14 cm. (π = 22/7)",o:["36 cm","44 cm","50 cm","154 cm"],a:2,e:"P = ½πr + 2r = 22 + 28 = 50 cm. Remember: two radii are included!"},
+{q:"Rectangle + semicircle at one end: l = 10 cm, w = 6 cm, r = 3 cm. Find the area. (π = 22/7)",o:["60 cm²","74.13 cm²","88.27 cm²","65.13 cm²"],a:1,e:"A = 10×6 + ½π(3²) = 60 + 4.5π ≈ 60 + 14.13 = 74.13 cm²."},
+{q:"Same shape as Q15 (l = 10 cm, w = 6 cm, r = 3 cm). Find the perimeter.",o:["35.42 cm","38.85 cm","30.57 cm","34.58 cm"],a:0,e:"P = 2l + w + πr = 20 + 6 + 3π ≈ 26 + 9.42 = 35.42 cm."},
+{q:"Capsule shape: rectangle 10 cm × 6 cm with a semicircle at each end (r = 3 cm). Find the area.",o:["74.13 cm²","88.27 cm²","108.57 cm²","90.27 cm²"],a:1,e:"A = 10×6 + π(3²) = 60 + 9π ≈ 60 + 28.27 = 88.27 cm²."},
+{q:"Semicircle on top of a rectangle: rectangle 8 cm wide, 5 cm high, r = 4 cm. Find the area.",o:["74.13 cm²","65.13 cm²","97.87 cm²","108.57 cm²"],a:1,e:"A = 8×5 + ½π(4²) = 40 + 8π ≈ 40 + 25.13 = 65.13 cm²."},
+{q:"Rectangle with a semicircular cut-out: l = 14 cm, w = 8 cm, r = 3 cm. Find the area.",o:["112 cm²","97.87 cm²","88.27 cm²","108.57 cm²"],a:1,e:"A = 14×8 − ½π(3²) = 112 − 4.5π ≈ 112 − 14.13 = 97.87 cm²."},
+{q:"Quarter circle with a rectangle: l = 12 cm, w = 8 cm, r = 4 cm. Find the area.",o:["96 cm²","108.57 cm²","90.27 cm²","65.13 cm²"],a:1,e:"A = 12×8 + ¼π(4²) = 96 + 4π ≈ 96 + 12.57 = 108.57 cm²."}
+];
+const ESSAY=[
+{q:"26. Capsule shape: a rectangle 10 cm long and 6 cm wide, with a semicircle (r = 3 cm) at each end. Find the perimeter. Show your working.",hint:"Perimeter = 2l + 2πr"},
+{q:"27. Semicircle on top of a rectangle: the rectangle is 8 cm wide and 5 cm high, and the semicircle has r = 4 cm. Find the perimeter. Show your working.",hint:"Perimeter = l + 2w + πr"},
+{q:"28. “Key” shape: a circle with r = 4 cm joined to a rectangle 10 cm long and 4 cm wide. Find the area AND the perimeter. Show your working.",hint:"Area = πr² + l×w ; Perimeter = 2πr + 2l + w"},
+{q:"29. In a triangle, two angles are 75° and 55°. Find the third angle. Explain which angle rule you used.",hint:"Sum of angles in a triangle = 180°"},
+{q:"30. Explain in your own words: why is the perimeter of a semicircle NOT just πr? Then find the perimeter of a semicircle with radius 7 cm.",hint:"The straight edge (diameter) is part of the perimeter too."}
+];
+let qi=0,score=0,answers=[],essayAns=[];
+let audioCtx=null;
+function soundOn(){return document.getElementById('soundToggle').checked;}
+const MAXVOL=0.9; // volume maksimum 90%
+function beep(f,t0,d,type){if(!soundOn())return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(MAXVOL,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+d);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+d);}catch(e){}}
+function playCorrect(){ // bunyi koin gemerincing: denting logam bernada tinggi, cepat
+  [1568,2093,2637,3136,2093,2637].forEach((f,i)=>beep(f,i*.07,.22,'triangle'));
+  [1245,1760,2217].forEach((f,i)=>beep(f,.05+i*.09,.18,'square'));
+}
+function playWrong(){[330,262,196].forEach((f,i)=>beep(f,i*.16,.4));}
+function flyCoins(){const em=['🪙','🪙','🪙','💰','🪙','🪙','💰','🪙'];em.forEach((e,i)=>{const c=document.createElement('div');c.className='coin';c.textContent=e;c.style.left=(5+Math.random()*88)+'%';c.style.animationDelay=(i*.12)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2800);});}
+function showConcept(){document.getElementById('startScreen').classList.add('hidden');document.getElementById('conceptScreen').classList.remove('hidden');}
+function backToStart(){document.getElementById('conceptScreen').classList.add('hidden');document.getElementById('startScreen').classList.remove('hidden');}
+function startQuiz(){
+  const n=document.getElementById('stuName').value.trim();
+  if(!n){alert('Please enter your name first 🙂');document.getElementById('stuName').focus();return;}
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  qi=0;score=0;answers=[];essayAns=[];
+  renderQ();
+}
+function renderQ(){
+  const q=MCQ[qi];
+  document.getElementById('qLabel').textContent=`Question ${qi+1} / 20`;
+  document.getElementById('scoreLabel').textContent=`Score: ${score}`;
+  document.getElementById('progBar').style.width=(qi/20*100)+'%';
+  document.getElementById('qText').textContent=(qi+1)+'. '+q.q;
+  const box=document.getElementById('opts');box.innerHTML='';
+  const fb=document.getElementById('fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('nextBtn').classList.add('hidden');
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=()=>answer(i,b);
+    box.appendChild(b);
+  });
+}
+function answer(i,btn){
+  const q=MCQ[qi];
+  const btns=document.querySelectorAll('#opts .opt');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.a;
+  answers.push({q:q.q,picked:q.o[i],correctAns:q.o[q.a],ok:correct,exp:q.e});
+  const fb=document.getElementById('fb');
+  if(correct){score++;btn.classList.add('correct');fb.className='feedback ok';fb.innerHTML='✅ <b>Correct!</b> '+q.e;playCorrect();flyCoins();}
+  else{btn.classList.add('wrong');btns[q.a].classList.add('correct');fb.className='feedback no';fb.innerHTML='❌ <b>Not quite.</b> The correct answer is <b>'+q.o[q.a]+'</b>.<br>'+q.e;playWrong();}
+  fb.style.display='block';
+  document.getElementById('scoreLabel').textContent=`Score: ${score}`;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent=qi===19?'Continue to Essay ✍️':'Next →';
+  nb.classList.remove('hidden');
+}
+function nextQ(){
+  if(qi<19){qi++;renderQ();}
+  else{
+    document.getElementById('quizScreen').classList.add('hidden');
+    const es=document.getElementById('essayScreen');es.classList.remove('hidden');
+    const list=document.getElementById('essayList');list.innerHTML='';
+    ESSAY.forEach((e,i)=>{
+      const d=document.createElement('div');d.style.marginBottom='18px';
+      d.innerHTML=`<p style="font-size:17px;line-height:1.5"><b>${e.q}</b><br><span style="color:#888;font-size:15px">Hint: ${e.hint}</span></p><textarea id="es${i}" placeholder="Write your working and answer here..."></textarea>`;
+      list.appendChild(d);
+    });
+    window.scrollTo(0,0);
+  }
+}
+function finishQuiz(){
+  essayAns=ESSAY.map((e,i)=>({q:e.q,ans:document.getElementById('es'+i).value.trim()||'(No answer written)'}));
+  document.getElementById('essayScreen').classList.add('hidden');
+  const rs=document.getElementById('resultScreen');rs.classList.remove('hidden');
+  document.getElementById('resName').textContent=document.getElementById('stuName').value.trim();
+  document.getElementById('resClass').textContent=document.getElementById('stuClass').value.trim()||'Grade 6';
+  document.getElementById('finalScore').textContent=score;
+  const m=document.getElementById('resMsg');
+  m.textContent=score>=18?'🌟 Excellent! You really understand angles and circles!':score>=14?'👍 Great job! A little more practice and you will be perfect!':score>=10?'💪 Good effort! Review the concept page and try again!':'📖 Keep practising! Read the concept page once more and try again!';
+  const rl=document.getElementById('reviewList');rl.innerHTML='';
+  answers.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16px;line-height:1.5';
+    d.innerHTML=`<b>${i+1}. ${a.q}</b><br>Your answer: <b style="color:${a.ok?'#2e7d32':'#c62828'}">${a.picked} ${a.ok?'✅':'❌'}</b>${a.ok?'':`<br>Correct answer: <b>${a.correctAns}</b>`}<br><span style="color:#666">${a.exp}</span>`;
+    rl.appendChild(d);
+  });
+  const er=document.getElementById('essayReview');er.innerHTML='';
+  essayAns.forEach(a=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16px;line-height:1.5;white-space:pre-wrap';
+    d.innerHTML=`<b>${a.q}</b><br>${a.ans}`;
+    er.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
