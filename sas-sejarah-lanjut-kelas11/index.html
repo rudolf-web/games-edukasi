@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAS Sejarah Lanjut — Kelas XI SMA | Kebudayaan Zaman Prasejarah</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#3e2723,#8d6e63,#ff8f00);min-height:100vh;color:#333}
+.container{max-width:780px;margin:0 auto;padding:20px}
+.card{background:#fff8e1;border-radius:20px;padding:32px 28px;box-shadow:0 10px 40px rgba(0,0,0,.3);margin-top:30px}
+h1{font-size:30px;color:#5d4037;text-align:center;line-height:1.3}
+h2{font-size:24px;color:#5d4037;margin-bottom:14px}
+.sub{text-align:center;color:#6d4c41;font-size:17px;margin-top:8px}
+.badge{display:inline-block;background:#ffecb3;color:#5d4037;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:4px}
+input[type=text]{width:100%;padding:13px 16px;font-size:17px;border:2px solid #d7ccc8;border-radius:12px;margin:8px 0}
+.btn{display:block;width:100%;padding:15px;font-size:19px;font-weight:700;border:none;border-radius:14px;cursor:pointer;margin-top:12px;color:#fff;background:linear-gradient(135deg,#6d4c41,#a1887f)}
+.btn.green{background:linear-gradient(135deg,#2e7d32,#66bb6a)}
+.btn.orange{background:linear-gradient(135deg,#e65100,#ff9800)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.opt{display:block;width:100%;text-align:left;padding:15px 18px;font-size:18px;border:2px solid #d7ccc8;border-radius:14px;background:#fffdf7;margin:9px 0;cursor:pointer}
+.opt:hover{border-color:#8d6e63;background:#fbe9e7}
+.opt.correct{background:#c8e6c9;border-color:#43a047}
+.opt.wrong{background:#ffcdd2;border-color:#e53935}
+.opt:disabled{cursor:default}
+.progress{height:14px;background:#e0e0e0;border-radius:10px;overflow:hidden;margin:14px 0}
+.progress>div{height:100%;background:linear-gradient(90deg,#6d4c41,#ff8f00);width:0%;transition:width .3s}
+.feedback{padding:16px;border-radius:12px;margin-top:14px;font-size:17px;line-height:1.5;display:none}
+.feedback.ok{background:#e8f5e9;border:2px solid #43a047}
+.feedback.no{background:#fce4ec;border:2px solid #e53935}
+textarea{width:100%;min-height:100px;padding:12px;font-size:16px;border:2px solid #d7ccc8;border-radius:12px;font-family:inherit;margin:8px 0}
+.score-big{font-size:72px;font-weight:900;color:#5d4037;text-align:center}
+.formula{background:#fff3e0;border-left:5px solid #ff8f00;padding:12px 16px;border-radius:8px;margin:12px 0;font-size:18px}
+.concept h3{color:#e65100;margin:16px 0 6px;font-size:19px}
+.concept p,.concept li{font-size:17px;line-height:1.55}
+.concept ul{margin-left:22px}
+.hidden{display:none}
+.coin{position:fixed;font-size:46px;z-index:999;pointer-events:none;animation:coinFall 2.2s ease-in forwards}
+@keyframes coinFall{0%{top:-60px;transform:rotate(0deg) scale(1);opacity:1}70%{opacity:1}100%{top:105vh;transform:rotate(720deg) scale(.8);opacity:0}}
+@media print{.navbtns,.btn{display:none!important}body{background:#fff}.card{box-shadow:none;margin-top:0}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="card" id="startScreen">
+<h1>🏺 SAS Sejarah Lanjut<br>Kebudayaan Zaman Prasejarah</h1>
+<p class="sub">SMA • Kelas XI<br>Bab 3 — Antropologi: Kebudayaan Zaman Prasejarah</p>
+<p style="text-align:center;margin-top:14px">
+<span class="badge">30 Pilihan Ganda</span>
+<span class="badge">5 Essay</span>
+<span class="badge">Skor / 30</span>
+</p>
+<input type="text" id="stuName" placeholder="Nama kamu">
+<input type="text" id="stuClass" placeholder="Kelas (mis. XI-1)">
+<label style="font-size:16px"><input type="checkbox" id="soundToggle" checked style="width:18px;height:18px"> 🔊 Suara ON</label>
+<button class="btn orange" onclick="showConcept()">📖 Baca Konsep Dulu</button>
+<button class="btn" onclick="startQuiz()">▶ Mulai Kuis</button>
+<p style="text-align:center;margin-top:16px;font-size:15px;color:#888">Guru: Rudolf A. Luhukay, S.T.</p>
+</div>
+
+<div class="card concept hidden" id="conceptScreen">
+<h2>📖 Konsep — Baca Dulu!</h2>
+
+<h3>1. Manusia Makhluk Berbudaya</h3>
+<ul>
+<li>Perbedaan paling mendasar manusia dan binatang: <b>akal budi</b>. Binatang bertindak menurut <b>naluri</b> saja.</li>
+<li>Dengan akal budi manusia menciptakan alat (tongkat pengait, tombak, jala) dan <b>bahasa</b>.</li>
+<li>Kebudayaan diteruskan lewat <b>belajar, mengajar, dan bahasa</b> — ke generasi berikut dan ke orang di sekitarnya (masyarakat).</li>
+<li>Contoh peninggalan yang masih dipakai: <b>cobek dan ulekan</b>.</li>
+</ul>
+
+<h3>2. Apa Itu Zaman Prasejarah?</h3>
+<ul>
+<li><b>Prasejarah / praaksara / nirleka</b> = masa sebelum manusia mengenal tulisan.</li>
+<li>Menurut Soekmono: prasejarah dimulai ketika <b>manusia mulai berkebudayaan</b>.</li>
+<li>Indonesia memasuki zaman sejarah <b>abad ke-5 M</b>: prasasti <b>Kutai (Raja Mulawarman)</b> dan <b>Jawa Barat (Raja Purnawarman)</b>.</li>
+<li>Sumeria dan Mesir mengakhiri prasejarah sekitar <b>4000 SM</b>; sebagian masyarakat Papua baru mengenal tulisan awal abad ke-20.</li>
+<li>Peninggalan prasejarah ada dua: <b>fosil</b> (sisa tulang-belulang) dan <b>artefak</b> (benda buatan manusia).</li>
+</ul>
+
+<h3>3. Pembagian Zaman (Geologi)</h3>
+<div class="formula">Bumi terbentuk ± <b>4,5 miliar</b> tahun lalu</div>
+<ul>
+<li><b>Azoikum:</b> Bumi baru terbentuk, belum ada kehidupan.</li>
+<li><b>Palaeozoikum:</b> ± 340 juta tahun, zaman purba tertua.</li>
+<li><b>Mesozoikum:</b> ± 140 juta tahun, <b>zaman reptil</b>.</li>
+<li><b>Neozoikum/Kenozoikum:</b> sejak ± 60 juta tahun lalu — Tersier dan <b>Kuarter</b> (manusia mulai ada).</li>
+</ul>
+
+<h3>4. Zaman Batu</h3>
+<ul>
+<li><b>Paleolitikum Tua:</b> tradisi <b>Oldowan</b> (benturan, kasar). Kebudayaan <b>Pacitan</b> (1935, von Koenigswald, Sungai Baksoko, Punung) dan <b>Ngandong</b> (1934; tulang, tanduk rusa, serpih pilah).</li>
+<li><b>Paleolitikum Madya:</b> Mousterian. <b>Muda:</b> panah, tombak, pisau batu.</li>
+<li><b>Mesolitikum</b> (batu tengah): semi menetap, gerabah, <b>kjokkenmoddinger</b> (sampah dapur, tumpukan kerang s.d. 7 m, pantai timur Sumatra), <b>abris sous roche</b> (gua).</li>
+<li><b>Neolitikum</b> (batu muda): <b>food producing</b> — bercocok tanam, beternak, menetap (<b>sedenter</b>). Kapak persegi (dinamai Robert von Heine Geldern) dan kapak lonjong.</li>
+</ul>
+
+<h3>5. Megalitikum &amp; Zaman Logam</h3>
+<ul>
+<li><b>Menhir:</b> tugu batu penghormatan roh nenek moyang (102 menhir di Rante Kalimbuang, Tana Toraja).</li>
+<li><b>Dolmen:</b> meja batu untuk sesaji. <b>Sarkofagus:</b> keranda batu utuh. <b>Waruga:</b> peti kubur. <b>Punden berundak:</b> bangunan sesaji, dasar candi.</li>
+<li><b>Zaman Logam:</b> tembaga (tidak ada di Asia Tenggara) → <b>perunggu</b> (tembaga + timah) → <b>besi</b> (peleburan butuh panas sangat tinggi).</li>
+</ul>
+
+<h3>6. Tokoh Penting</h3>
+<ul>
+<li><b>Von Koenigswald:</b> menemukan fosil <b>Meganthropus Paleojavanicus</b> di Sangiran (1941).</li>
+<li><b>Prof. R. Soekmono</b> (1922–1997): Kepala Dinas Purbakala 1954–1974, Guru Besar Arkeologi UI 1978.</li>
+<li><b>Raden Pandji Soejono:</b> perintis arkeologi Indonesia. Lainnya: E. Dubois, Van Heekeren.</li>
+</ul>
+
+<button class="btn" onclick="backToStart()">← Kembali</button>
+<button class="btn green" onclick="startQuiz()">▶ Saya Sudah Paham — Mulai Kuis</button>
+</div>
+
+<div class="card hidden" id="quizScreen">
+<div style="display:flex;justify-content:space-between;font-size:16px;color:#666"><span id="qLabel">Soal 1 / 30</span><span id="scoreLabel">Skor: 0</span></div>
+<div class="progress"><div id="progBar"></div></div>
+<h2 id="qText" style="color:#333"></h2>
+<div id="opts"></div>
+<div class="feedback" id="fb"></div>
+<button class="btn hidden" id="nextBtn" onclick="nextQ()">Lanjut →</button>
+</div>
+
+<div class="card hidden" id="essayScreen">
+<h2>✍️ Soal Essay (31–35)</h2>
+<p class="sub">Tuliskan jawabanmu dengan penjelasan. Essay <b>tidak dinilai otomatis</b> — gurumu yang akan memeriksa.</p>
+<div id="essayList"></div>
+<button class="btn green" onclick="finishQuiz()">✅ Selesai &amp; Lihat Skorku</button>
+</div>
+
+<div class="card hidden" id="resultScreen">
+<h1>🎉 Hasilmu</h1>
+<p style="text-align:center;font-size:20px;margin-top:8px"><span id="resName"></span> • <span id="resClass"></span></p>
+<div class="score-big"><span id="finalScore">0</span> / 30</div>
+<p style="text-align:center;font-size:20px" id="resMsg"></p>
+<h2 style="margin-top:20px">📋 Pembahasan — Pilihan Ganda</h2>
+<div id="reviewList"></div>
+<h2 style="margin-top:20px">✍️ Jawaban Essay-mu</h2>
+<div id="essayReview"></div>
+<div class="navbtns">
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="location.reload()">🔄 Main Lagi</button>
+</div>
+</div>
+
+</div>
+<script>
+const MCQ=[
+{q:"Apa yang dimaksud dengan zaman prasejarah?",o:["Masa setelah manusia mengenal tulisan", "Masa sebelum manusia mengenal tulisan", "Masa kerajaan-kerajaan besar di Indonesia", "Masa penjajahan Belanda"],a:1,e:"Prasejarah (praaksara) adalah masa sebelum manusia mengenal tulisan."},
+{q:"Istilah “nirleka” berasal dari bahasa Sanskerta. Apa artinya?",o:["Tidak ada aksara (tulisan)", "Sebelum sejarah", "Zaman batu besar", "Masa berburu dan meramu"],a:0,e:"Nir = tidak, leka = aksara. Jadi nirleka berarti masa tanpa tulisan."},
+{q:"Menurut Soekmono, zaman prasejarah dimulai ketika…",o:["Manusia mulai mengenal logam", "Manusia mulai membangun candi", "Manusia mulai bercocok tanam", "Manusia mulai berkebudayaan"],a:3,e:"Soekmono: permulaan zaman prasejarah dimulai ketika manusia mulai berkebudayaan."},
+{q:"Bangsa Indonesia memasuki zaman sejarah pada abad ke-5 Masehi. Bukti tertulis pertamanya adalah…",o:["Kitab Negarakertagama", "Prasasti di Pasemah", "Prasasti di Kutai (Raja Mulawarman) dan Jawa Barat (Raja Purnawarman)", "Candi Borobudur"],a:2,e:"Keterangan tertulis pertama berupa prasasti di Kutai masa Raja Mulawarman dan di Jawa Barat masa Raja Purnawarman."},
+{q:"Bangsa Sumeria dan Mesir mengakhiri zaman prasejarah mereka sekitar…",o:["Abad ke-5 M", "600.000 tahun lalu", "4000 tahun SM", "Awal abad ke-20"],a:2,e:"Sumeria dan Mesir telah mengenal tulisan sekitar 4000 tahun SM."},
+{q:"Apa perbedaan paling mendasar antara manusia dan binatang?",o:["Manusia makan lebih banyak", "Manusia dikaruniai akal budi", "Manusia hidup berkelompok", "Manusia bisa berlari lebih cepat"],a:1,e:"Perbedaan paling mendasar adalah manusia dikaruniai akal budi (kecerdasan otak)."},
+{q:"Binatang bertindak atau bekerja sesuai dengan…",o:["Bahasa yang dipelajarinya", "Akal budinya", "Nalurinya (insting) saja", "Kebudayaan kelompoknya"],a:2,e:"Binatang berbuat mengikuti nalurinya saja; ia tidak menyimpan makanan untuk kemudian hari."},
+{q:"Bagaimana kebudayaan diteruskan kepada generasi berikutnya?",o:["Melalui belajar, mengajar, dan bahasa", "Kebudayaan tidak dapat diteruskan", "Melalui naluri yang diwariskan", "Melalui kodrat/keturunan biologis saja"],a:0,e:"Kebudayaan harus dipelajari; manusia dapat mengajar, diajar, dan belajar — terutama melalui bahasa."},
+{q:"Bumi terbentuk kira-kira berapa tahun yang lalu?",o:["60 juta tahun", "4,5 miliar tahun", "20.000 tahun", "600.000 tahun"],a:1,e:"Berbagai studi geologi menyebutkan Bumi terbentuk kira-kira 4,5 miliar tahun yang lalu."},
+{q:"Zaman ketika Bumi baru terbentuk dan belum ada kehidupan sama sekali disebut…",o:["Azoikum", "Palaeozoikum", "Neozoikum", "Mesozoikum"],a:0,e:"Azoikum: kulit Bumi masih panas sekali dan tak ada kehidupan sama sekali."},
+{q:"Zaman Palaeozoikum berlangsung kira-kira…",o:["140 juta tahun", "60 juta tahun", "340 juta tahun", "20.000 tahun"],a:2,e:"Palaeozoikum (zaman primair) berlangsung kira-kira 340 juta tahun."},
+{q:"Zaman Mesozoikum dikenal juga sebagai…",o:["Zaman binatang menyusui", "Zaman batu besar", "Zaman manusia", "Zaman reptil"],a:3,e:"Mesozoikum disebut zaman reptil karena sebagian besar faunanya terdiri atas reptil."},
+{q:"Manusia mulai ada pada zaman…",o:["Kuarter", "Azoikum", "Palaeozoikum", "Mesozoikum"],a:0,e:"Zaman Kuarter adalah zaman terpenting bagi kita karena pada masa inilah mulai ada manusia."},
+{q:"Zaman Paleolitikum Tua ditandai dengan tradisi pembuatan alat yang disebut…",o:["Neolitikum", "Megalitikum", "Oldowan", "Mousterian"],a:2,e:"Tradisi Oldowan: alat batu dibuat dengan sistem benturan, masih sangat kasar, tidak diasah."},
+{q:"Kebudayaan Pacitan ditemukan pada tahun 1935 oleh von Koenigswald di…",o:["Ngandong, dekat Ngawi", "Sungai Baksoko, Desa Punung, Pacitan", "Sangiran, Jawa Tengah", "Pantai timur Sumatra"],a:1,e:"Kapak-kapak Pacitan ditemukan di Sungai Baksoko, Desa Punung, Pacitan, Jawa Timur."},
+{q:"Kebudayaan Ngandong ditandai dengan alat-alat yang terbuat dari…",o:["Tanah liat dan gerabah", "Logam perunggu", "Tulang dan tanduk rusa, serta serpih", "Besi yang dilebur"],a:2,e:"Ngandong: alat dari tulang, alat penusuk dari tanduk rusa, serpih (akes), dan ujung tombak bergigi."},
+{q:"“Kjokkenmoddinger” adalah istilah dari bahasa Denmark yang berarti…",o:["Sampah dapur", "Meja batu sesaji", "Gua tempat tinggal", "Kapak genggam"],a:0,e:"Kjokken = dapur, modding = sampah. Jadi kjokkenmoddinger adalah tumpukan sampah dapur berupa cangkang kerang dan siput."},
+{q:"Tumpukan kjokkenmoddinger di Indonesia dapat dijumpai di…",o:["Sangiran, Jawa Tengah", "Tana Toraja", "Sepanjang pantai timur Sumatra, dari Langsa hingga Medan", "Pegunungan Papua"],a:2,e:"Kjokkenmoddinger dijumpai sepanjang pantai timur Sumatra, dari Langsa di Aceh hingga Medan, dengan tinggi tumpukan hingga 7 meter."},
+{q:"Zaman Neolitikum disebut sebagai revolusi dalam kehidupan manusia prasejarah karena manusia mulai…",o:["Membuat alat dari logam", "Berburu dengan tombak bergerigi", "Menghasilkan makanan sendiri (food producing) dengan bercocok tanam", "Mengenal tulisan"],a:2,e:"Neolitikum: manusia tidak lagi menggantungkan diri pada alam, melainkan bercocok tanam dan beternak (food producing)."},
+{q:"Pada zaman Neolitikum, pola hunian manusia berubah menjadi…",o:["Semi menetap di gua", "Tinggal di atas pohon", "Menetap (sedenter) dalam kelompok", "Nomaden (berpindah-pindah)"],a:2,e:"Manusia Neolitikum hidup menetap (sedenter) dan membangun rumah-rumah dalam kelompok."},
+{q:"Kapak persegi pertama kali diberi nama oleh…",o:["R. P. Soejono", "Soekmono", "Von Koenigswald", "Robert von Heine Geldern"],a:3,e:"Orang yang pertama memberikan nama kapak persegi adalah Robert von Heine Geldern."},
+{q:"Menhir adalah peninggalan megalitikum berupa…",o:["Meja batu untuk sesaji", "Keranda dari batu utuh", "Tugu batu untuk menghormati roh nenek moyang", "Peti kubur berbentuk kubus"],a:2,e:"Menhir: tugu batu untuk menghormati roh nenek moyang. Contoh: 102 menhir di Rante Kalimbuang, Tana Toraja."},
+{q:"Dolmen adalah…",o:["Meja batu yang kakinya berupa tugu batu, digunakan untuk meletakkan sesaji", "Peti kubur dari batu", "Tugu batu penghormatan", "Bangunan sesaji berundak"],a:0,e:"Dolmen: meja batu yang kakinya berupa menhir; digunakan untuk meletakkan sesaji."},
+{q:"Sarkofagus adalah…",o:["Meja batu untuk sesaji", "Keranda dari batu utuh (monolith) yang dianggap memiliki kekuatan magis", "Peti kubur berbentuk kubus atau bulat", "Bangunan sesaji yang menjadi dasar candi"],a:1,e:"Sarkofagus: keranda dari batu utuh (monolith) yang dianggap memiliki kekuatan magis."},
+{q:"Zaman perunggu dihasilkan dari campuran logam…",o:["Emas dan perak", "Besi dan timah", "Tembaga dan timah", "Tembaga dan besi"],a:2,e:"Perunggu adalah logam campuran yang lebih keras dari tembaga, hasil pencampuran tembaga dan timah."},
+{q:"Von Koenigswald menemukan fosil Meganthropus Paleojavanicus di Sangiran pada tahun…",o:["1935", "1941", "1934", "1954"],a:1,e:"Von Koenigswald menemukan fosil Meganthropus Paleojavanicus di Sangiran pada 1941."},
+{q:"Prof. R. Soekmono menjabat sebagai Kepala Dinas Purbakala pada tahun…",o:["1922–1997", "1935–1941", "1978–1986", "1954–1974"],a:3,e:"Soekmono diangkat sebagai Kepala Dinas Purbakala mulai 1954 dan menjabat hingga 1974; tahun 1978 ia dikukuhkan sebagai Guru Besar Arkeologi UI."},
+{q:"Tokoh yang dikenal sebagai perintis arkeologi Indonesia adalah…",o:["Raden Pandji Soejono", "Van Heekeren", "Truman Simanjuntak", "E. Dubois"],a:0,e:"Raden Pandji Soejono dikenal sebagai perintis arkeologi Indonesia yang sangat gigih."},
+{q:"Apa perbedaan antara fosil dan artefak?",o:["Fosil adalah sisa tulang-belulang manusia purba, artefak adalah benda yang dibuat/dipakai manusia", "Keduanya sama saja", "Fosil adalah benda buatan manusia, artefak adalah sisa tulang", "Fosil hanya ditemukan di Sangiran"],a:0,e:"Fosil: sisa-sisa tulang belulang manusia prasejarah. Artefak: benda-benda yang pernah dibuat atau dipakai sebagai alat."},
+{q:"Peralatan rumah tangga zaman prasejarah yang masih bertahan digunakan hingga kini adalah…",o:["Kapak perunggu", "Tombak bergerigi", "Cobek dan ulekan", "Keranda batu"],a:2,e:"Cobek dan ulekan adalah perkakas batu sejak zaman prasejarah yang tetap digunakan ibu-ibu di dapur hingga kini."}
+];
+const ESSAY=[
+{q:"31. Jelaskan perbedaan paling mendasar antara manusia dan binatang menurut Bab 3, dan bagaimana akal budi memungkinkan manusia menciptakan dan mengembangkan kebudayaan. Berikan contohnya.",hint:"Kunci: akal budi; menciptakan alat (tongkat pengait, tombak, jala); bahasa untuk berkomunikasi dan mewariskan kebudayaan."},
+{q:"32. Jelaskan mengapa bangsa Indonesia memasuki zaman sejarah pada abad ke-5 Masehi. Bukti tertulis apa yang menandainya?",hint:"Kunci: muncul keterangan tertulis pertama berupa prasasti — di Kutai masa Raja Mulawarman dan di Jawa Barat masa Raja Purnawarman."},
+{q:"33. Bandingkan cara manusia memperoleh makanan dan pola huniannya pada zaman Paleolitikum, Mesolitikum, dan Neolitikum.",hint:"Kunci: Paleolitikum — food gathering (berburu & meramu), nomaden; Mesolitikum — berburu & mengumpulkan, semi menetap (pantai/gua), gerabah; Neolitikum — food producing (bercocok tanam & beternak), menetap/sedenter."},
+{q:"34. Jelaskan apa itu kjokkenmoddinger dan informasi apa yang dapat diperoleh para ahli arkeologi dari peninggalan tersebut.",hint:"Kunci: sampah dapur (bahasa Denmark: kjokken = dapur, modding = sampah); tumpukan cangkang kerang/siput hingga 7 m; pantai timur Sumatra (Langsa–Medan); bukti manusia Mesolitikum tinggal di tepi pantai."},
+{q:"35. Jelaskan kebudayaan megalitikum. Sebutkan minimal tiga peninggalannya beserta fungsinya masing-masing.",hint:"Kunci: menhir — tugu batu penghormatan roh nenek moyang; dolmen — meja batu untuk sesaji; sarkofagus — keranda batu utuh; waruga — peti kubur; punden berundak — bangunan sesaji, dasar candi."}
+];
+let qi=0,score=0,answers=[],essayAns=[];
+let audioCtx=null;
+function soundOn(){return document.getElementById('soundToggle').checked;}
+const MAXVOL=0.9;
+function beep(f,t0,d,type){if(!soundOn())return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(MAXVOL,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+d);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+d);}catch(e){}}
+function playCorrect(){[1568,2093,2637,3136,2093,2637].forEach((f,i)=>beep(f,i*.07,.22,'triangle'));[1245,1760,2217].forEach((f,i)=>beep(f,.05+i*.09,.18,'square'));}
+function playWrong(){[330,262,196].forEach((f,i)=>beep(f,i*.16,.4));}
+function flyCoins(){const em=['🪙','🪙','🪙','💰','🪙','🪙','💰','🪙'];em.forEach((e,i)=>{const c=document.createElement('div');c.className='coin';c.textContent=e;c.style.left=(5+Math.random()*88)+'%';c.style.animationDelay=(i*.12)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2800);});}
+function showConcept(){document.getElementById('startScreen').classList.add('hidden');document.getElementById('conceptScreen').classList.remove('hidden');}
+function backToStart(){document.getElementById('conceptScreen').classList.add('hidden');document.getElementById('startScreen').classList.remove('hidden');}
+function startQuiz(){
+  const n=document.getElementById('stuName').value.trim();
+  if(!n){alert('Tuliskan namamu dulu 🙂');document.getElementById('stuName').focus();return;}
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  qi=0;score=0;answers=[];essayAns=[];
+  renderQ();
+}
+function renderQ(){
+  const q=MCQ[qi];
+  document.getElementById('qLabel').textContent='Soal '+(qi+1)+' / 30';
+  document.getElementById('scoreLabel').textContent='Skor: '+score;
+  document.getElementById('progBar').style.width=(qi/30*100)+'%';
+  document.getElementById('qText').textContent=(qi+1)+'. '+q.q;
+  const box=document.getElementById('opts');box.innerHTML='';
+  const fb=document.getElementById('fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('nextBtn').classList.add('hidden');
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=()=>answer(i,b);
+    box.appendChild(b);
+  });
+}
+function answer(i,btn){
+  const q=MCQ[qi];
+  const btns=document.querySelectorAll('#opts .opt');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.a;
+  answers.push({q:q.q,picked:q.o[i],correctAns:q.o[q.a],ok:correct,exp:q.e});
+  const fb=document.getElementById('fb');
+  if(correct){score++;btn.classList.add('correct');fb.className='feedback ok';fb.innerHTML='✅ <b>Benar!</b> '+q.e;playCorrect();flyCoins();}
+  else{btn.classList.add('wrong');btns[q.a].classList.add('correct');fb.className='feedback no';fb.innerHTML='❌ <b>Belum tepat.</b> Jawaban benar: <b>'+q.o[q.a]+'</b>.<br>'+q.e;playWrong();}
+  fb.style.display='block';
+  document.getElementById('scoreLabel').textContent='Skor: '+score;
+  const nb=document.getElementById('nextBtn');
+  nb.textContent=qi===29?'Lanjut ke Essay ✍️':'Lanjut →';
+  nb.classList.remove('hidden');
+}
+function nextQ(){
+  if(qi<29){qi++;renderQ();}
+  else{
+    document.getElementById('quizScreen').classList.add('hidden');
+    const es=document.getElementById('essayScreen');es.classList.remove('hidden');
+    const list=document.getElementById('essayList');list.innerHTML='';
+    ESSAY.forEach((e,i)=>{
+      const d=document.createElement('div');d.style.marginBottom='18px';
+      d.innerHTML='<p style="font-size:17px;line-height:1.5"><b>'+e.q+'</b><br><span style="color:#888;font-size:15px">Petunjuk: '+e.hint+'</span></p><textarea id="es'+i+'" placeholder="Tuliskan jawaban dan penjelasanmu di sini..."></textarea>';
+      list.appendChild(d);
+    });
+    window.scrollTo(0,0);
+  }
+}
+function finishQuiz(){
+  essayAns=ESSAY.map((e,i)=>({q:e.q,ans:document.getElementById('es'+i).value.trim()||'(Belum dijawab)'}));
+  document.getElementById('essayScreen').classList.add('hidden');
+  const rs=document.getElementById('resultScreen');rs.classList.remove('hidden');
+  document.getElementById('resName').textContent=document.getElementById('stuName').value.trim();
+  document.getElementById('resClass').textContent=document.getElementById('stuClass').value.trim()||'Kelas XI';
+  document.getElementById('finalScore').textContent=score;
+  const m=document.getElementById('resMsg');
+  m.textContent=score>=27?'🌟 Luar biasa! Kamu benar-benar menguasai kebudayaan prasejarah!':score>=21?'👍 Hebat! Sedikit latihan lagi dan kamu akan sempurna!':score>=15?'💪 Usaha yang bagus! Baca lagi halaman konsepnya dan coba lagi!':'📖 Terus berlatih! Baca halaman konsep sekali lagi dan coba lagi!';
+  const rl=document.getElementById('reviewList');rl.innerHTML='';
+  answers.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16px;line-height:1.5';
+    d.innerHTML='<b>'+(i+1)+'. '+a.q+'</b><br>Jawabanmu: <b style="color:'+(a.ok?'#2e7d32':'#c62828')+'">'+a.picked+' '+(a.ok?'✅':'❌')+'</b>'+(a.ok?'':'<br>Jawaban benar: <b>'+a.correctAns+'</b>')+'<br><span style="color:#666">'+a.exp+'</span>';
+    rl.appendChild(d);
+  });
+  const er=document.getElementById('essayReview');er.innerHTML='';
+  essayAns.forEach(a=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16px;line-height:1.5;white-space:pre-wrap';
+    d.innerHTML='<b>'+a.q+'</b><br>'+a.ans;
+    er.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
