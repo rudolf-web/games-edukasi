@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factor &amp; Multiple Quest — Snake and Ladders • Grade 7</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#fff8e1,#ffe0b2);min-height:100vh;color:#3e2723}
+.container{max-width:980px;margin:0 auto;padding:20px}
+.card{background:#fffdf7;border-radius:20px;padding:28px 24px;box-shadow:0 10px 30px rgba(62,39,35,.15);margin-top:24px}
+h1{font-size:32px;text-align:center;color:#5d4037;line-height:1.25}
+h2{font-size:24px;color:#5d4037;margin-bottom:12px}
+.sub{text-align:center;color:#8d6e63;font-size:16px;margin-top:8px;line-height:1.5}
+.badge{display:inline-block;background:#ffecb3;color:#5d4037;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:4px}
+input[type=text]{width:100%;padding:13px 16px;font-size:17px;border:2px solid #d7ccc8;border-radius:12px;margin:8px 0}
+.btn{display:block;width:100%;padding:15px;font-size:19px;font-weight:700;border:none;border-radius:14px;cursor:pointer;margin-top:12px;color:#fff;background:linear-gradient(135deg,#6d4c41,#a1887f)}
+.btn.green{background:linear-gradient(135deg,#2e7d32,#66bb6a)}
+.btn.orange{background:linear-gradient(135deg,#e65100,#ff9800)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.mode-row{display:flex;gap:10px;margin:12px 0}
+.mode-btn{flex:1;padding:14px;font-size:17px;font-weight:800;border:2px solid #d7ccc8;border-radius:14px;background:#fff;cursor:pointer;color:#5d4037}
+.mode-btn.sel{border-color:#e65100;background:#fff3e0}
+/* board */
+.game-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.board{flex:0 0 auto;display:grid;grid-template-columns:repeat(10,54px);grid-template-rows:repeat(10,54px);gap:2px;background:#8d6e63;padding:6px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.cell{position:relative;background:#fff8e1;border-radius:6px;font-size:11px;font-weight:800;color:#8d6e63;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1}
+.cell.dark{background:#ffecb3}
+.cell.ladder{background:#c8e6c9;color:#1b5e20}
+.cell.snake{background:#ffcdd2;color:#b71c1c}
+.cell.finish{background:gold;color:#5d4037}
+.cell .mk{font-size:17px}
+.cell .tg{font-size:9px;font-weight:700}
+.token{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:2}
+.token.you{background:#42a5f5}
+.token.bot{background:#ef5350}
+.tokens{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none}
+.side{flex:1;min-width:280px}
+.panel{background:#fff3e0;border-radius:14px;padding:16px;margin-bottom:14px}
+.panel h3{color:#e65100;margin-bottom:8px}
+.dice{font-size:64px;text-align:center;line-height:1}
+.dice.rolling{animation:shake .12s infinite}
+@keyframes shake{0%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}100%{transform:rotate(0)}}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;font-size:16px;border:2px solid #d7ccc8;border-radius:12px;background:#fff;margin:8px 0;cursor:pointer;color:#3e2723}
+.opt:hover{border-color:#8d6e63;background:#fff8e1}
+.opt.correct{background:#c8e6c9;border-color:#43a047}
+.opt.wrong{background:#ffcdd2;border-color:#e53935}
+.opt:disabled{cursor:default}
+.feedback{padding:12px;border-radius:10px;margin-top:10px;font-size:15px;line-height:1.5;display:none}
+.feedback.ok{background:#e8f5e9;border:2px solid #43a047}
+.feedback.no{background:#fce4ec;border:2px solid #e53935}
+.log{max-height:150px;overflow-y:auto;font-size:14px;line-height:1.6}
+.log div{padding:3px 0;border-bottom:1px dashed #d7ccc8}
+.score-big{font-size:56px;font-weight:900;color:#5d4037;text-align:center}
+.concept h3{color:#e65100;margin:16px 0 6px;font-size:18px}
+.concept p,.concept li{font-size:16px;line-height:1.55}
+.concept ul{margin-left:22px}
+.legend{font-size:14px;line-height:1.7}
+.hidden{display:none}
+@media print{.btn{display:none!important}body{background:#fff}}
+@media(max-width:640px){.board{grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,44px);width:100%}.cell{font-size:9px}.token{width:20px;height:20px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="card" id="startScreen">
+<h1>🐍 Factor &amp; Multiple Quest<br>Snake and Ladders</h1>
+<p class="sub">Matematika • Grade 7<br>Lempar dadu, jawab soal Factors &amp; Multiples, naiki tangga, hindari ular — siapa yang sampai di 100 duluan?</p>
+<p style="text-align:center;margin-top:14px">
+<span class="badge">🐍 6 Ular</span>
+<span class="badge">🪜 6 Tangga</span>
+<span class="badge">❓ 36 Soal</span>
+<span class="badge">🎯 Sampai di 100</span>
+</p>
+<input type="text" id="stuName" placeholder="Nama kamu">
+<div class="mode-row">
+<button class="mode-btn sel" id="modeSolo" onclick="setMode('solo')">🧑 Solo Quest</button>
+<button class="mode-btn" id="modeBot" onclick="setMode('bot')">🤖 Vs Komputer</button>
+</div>
+<label style="font-size:16px"><input type="checkbox" id="soundToggle" checked style="width:18px;height:18px"> 🔊 Suara ON</label>
+<button class="btn orange" onclick="showConcept()">📖 Baca Konsep &amp; Peta Papan</button>
+<button class="btn" onclick="startGame()">▶ Mulai Bermain!</button>
+<p style="text-align:center;margin-top:16px;font-size:15px;color:#888">Guru: Rudolf A. Luhukay, S.T.</p>
+</div>
+
+<div class="card concept hidden" id="conceptScreen">
+<h2>📖 Konsep — Baca Dulu!</h2>
+<h3>1. Multiples — Kelipatan</h3>
+<p>Kelipatan suatu bilangan adalah hasil perkalian bilangan itu dengan 1, 2, 3, 4, … Kelipatan tidak pernah habis.</p>
+<p><b>Contoh:</b> kelipatan 6 = 6, 12, 18, 24, 30, 36, … • Kelipatan ke-5 dari 6 = 5 × 6 = <b>30</b></p>
+<h3>2. Factors — Faktor</h3>
+<p>Faktor adalah bilangan yang membagi habis suatu bilangan, tanpa sisa.</p>
+<p><b>Contoh:</b> faktor dari 24 = <b>1, 2, 3, 4, 6, 8, 12, 24</b> (ada 8 faktor).</p>
+<h3>3. HCF — Highest Common Factor (FPB)</h3>
+<p>FPB adalah faktor terbesar yang dimiliki bersama oleh dua bilangan atau lebih. Dengan faktorisasi prima, ambil pangkat <b>terkecil</b> dari faktor prima yang sama.</p>
+<p><b>Contoh:</b> 12 = 2² × 3 dan 18 = 2 × 3² → FPB = 2 × 3 = <b>6</b></p>
+<h3>4. LCM — Lowest Common Multiple (KPK)</h3>
+<p>KPK adalah kelipatan terkecil yang dimiliki bersama oleh dua bilangan atau lebih. Dengan faktorisasi prima, ambil pangkat <b>terbesar</b> dari setiap faktor prima.</p>
+<p><b>Contoh:</b> 6 = 2 × 3 dan 8 = 2³ → KPK = 2³ × 3 = <b>24</b></p>
+<h3>5. Prime Numbers — Bilangan Prima</h3>
+<p>Bilangan prima hanya punya dua faktor: 1 dan dirinya sendiri. Bilangan prima terkecil adalah <b>2</b>.</p>
+<p><b>Contoh:</b> 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, …</p>
+<h3>🗺️ Peta Papan</h3>
+<p class="legend" id="legendText"></p>
+<button class="btn" onclick="backToStart()">← Kembali</button>
+<button class="btn green" onclick="startGame()">▶ Saya Sudah Paham — Mulai Bermain!</button>
+</div>
+
+<div class="card hidden" id="gameScreen">
+<div class="game-wrap">
+<div class="board" id="board"></div>
+<div class="side">
+<div class="panel">
+<h3>🎲 Giliran: <span id="turnLabel">Kamu</span></h3>
+<div class="dice" id="diceFace">🎲</div>
+<p style="text-align:center;font-size:15px" id="diceText">Tekan tombol untuk melempar dadu!</p>
+<button class="btn green" id="rollBtn" onclick="rollDice()">🎲 Lempar Dadu</button>
+</div>
+<div class="panel hidden" id="qPanel">
+<h3 id="qTitle">❓ Soal</h3>
+<p id="qText" style="font-size:17px;line-height:1.5"></p>
+<div id="opts"></div>
+<div class="feedback" id="fb"></div>
+</div>
+<div class="panel">
+<h3>📊 Skor</h3>
+<p style="font-size:16px;line-height:1.8" id="statsText"></p>
+</div>
+<div class="panel">
+<h3>📜 Catatan Permainan</h3>
+<div class="log" id="log"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card hidden" id="resultScreen">
+<h1 id="resTitle">🏆 Kamu Menang!</h1>
+<p style="text-align:center;font-size:19px;margin-top:8px"><span id="resName"></span> • <span id="resClass"></span></p>
+<div class="score-big"><span id="finalScore">0</span> benar</div>
+<p style="text-align:center;font-size:19px" id="resMsg"></p>
+<h2 style="margin-top:20px">📋 Pembahasan — Soal yang Dijawab</h2>
+<div id="reviewList"></div>
+<div style="margin-top:16px">
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="location.reload()">🔄 Main Lagi</button>
+</div>
+</div>
+
+</div>
+<script>
+const QUESTIONS=[
+{q:"What is the 5th multiple of 6?",o:["24", "30", "36", "42"],a:1,e:"5 × 6 = 30."},
+{q:"Which number is a multiple of 7?",o:["40", "45", "49", "52"],a:2,e:"49 ÷ 7 = 7, so 49 is a multiple of 7."},
+{q:"What is the 4th multiple of 9?",o:["27", "32", "36", "45"],a:2,e:"4 × 9 = 36."},
+{q:"Which of these is NOT a multiple of 8?",o:["32", "40", "48", "54"],a:3,e:"54 ÷ 8 = 6 remainder 6, so 54 is not a multiple of 8."},
+{q:"The multiples of 12 are 12, 24, 36, … What comes next?",o:["40", "44", "48", "52"],a:2,e:"Multiples of 12 increase by 12: 36 + 12 = 48."},
+{q:"What is the 6th multiple of 5?",o:["25", "30", "35", "40"],a:1,e:"6 × 5 = 30."},
+{q:"Which number is a multiple of both 3 and 4?",o:["14", "18", "24", "30"],a:2,e:"24 ÷ 3 = 8 and 24 ÷ 4 = 6."},
+{q:"What is the 3rd multiple of 15?",o:["30", "40", "45", "60"],a:2,e:"3 × 15 = 45."},
+{q:"Which number is a factor of 36?",o:["5", "7", "9", "11"],a:2,e:"36 ÷ 9 = 4, so 9 is a factor of 36."},
+{q:"How many factors does 24 have?",o:["6", "7", "8", "10"],a:2,e:"Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24 — that is 8 factors."},
+{q:"Which of these is NOT a factor of 48?",o:["6", "8", "12", "7"],a:3,e:"48 ÷ 7 is not exact, so 7 is not a factor of 48."},
+{q:"What are the factors of 18?",o:["1, 2, 3, 6, 9, 18", "1, 2, 4, 6, 9, 18", "1, 3, 6, 9, 12, 18", "2, 3, 6, 9, 18"],a:0,e:"18 = 1×18, 2×9, 3×6."},
+{q:"Is 7 a factor of 91?",o:["Yes, 91 ÷ 7 = 13", "No, 91 ÷ 7 = 12", "Yes, 91 ÷ 7 = 11", "No, 91 is a prime number"],a:0,e:"91 = 7 × 13."},
+{q:"How many factors does 30 have?",o:["6", "8", "10", "12"],a:1,e:"Factors of 30: 1, 2, 3, 5, 6, 10, 15, 30 — that is 8 factors."},
+{q:"The largest factor of 60 (other than 60 itself) is…",o:["20", "30", "40", "15"],a:1,e:"60 ÷ 30 = 2, and no factor between 30 and 60 divides 60."},
+{q:"Which pair are BOTH factors of 72?",o:["7 and 9", "8 and 9", "8 and 11", "6 and 14"],a:1,e:"72 ÷ 8 = 9 and 72 ÷ 9 = 8."},
+{q:"What is the HCF of 12 and 18?",o:["3", "6", "9", "12"],a:1,e:"Common factors of 12 and 18: 1, 2, 3, 6. The highest is 6."},
+{q:"What is the HCF of 24 and 36?",o:["6", "8", "12", "18"],a:2,e:"24 = 2³ × 3, 36 = 2² × 3². HCF uses the smallest powers: 2² × 3 = 12."},
+{q:"What is the HCF of 48 and 72?",o:["12", "16", "24", "36"],a:2,e:"48 = 2⁴ × 3, 72 = 2³ × 3². HCF = 2³ × 3 = 24."},
+{q:"What is the HCF of 15 and 25?",o:["3", "5", "10", "15"],a:1,e:"Common factors of 15 and 25: 1 and 5. The highest is 5."},
+{q:"What is the HCF of 14 and 21?",o:["3", "7", "14", "21"],a:1,e:"Common factors of 14 and 21: 1 and 7. The highest is 7."},
+{q:"What is the LCM of 6 and 8?",o:["12", "18", "24", "48"],a:2,e:"Multiples of 6: 6, 12, 18, 24… Multiples of 8: 8, 16, 24… The smallest common one is 24."},
+{q:"What is the LCM of 4 and 10?",o:["10", "20", "30", "40"],a:1,e:"Multiples of 4: 4, 8, 12, 16, 20… Multiples of 10: 10, 20… The smallest common one is 20."},
+{q:"What is the LCM of 9 and 12?",o:["18", "24", "36", "72"],a:2,e:"9 = 3², 12 = 2² × 3. LCM uses the largest powers: 2² × 3² = 36."},
+{q:"What is the LCM of 18, 24 and 40?",o:["120", "240", "360", "720"],a:2,e:"18 = 2 × 3², 24 = 2³ × 3, 40 = 2³ × 5. LCM = 2³ × 3² × 5 = 360."},
+{q:"What is the LCM of 5 and 7?",o:["12", "25", "35", "70"],a:2,e:"5 and 7 are both prime, so their LCM is 5 × 7 = 35."},
+{q:"Which number is a prime number?",o:["15", "17", "21", "27"],a:1,e:"17 has only two factors: 1 and 17."},
+{q:"Which number is NOT a prime number?",o:["23", "29", "31", "39"],a:3,e:"39 = 3 × 13, so 39 is composite."},
+{q:"What is the prime factorisation of 36?",o:["2 × 3²", "2² × 3²", "2³ × 3", "2 × 3³"],a:1,e:"36 = 4 × 9 = 2² × 3²."},
+{q:"What is the prime factorisation of 60?",o:["2 × 3 × 5", "2² × 3 × 5", "2² × 3² × 5", "2 × 3² × 5"],a:1,e:"60 = 4 × 15 = 2² × 3 × 5."},
+{q:"What is the smallest prime number?",o:["0", "1", "2", "3"],a:2,e:"2 is the smallest prime number (and the only even prime)."},
+{q:"How many prime numbers are there between 10 and 30?",o:["5", "6", "7", "8"],a:1,e:"They are 11, 13, 17, 19, 23 and 29 — that is 6 primes."},
+{q:"Rudi has 48 marbles and 72 stickers. He wants to make equal gift packs with nothing left over. What is the greatest number of packs he can make?",o:["12", "18", "24", "36"],a:2,e:"This is the HCF of 48 and 72, which is 24."},
+{q:"Bus A comes every 12 minutes and Bus B every 18 minutes. They leave together now. In how many minutes will they leave together again?",o:["24", "30", "36", "54"],a:2,e:"This is the LCM of 12 and 18, which is 36."},
+{q:"A rope 60 cm long is cut into equal pieces of 12 cm. How many pieces are there?",o:["4", "5", "6", "7"],a:1,e:"60 ÷ 12 = 5 pieces."},
+{q:"Which number is both a multiple of 6 and a factor of 72?",o:["10", "12", "14", "16"],a:1,e:"12 = 6 × 2, and 72 ÷ 12 = 6."}
+];
+const LADDERS={"6": 36, "9": 27, "12": 48, "20": 60, "28": 56, "33": 66};
+const SNAKES={"99": 11, "96": 24, "90": 30, "81": 3, "72": 18, "64": 16};
+let mode='solo',playerName='',turn='you',qIndex=0;
+let pos={you:0,bot:0},correct={you:0,bot:0},turns={you:0,bot:0},answered=[],diceVal=0,rolling=false,gameOver=false;
+let audioCtx=null;
+function soundOn(){return document.getElementById('soundToggle').checked;}
+const MAXVOL=0.9;
+function beep(f,t0,d,type){if(!soundOn())return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(MAXVOL,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+d);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+d);}catch(e){}}
+function playCorrect(){[1568,2093,2637,3136].forEach((f,i)=>beep(f,i*.07,.22,'triangle'));}
+function playWrong(){[330,262,196].forEach((f,i)=>beep(f,i*.16,.4));}
+function playLadder(){[523,659,784,1046,1318].forEach((f,i)=>beep(f,i*.09,.25,'sine'));}
+function playSnake(){[600,500,400,300,200].forEach((f,i)=>beep(f,i*.1,.25,'sawtooth'));}
+function playDice(){[300,500,700].forEach((f,i)=>beep(f,i*.06,.08,'square'));}
+function playWin(){[523,659,784,1046,784,1046,1318].forEach((f,i)=>beep(f,i*.13,.3,'triangle'));}
+function setMode(m){mode=m;document.getElementById('modeSolo').classList.toggle('sel',m==='solo');document.getElementById('modeBot').classList.toggle('sel',m==='bot');}
+function showConcept(){
+  document.getElementById('legendText').innerHTML=
+   '<b>🪜 Tangga (naik!):</b> '+Object.keys(LADDERS).map(k=>k+' → '+LADDERS[k]+' ('+k+' × '+(LADDERS[k]/k)+')').join(' • ')+
+   '<br><b>🐍 Ular (turun!):</b> '+Object.keys(SNAKES).map(k=>k+' → '+SNAKES[k]+' ('+SNAKES[k]+' adalah faktor dari '+k+')').join(' • ')+
+   '<br><b>Aturan:</b> jawab benar = maju sesuai dadu. Mendarat di dasar tangga = naik! Mendarat di kepala ular = meluncur turun! Harus mendarat <b>tepat di 100</b> (kelebihan memantul balik).';
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.remove('hidden');
+}
+function backToStart(){document.getElementById('conceptScreen').classList.add('hidden');document.getElementById('startScreen').classList.remove('hidden');}
+function cellNum(r,c){ // r=0 top row ... 9 bottom row; c=0..9 left..right
+  var rowFromBottom=9-r;
+  var n=rowFromBottom*10+1;
+  return (rowFromBottom%2===0)? n+c : n+9-c;
+}
+function buildBoard(){
+  var b=document.getElementById('board');b.innerHTML='';
+  for(var r=0;r<10;r++)for(var c=0;c<10;c++){
+    var n=cellNum(r,c);
+    var d=document.createElement('div');d.className='cell'+(((r+c)%2===0)?' dark':'');d.id='cell-'+n;
+    var inner='<span>'+n+'</span>';
+    if(n===100){d.classList.add('finish');inner='<span class="mk">🏆</span><span>100</span>';}
+    else if(LADDERS[n]){d.classList.add('ladder');inner='<span class="mk">🪜</span><span class="tg">→ '+LADDERS[n]+'</span>';}
+    else if(SNAKES[n]){d.classList.add('snake');inner='<span class="mk">🐍</span><span class="tg">→ '+SNAKES[n]+'</span>';}
+    d.innerHTML=inner+'<div class="tokens" id="tok-'+n+'"></div>';
+    b.appendChild(d);
+  }
+}
+function placeToken(who){
+  document.querySelectorAll('.token.'+who).forEach(t=>t.remove());
+  if(pos[who]===0)return;
+  var slot=document.getElementById('tok-'+pos[who]);
+  if(!slot)return;
+  var t=document.createElement('div');t.className='token '+who;t.textContent=who==='you'?'🧑':'🤖';
+  slot.appendChild(t);
+}
+function logMsg(m){var l=document.getElementById('log');var d=document.createElement('div');d.textContent=m;l.prepend(d);}
+function updateStats(){
+  document.getElementById('statsText').innerHTML=
+   '🧑 Kamu: kotak <b>'+pos.you+'</b> • ✅ '+correct.you+' benar • 🎲 '+turns.you+' lemparan'+
+   (mode==='bot'?'<br>🤖 Komputer: kotak <b>'+pos.bot+'</b> • ✅ '+correct.bot+' benar • 🎲 '+turns.bot+' lemparan':'');
+}
+function startGame(){
+  var n=document.getElementById('stuName').value.trim();
+  if(!n){alert('Tuliskan namamu dulu 🙂');document.getElementById('stuName').focus();return;}
+  playerName=n;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+  buildBoard();updateStats();
+  document.getElementById('turnLabel').textContent='Kamu';
+  logMsg('🎮 Permainan dimulai! '+playerName+' (solo) — lempar dadumu!');
+  if(mode==='bot')logMsg('🤖 Komputer ikut bermain!');
+}
+function rollDice(){
+  if(rolling||gameOver)return;
+  rolling=true;
+  document.getElementById('rollBtn').disabled=true;
+  var face=document.getElementById('diceFace');face.classList.add('rolling');playDice();
+  var ticks=0;
+  var iv=setInterval(function(){
+    face.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][Math.floor(Math.random()*6)];
+    if(++ticks>=8){
+      clearInterval(iv);face.classList.remove('rolling');
+      diceVal=1+Math.floor(Math.random()*6);
+      face.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][diceVal-1];
+      document.getElementById('diceText').textContent=(turn==='you'?'Kamu':'Komputer')+' mendapat '+diceVal+'! Jawab soal untuk melangkah.';
+      askQuestion();
+    }
+  },90);
+}
+function askQuestion(){
+  var q=QUESTIONS[qIndex%QUESTIONS.length];qIndex++;
+  var p=document.getElementById('qPanel');p.classList.remove('hidden');
+  document.getElementById('qTitle').textContent='❓ Soal — '+(turn==='you'?'Giliranmu':'Giliran Komputer');
+  document.getElementById('qText').textContent=q.q;
+  var box=document.getElementById('opts');box.innerHTML='';
+  var fb=document.getElementById('fb');fb.style.display='none';fb.className='feedback';
+  if(turn==='bot'){
+    setTimeout(function(){
+      var ok=Math.random()<0.7;
+      var pick=ok?q.a:((q.a+1+Math.floor(Math.random()*3))%4);
+      resolveAnswer(pick,q,true);
+    },1400);
+    return;
+  }
+  q.o.forEach(function(opt,i){
+    var b=document.createElement('button');b.className='opt';
+    b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=function(){resolveAnswer(i,q,false);};
+    box.appendChild(b);
+  });
+}
+function resolveAnswer(i,q,isBot){
+  var btns=document.querySelectorAll('#opts .opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var ok=i===q.a;
+  var who=turn;
+  answered.push({q:q.q,picked:q.o[i],correctAns:q.o[q.a],ok:ok,exp:q.e,who:who});
+  var fb=document.getElementById('fb');
+  if(ok){
+    correct[who]++;
+    if(btns[i])btns[i].classList.add('correct');
+    fb.className='feedback ok';fb.innerHTML='✅ <b>Benar!</b> '+q.e+' Kamu maju '+diceVal+' langkah!';
+    fb.style.display='block';playCorrect();
+    setTimeout(function(){moveToken(who,diceVal);},700);
+  }else{
+    if(btns[i])btns[i].classList.add('wrong');
+    if(btns[q.a])btns[q.a].classList.add('correct');
+    fb.className='feedback no';fb.innerHTML='❌ <b>Belum tepat.</b> Jawaban benar: <b>'+q.o[q.a]+'</b>.<br>'+q.e+' Kamu tetap di kotak '+pos[who]+'.';
+    fb.style.display='block';playWrong();
+    setTimeout(function(){endTurn();},1600);
+  }
+  updateStats();
+}
+function moveToken(who,steps){
+  var from=pos[who];
+  var target=from+steps;
+  if(target>100)target=100-(target-100);
+  turns[who]++;
+  var step=0;
+  var iv=setInterval(function(){
+    step++;
+    var cur=from+step;
+    if(cur>100)cur=100-(cur-100);
+    pos[who]=cur;placeToken(who);updateStats();
+    if(step>=steps){
+      clearInterval(iv);
+      checkSpecial(who);
+    }
+  },300);
+}
+function checkSpecial(who){
+  var p=pos[who],name=who==='you'?'Kamu':'Komputer';
+  if(LADDERS[p]){
+    var top=LADDERS[p];
+    logMsg('🪜 '+name+' naik tangga! '+p+' → '+top+' ('+p+' × '+(top/p)+' = '+top+')');
+    playLadder();
+    setTimeout(function(){pos[who]=top;placeToken(who);updateStats();afterMove(who);},600);
+  }else if(SNAKES[p]){
+    var tail=SNAKES[p];
+    logMsg('🐍 '+name+' kena ular! '+p+' → '+tail+' ('+tail+' adalah faktor dari '+p+')');
+    playSnake();
+    setTimeout(function(){pos[who]=tail;placeToken(who);updateStats();afterMove(who);},600);
+  }else{
+    afterMove(who);
+  }
+}
+function afterMove(who){
+  if(pos[who]===100){finishGame(who);return;}
+  endTurn();
+}
+function endTurn(){
+  if(gameOver)return;
+  document.getElementById('qPanel').classList.add('hidden');
+  document.getElementById('rollBtn').disabled=false;
+  rolling=false;
+  if(mode==='bot'){
+    turn=turn==='you'?'bot':'you';
+    document.getElementById('turnLabel').textContent=turn==='you'?'Kamu':'Komputer';
+    if(turn==='bot'){setTimeout(rollDice,900);}
+  }else{
+    document.getElementById('diceText').textContent='Lempar lagi dadumu!';
+  }
+  updateStats();
+}
+function finishGame(who){
+  gameOver=true;playWin();
+  document.getElementById('gameScreen').classList.add('hidden');
+  var rs=document.getElementById('resultScreen');rs.classList.remove('hidden');
+  var youWon=who==='you';
+  document.getElementById('resTitle').textContent=youWon?'🏆 Kamu Menang!':'🤖 Komputer Menang!';
+  document.getElementById('resName').textContent=playerName;
+  document.getElementById('resClass').textContent='Grade 7 • Factor & Multiple Quest';
+  document.getElementById('finalScore').textContent=correct.you;
+  var total=answered.filter(a=>a.who==='you').length;
+  document.getElementById('resMsg').textContent=youWon?
+    'Luar biasa! Kamu sampai di kotak 100 dengan '+correct.you+' jawaban benar dari '+total+' soal!':
+    'Komputer sampai di 100 duluan. Kamu menjawab '+correct.you+' soal dengan benar dari '+total+'. Coba lagi, kamu pasti bisa!';
+  var rl=document.getElementById('reviewList');rl.innerHTML='';
+  answered.filter(a=>a.who==='you').forEach(function(a,i){
+    var d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5';
+    d.innerHTML='<b>'+(i+1)+'. '+a.q+'</b><br>Jawabanmu: <b style="color:'+(a.ok?'#2e7d32':'#c62828')+'">'+a.picked+' '+(a.ok?'✅':'❌')+'</b>'+(a.ok?'':'<br>Jawaban benar: <b>'+a.correctAns+'</b>')+'<br><span style="color:#666">'+a.exp+'</span>';
+    rl.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+buildBoard();
+</script>
+</body>
+</html>
