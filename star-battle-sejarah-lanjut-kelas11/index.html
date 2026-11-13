@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Star Battle: Zaman Prasejarah — Sejarah Lanjut Kelas XI</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#050510;color:#e0e0ff;min-height:100vh;overflow-x:hidden}
+.stars{position:fixed;inset:0;z-index:0;background-image:radial-gradient(2px 2px at 20px 30px,#fff,transparent),radial-gradient(2px 2px at 40px 70px,#fff,transparent),radial-gradient(1px 1px at 90px 40px,#fff,transparent),radial-gradient(1px 1px at 130px 80px,#fff,transparent),radial-gradient(2px 2px at 160px 120px,#ffe082,transparent),radial-gradient(1px 1px at 200px 50px,#fff,transparent),radial-gradient(2px 2px at 250px 90px,#fff,transparent),radial-gradient(1px 1px at 300px 30px,#fff,transparent);background-size:350px 180px;animation:twinkle 4s ease-in-out infinite alternate}
+@keyframes twinkle{from{opacity:.6}to{opacity:1}}
+.container{max-width:760px;margin:0 auto;padding:20px;position:relative;z-index:1}
+.card{background:rgba(16,16,48,.92);border:2px solid #3949ab;border-radius:20px;padding:28px 24px;box-shadow:0 0 40px rgba(63,81,181,.5);margin-top:24px}
+h1{font-size:32px;text-align:center;color:#ffe082;line-height:1.25;text-shadow:0 0 18px rgba(255,224,130,.7)}
+h2{font-size:23px;color:#ffe082;margin-bottom:12px}
+.sub{text-align:center;color:#b0bec5;font-size:16px;margin-top:8px;line-height:1.5}
+.badge{display:inline-block;background:#1a237e;color:#ffe082;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:4px;border:1px solid #3949ab}
+input[type=text]{width:100%;padding:13px 16px;font-size:17px;border:2px solid #3949ab;border-radius:12px;margin:8px 0;background:#0d0d2b;color:#fff}
+.btn{display:block;width:100%;padding:15px;font-size:19px;font-weight:700;border:none;border-radius:14px;cursor:pointer;margin-top:12px;color:#1a237e;background:linear-gradient(135deg,#ffe082,#ffb300)}
+.btn.blue{color:#fff;background:linear-gradient(135deg,#3949ab,#1a237e)}
+.btn.green{color:#fff;background:linear-gradient(135deg,#2e7d32,#66bb6a)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.hpbar{height:20px;background:#222;border-radius:10px;overflow:hidden;border:1px solid #555;margin:6px 0 2px}
+.hpbar>div{height:100%;transition:width .4s}
+.hp-enemy>div{background:linear-gradient(90deg,#e53935,#ff5252)}
+.hp-you>div{background:linear-gradient(90deg,#00e676,#69f0ae)}
+.hp-label{display:flex;justify-content:space-between;font-weight:700;font-size:15px}
+.arena{display:flex;justify-content:space-between;align-items:center;margin:10px 0 4px}
+.fighter{font-size:64px;text-align:center;width:110px}
+.fighter.you{filter:drop-shadow(0 0 12px #00e676)}
+.fighter.enemy{filter:drop-shadow(0 0 12px #ff5252)}
+.fighter.attack{animation:atk .4s ease}
+.fighter.hurt{animation:hurt .4s ease}
+@keyframes atk{0%{transform:translateX(0)}40%{transform:translateX(28px) scale(1.15)}100%{transform:translateX(0)}}
+@keyframes hurt{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px) rotate(-6deg)}75%{transform:translateX(10px) rotate(6deg)}}
+.saber{font-size:20px;text-align:center;color:#69f0ae;text-shadow:0 0 10px #00e676}
+.timerbar{height:10px;background:#222;border-radius:8px;overflow:hidden;margin:12px 0}
+.timerbar>div{height:100%;background:linear-gradient(90deg,#ffb300,#ffe082);width:100%}
+.qtext{font-size:20px;line-height:1.45;margin:10px 0}
+.opt{display:block;width:100%;text-align:left;padding:13px 16px;font-size:17px;border:2px solid #3949ab;border-radius:12px;background:#12123a;color:#e0e0ff;margin:8px 0;cursor:pointer}
+.opt:hover{border-color:#ffe082;background:#1a1a4d}
+.opt.correct{background:#1b5e20;border-color:#69f0ae}
+.opt.wrong{background:#7f0000;border-color:#ff5252}
+.opt:disabled{cursor:default}
+.feedback{padding:14px;border-radius:12px;margin-top:12px;font-size:16px;line-height:1.5;display:none}
+.feedback.ok{background:#1b5e20;border:2px solid #69f0ae}
+.feedback.no{background:#4a0000;border:2px solid #ff5252}
+textarea{width:100%;min-height:90px;padding:12px;font-size:16px;border:2px solid #3949ab;border-radius:12px;font-family:inherit;margin:8px 0;background:#0d0d2b;color:#fff}
+.score-big{font-size:64px;font-weight:900;color:#ffe082;text-align:center;text-shadow:0 0 20px rgba(255,224,130,.8)}
+.concept h3{color:#ffb300;margin:16px 0 6px;font-size:18px}
+.concept p,.concept li{font-size:16px;line-height:1.55;color:#e0e0ff}
+.concept ul{margin-left:22px}
+.hidden{display:none}
+.boom{position:fixed;font-size:90px;z-index:999;pointer-events:none;left:50%;top:40%;transform:translate(-50%,-50%);animation:boom .8s ease-out forwards}
+@keyframes boom{0%{transform:translate(-50%,-50%) scale(.3);opacity:1}100%{transform:translate(-50%,-50%) scale(1.6);opacity:0}}
+.coin{position:fixed;font-size:44px;z-index:999;pointer-events:none;animation:coinFall 2s ease-in forwards}
+@keyframes coinFall{0%{top:-60px;transform:rotate(0deg);opacity:1}100%{top:105vh;transform:rotate(720deg);opacity:0}}
+.combo{color:#ffb300;font-weight:800}
+@media print{.btn{display:none!important}body{background:#fff;color:#000}.card{background:#fff;border-color:#999;box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="container">
+
+<div class="card" id="startScreen">
+<h1>⭐ STAR BATTLE<br>Zaman Prasejarah</h1>
+<p class="sub">Sejarah Lanjut • Kelas XI SMA<br>Kalahkan 3 musuh dari zaman batu sampai zaman logam dengan jawabanmu!</p>
+<p style="text-align:center;margin-top:14px">
+<span class="badge">⚔️ 3 Musuh</span>
+<span class="badge">❓ 30 Soal</span>
+<span class="badge">✍️ 5 Essay</span>
+<span class="badge">⏱️ 20 Detik / Soal</span>
+</p>
+<p style="text-align:center;margin-top:14px;font-size:16px;line-height:1.6">
+🪨 <b>Ronde 1 — Kapak Trooper</b> (Soal 1–10)<br>
+🗿 <b>Ronde 2 — Menhir Lord</b> (Soal 11–20)<br>
+🔥 <b>Ronde 3 — Darth Logam</b> (Soal 21–30)
+</p>
+<input type="text" id="stuName" placeholder="Nama kamu, Pejuang">
+<input type="text" id="stuClass" placeholder="Kelas (mis. XI-1)">
+<label style="font-size:16px"><input type="checkbox" id="soundToggle" checked style="width:18px;height:18px"> 🔊 Suara ON</label>
+<button class="btn blue" onclick="showConcept()">📖 Baca Konsep Dulu</button>
+<button class="btn" onclick="startGame()">▶ Mulai Bertarung!</button>
+<p style="text-align:center;margin-top:16px;font-size:14px;color:#888">Guru: Rudolf A. Luhukay, S.T.</p>
+</div>
+
+<div class="card concept hidden" id="conceptScreen">
+<h2>📖 Konsep — Baca Dulu!</h2>
+<h3>1. Manusia Makhluk Berbudaya</h3>
+<ul>
+<li>Perbedaan paling mendasar manusia dan binatang: <b>akal budi</b>. Binatang bertindak menurut <b>naluri</b> saja.</li>
+<li>Dengan akal budi manusia menciptakan alat (tongkat pengait, tombak, jala) dan <b>bahasa</b>.</li>
+<li>Kebudayaan diteruskan lewat <b>belajar, mengajar, dan bahasa</b>. Contoh peninggalan yang masih dipakai: <b>cobek dan ulekan</b>.</li>
+</ul>
+<h3>2. Apa Itu Zaman Prasejarah?</h3>
+<ul>
+<li><b>Prasejarah / praaksara / nirleka</b> = masa sebelum manusia mengenal tulisan.</li>
+<li>Menurut Soekmono: prasejarah dimulai ketika <b>manusia mulai berkebudayaan</b>.</li>
+<li>Indonesia memasuki zaman sejarah <b>abad ke-5 M</b>: prasasti <b>Kutai (Raja Mulawarman)</b> dan <b>Jawa Barat (Raja Purnawarman)</b>.</li>
+<li>Sumeria dan Mesir mengakhiri prasejarah sekitar <b>4000 SM</b>.</li>
+<li>Peninggalan prasejarah: <b>fosil</b> (sisa tulang-belulang) dan <b>artefak</b> (benda buatan manusia).</li>
+</ul>
+<h3>3. Pembagian Zaman (Geologi)</h3>
+<ul>
+<li>Bumi terbentuk ± <b>4,5 miliar</b> tahun lalu.</li>
+<li><b>Azoikum:</b> belum ada kehidupan. <b>Palaeozoikum:</b> ± 340 juta tahun. <b>Mesozoikum:</b> ± 140 juta tahun, <b>zaman reptil</b>. <b>Neozoikum:</b> ± 60 juta tahun lalu — Tersier dan <b>Kuarter</b> (manusia mulai ada).</li>
+</ul>
+<h3>4. Zaman Batu</h3>
+<ul>
+<li><b>Paleolitikum Tua:</b> tradisi <b>Oldowan</b>. <b>Pacitan</b> (1935, von Koenigswald, Sungai Baksoko, Punung) dan <b>Ngandong</b> (1934; tulang, tanduk rusa, serpih pilah).</li>
+<li><b>Mesolitikum:</b> semi menetap, gerabah, <b>kjokkenmoddinger</b> (sampah dapur, tumpukan kerang s.d. 7 m, pantai timur Sumatra), <b>abris sous roche</b> (gua).</li>
+<li><b>Neolitikum:</b> <b>food producing</b> — bercocok tanam, beternak, menetap (<b>sedenter</b>). Kapak persegi (Robert von Heine Geldern) dan kapak lonjong.</li>
+</ul>
+<h3>5. Megalitikum &amp; Zaman Logam</h3>
+<ul>
+<li><b>Menhir:</b> tugu batu penghormatan roh nenek moyang (102 menhir di Rante Kalimbuang, Tana Toraja).</li>
+<li><b>Dolmen:</b> meja batu untuk sesaji. <b>Sarkofagus:</b> keranda batu utuh. <b>Waruga:</b> peti kubur. <b>Punden berundak:</b> bangunan sesaji, dasar candi.</li>
+<li><b>Zaman Logam:</b> tembaga (tidak ada di Asia Tenggara) → <b>perunggu</b> (tembaga + timah) → <b>besi</b>.</li>
+</ul>
+<h3>6. Tokoh Penting</h3>
+<ul>
+<li><b>Von Koenigswald:</b> fosil <b>Meganthropus Paleojavanicus</b> di Sangiran (1941).</li>
+<li><b>Prof. R. Soekmono</b> (1922–1997): Kepala Dinas Purbakala 1954–1974, Guru Besar Arkeologi UI 1978.</li>
+<li><b>Raden Pandji Soejono:</b> perintis arkeologi Indonesia.</li>
+</ul>
+<button class="btn blue" onclick="backToStart()">← Kembali</button>
+<button class="btn" onclick="startGame()">▶ Saya Sudah Paham — Mulai Bertarung!</button>
+</div>
+
+<div class="card hidden" id="battleScreen">
+<div class="hp-label"><span id="enemyName">🪨 Kapak Trooper</span><span id="enemyHpTxt">100</span></div>
+<div class="hpbar hp-enemy"><div id="enemyHp" style="width:100%"></div></div>
+<div class="arena">
+<div class="fighter you" id="youFighter">🧑‍🚀</div>
+<div class="saber" id="saberTxt">— ⚔️ —</div>
+<div class="fighter enemy" id="enemyFighter">🪨</div>
+</div>
+<div class="hp-label"><span>🧑‍🚀 <span id="youName">Pejuang</span></span><span id="youHpTxt">100</span></div>
+<div class="hpbar hp-you"><div id="youHp" style="width:100%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:15px;color:#b0bec5;margin-top:10px"><span id="qLabel">Soal 1 / 30</span><span>✅ Benar: <b id="scoreLabel">0</b> &nbsp;•&nbsp; 🔥 Kombo: <b class="combo" id="comboLabel">0</b></span></div>
+<div class="timerbar"><div id="timerBar"></div></div>
+<div class="qtext" id="qText"></div>
+<div id="opts"></div>
+<div class="feedback" id="fb"></div>
+<button class="btn hidden" id="nextBtn" onclick="nextQ()">Lanjut →</button>
+</div>
+
+<div class="card hidden" id="essayScreen">
+<h2>✍️ Misi Terakhir — Essay (31–35)</h2>
+<p class="sub">Kamu berhasil mengalahkan ketiga musuh! Sekarang selesaikan 5 misi essay ini. Essay <b>tidak dinilai otomatis</b> — gurumu yang akan memeriksa.</p>
+<div id="essayList"></div>
+<button class="btn" onclick="finishGame()">🏆 Selesai &amp; Lihat Hasilku</button>
+</div>
+
+<div class="card hidden" id="resultScreen">
+<h1 id="resTitle">🏆 KEMENANGAN!</h1>
+<p style="text-align:center;font-size:19px;margin-top:8px"><span id="resName"></span> • <span id="resClass"></span></p>
+<div class="score-big"><span id="finalScore">0</span> / 30</div>
+<p style="text-align:center;font-size:19px" id="resMsg"></p>
+<h2 style="margin-top:20px">📋 Pembahasan — Pilihan Ganda</h2>
+<div id="reviewList"></div>
+<h2 style="margin-top:20px">✍️ Jawaban Essay-mu</h2>
+<div id="essayReview"></div>
+<div class="navbtns">
+<button class="btn blue" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn" onclick="location.reload()">🔄 Main Lagi</button>
+</div>
+</div>
+
+</div>
+<script>
+const MCQ=[
+{q:"Apa yang dimaksud dengan zaman prasejarah?",o:["Masa setelah manusia mengenal tulisan", "Masa sebelum manusia mengenal tulisan", "Masa kerajaan-kerajaan besar di Indonesia", "Masa penjajahan Belanda", "Masa ketika manusia pertama kali mengenal agama"],a:1,e:"Prasejarah (praaksara) adalah masa sebelum manusia mengenal tulisan."},
+{q:"Istilah “nirleka” berasal dari bahasa Sanskerta. Apa artinya?",o:["Tidak ada aksara (tulisan)", "Sebelum sejarah", "Zaman batu besar", "Masa berburu dan meramu", "Zaman ketika manusia mulai mengenal logam"],a:0,e:"Nir = tidak, leka = aksara. Jadi nirleka berarti masa tanpa tulisan."},
+{q:"Menurut Soekmono, zaman prasejarah dimulai ketika…",o:["Manusia mulai mengenal logam", "Manusia mulai membangun candi", "Manusia mulai bercocok tanam", "Manusia mulai berkebudayaan", "Manusia mulai mengenal dan menggunakan tulisan"],a:3,e:"Soekmono: permulaan zaman prasejarah dimulai ketika manusia mulai berkebudayaan."},
+{q:"Bangsa Indonesia memasuki zaman sejarah pada abad ke-5 Masehi. Bukti tertulis pertamanya adalah…",o:["Kitab Negarakertagama", "Prasasti di Pasemah", "Prasasti di Kutai (Raja Mulawarman) dan Jawa Barat (Raja Purnawarman)", "Candi Borobudur", "Prasasti di Pasemah, Sumatra Selatan"],a:2,e:"Keterangan tertulis pertama berupa prasasti di Kutai masa Raja Mulawarman dan di Jawa Barat masa Raja Purnawarman."},
+{q:"Bangsa Sumeria dan Mesir mengakhiri zaman prasejarah mereka sekitar…",o:["Abad ke-5 M", "600.000 tahun lalu", "4000 tahun SM", "Awal abad ke-20", "Abad ke-10 SM"],a:2,e:"Sumeria dan Mesir telah mengenal tulisan sekitar 4000 tahun SM."},
+{q:"Apa perbedaan paling mendasar antara manusia dan binatang?",o:["Manusia makan lebih banyak", "Manusia dikaruniai akal budi", "Manusia hidup berkelompok", "Manusia bisa berlari lebih cepat", "Manusia memiliki kekuatan fisik yang lebih besar"],a:1,e:"Perbedaan paling mendasar adalah manusia dikaruniai akal budi (kecerdasan otak)."},
+{q:"Binatang bertindak atau bekerja sesuai dengan…",o:["Bahasa yang dipelajarinya", "Akal budinya", "Nalurinya (insting) saja", "Kebudayaan kelompoknya", "Rencana jangka panjang yang disusunnya"],a:2,e:"Binatang berbuat mengikuti nalurinya saja; ia tidak menyimpan makanan untuk kemudian hari."},
+{q:"Bagaimana kebudayaan diteruskan kepada generasi berikutnya?",o:["Melalui belajar, mengajar, dan bahasa", "Kebudayaan tidak dapat diteruskan", "Melalui naluri yang diwariskan", "Melalui kodrat/keturunan biologis saja", "Melalui naluri dan insting semata"],a:0,e:"Kebudayaan harus dipelajari; manusia dapat mengajar, diajar, dan belajar — terutama melalui bahasa."},
+{q:"Bumi terbentuk kira-kira berapa tahun yang lalu?",o:["60 juta tahun", "4,5 miliar tahun", "20.000 tahun", "600.000 tahun", "340 juta tahun"],a:1,e:"Berbagai studi geologi menyebutkan Bumi terbentuk kira-kira 4,5 miliar tahun yang lalu."},
+{q:"Zaman ketika Bumi baru terbentuk dan belum ada kehidupan sama sekali disebut…",o:["Azoikum", "Palaeozoikum", "Neozoikum", "Mesozoikum", "Kuarter"],a:0,e:"Azoikum: kulit Bumi masih panas sekali dan tak ada kehidupan sama sekali."},
+{q:"Zaman Palaeozoikum berlangsung kira-kira…",o:["140 juta tahun", "60 juta tahun", "340 juta tahun", "20.000 tahun", "4,5 miliar tahun"],a:2,e:"Palaeozoikum (zaman primair) berlangsung kira-kira 340 juta tahun."},
+{q:"Zaman Mesozoikum dikenal juga sebagai…",o:["Zaman binatang menyusui", "Zaman batu besar", "Zaman manusia", "Zaman reptil", "Zaman batu muda"],a:3,e:"Mesozoikum disebut zaman reptil karena sebagian besar faunanya terdiri atas reptil."},
+{q:"Manusia mulai ada pada zaman…",o:["Kuarter", "Azoikum", "Palaeozoikum", "Mesozoikum", "Tersier"],a:0,e:"Zaman Kuarter adalah zaman terpenting bagi kita karena pada masa inilah mulai ada manusia."},
+{q:"Zaman Paleolitikum Tua ditandai dengan tradisi pembuatan alat yang disebut…",o:["Neolitikum", "Megalitikum", "Oldowan", "Mousterian", "Acheulean"],a:2,e:"Tradisi Oldowan: alat batu dibuat dengan sistem benturan, masih sangat kasar, tidak diasah."},
+{q:"Kebudayaan Pacitan ditemukan pada tahun 1935 oleh von Koenigswald di…",o:["Ngandong, dekat Ngawi", "Sungai Baksoko, Desa Punung, Pacitan", "Sangiran, Jawa Tengah", "Pantai timur Sumatra", "Situs Tanjungsari, Karawang"],a:1,e:"Kapak-kapak Pacitan ditemukan di Sungai Baksoko, Desa Punung, Pacitan, Jawa Timur."},
+{q:"Kebudayaan Ngandong ditandai dengan alat-alat yang terbuat dari…",o:["Tanah liat dan gerabah", "Logam perunggu", "Tulang dan tanduk rusa, serta serpih", "Besi yang dilebur", "Batu api (chalcedon) yang diupam"],a:2,e:"Ngandong: alat dari tulang, alat penusuk dari tanduk rusa, serpih (akes), dan ujung tombak bergigi."},
+{q:"“Kjokkenmoddinger” adalah istilah dari bahasa Denmark yang berarti…",o:["Sampah dapur", "Meja batu sesaji", "Gua tempat tinggal", "Kapak genggam", "Tumpukan batu menhir"],a:0,e:"Kjokken = dapur, modding = sampah. Jadi kjokkenmoddinger adalah tumpukan sampah dapur berupa cangkang kerang dan siput."},
+{q:"Tumpukan kjokkenmoddinger di Indonesia dapat dijumpai di…",o:["Sangiran, Jawa Tengah", "Tana Toraja", "Sepanjang pantai timur Sumatra, dari Langsa hingga Medan", "Pegunungan Papua", "Sepanjang pantai selatan Jawa"],a:2,e:"Kjokkenmoddinger dijumpai sepanjang pantai timur Sumatra, dari Langsa di Aceh hingga Medan, dengan tinggi tumpukan hingga 7 meter."},
+{q:"Zaman Neolitikum disebut sebagai revolusi dalam kehidupan manusia prasejarah karena manusia mulai…",o:["Membuat alat dari logam", "Berburu dengan tombak bergerigi", "Menghasilkan makanan sendiri (food producing) dengan bercocok tanam", "Mengenal tulisan", "Membuat alat dari batu kasar tanpa diasah"],a:2,e:"Neolitikum: manusia tidak lagi menggantungkan diri pada alam, melainkan bercocok tanam dan beternak (food producing)."},
+{q:"Pada zaman Neolitikum, pola hunian manusia berubah menjadi…",o:["Semi menetap di gua", "Tinggal di atas pohon", "Menetap (sedenter) dalam kelompok", "Nomaden (berpindah-pindah)", "Mendirikan kota-kota besar berdinding batu"],a:2,e:"Manusia Neolitikum hidup menetap (sedenter) dan membangun rumah-rumah dalam kelompok."},
+{q:"Kapak persegi pertama kali diberi nama oleh…",o:["R. P. Soejono", "Soekmono", "Von Koenigswald", "Robert von Heine Geldern", "E. Dubois"],a:3,e:"Orang yang pertama memberikan nama kapak persegi adalah Robert von Heine Geldern."},
+{q:"Menhir adalah peninggalan megalitikum berupa…",o:["Meja batu untuk sesaji", "Keranda dari batu utuh", "Tugu batu untuk menghormati roh nenek moyang", "Peti kubur berbentuk kubus", "Bangunan sesaji berundak"],a:2,e:"Menhir: tugu batu untuk menghormati roh nenek moyang. Contoh: 102 menhir di Rante Kalimbuang, Tana Toraja."},
+{q:"Dolmen adalah…",o:["Meja batu yang kakinya berupa tugu batu, digunakan untuk meletakkan sesaji", "Peti kubur dari batu", "Tugu batu penghormatan", "Bangunan sesaji berundak", "Keranda dari batu utuh"],a:0,e:"Dolmen: meja batu yang kakinya berupa menhir; digunakan untuk meletakkan sesaji."},
+{q:"Sarkofagus adalah…",o:["Meja batu untuk sesaji", "Keranda dari batu utuh (monolith) yang dianggap memiliki kekuatan magis", "Peti kubur berbentuk kubus atau bulat", "Bangunan sesaji yang menjadi dasar candi", "Tugu batu penghormatan"],a:1,e:"Sarkofagus: keranda dari batu utuh (monolith) yang dianggap memiliki kekuatan magis."},
+{q:"Zaman perunggu dihasilkan dari campuran logam…",o:["Emas dan perak", "Besi dan timah", "Tembaga dan timah", "Tembaga dan besi", "Tembaga dan batu kapur"],a:2,e:"Perunggu adalah logam campuran yang lebih keras dari tembaga, hasil pencampuran tembaga dan timah."},
+{q:"Von Koenigswald menemukan fosil Meganthropus Paleojavanicus di Sangiran pada tahun…",o:["1935", "1941", "1934", "1954", "1922"],a:1,e:"Von Koenigswald menemukan fosil Meganthropus Paleojavanicus di Sangiran pada 1941."},
+{q:"Prof. R. Soekmono menjabat sebagai Kepala Dinas Purbakala pada tahun…",o:["1922–1997", "1935–1941", "1978–1986", "1954–1974", "1941–1954"],a:3,e:"Soekmono diangkat sebagai Kepala Dinas Purbakala mulai 1954 dan menjabat hingga 1974; tahun 1978 ia dikukuhkan sebagai Guru Besar Arkeologi UI."},
+{q:"Tokoh yang dikenal sebagai perintis arkeologi Indonesia adalah…",o:["Raden Pandji Soejono", "Van Heekeren", "Truman Simanjuntak", "E. Dubois", "Von Koenigswald"],a:0,e:"Raden Pandji Soejono dikenal sebagai perintis arkeologi Indonesia yang sangat gigih."},
+{q:"Apa perbedaan antara fosil dan artefak?",o:["Fosil adalah sisa tulang-belulang manusia purba, artefak adalah benda yang dibuat/dipakai manusia", "Keduanya sama saja", "Fosil adalah benda buatan manusia, artefak adalah sisa tulang", "Fosil hanya ditemukan di Sangiran", "Fosil adalah prasasti tertulis, artefak adalah tulang-belulang"],a:0,e:"Fosil: sisa-sisa tulang belulang manusia prasejarah. Artefak: benda-benda yang pernah dibuat atau dipakai sebagai alat."},
+{q:"Peralatan rumah tangga zaman prasejarah yang masih bertahan digunakan hingga kini adalah…",o:["Kapak perunggu", "Tombak bergerigi", "Cobek dan ulekan", "Keranda batu", "Kapak genggam dari batu"],a:2,e:"Cobek dan ulekan adalah perkakas batu sejak zaman prasejarah yang tetap digunakan ibu-ibu di dapur hingga kini."}
+];
+const ESSAY=[
+{q:"31. Jelaskan perbedaan paling mendasar antara manusia dan binatang menurut Bab 3, dan bagaimana akal budi memungkinkan manusia menciptakan dan mengembangkan kebudayaan. Berikan contohnya.",hint:"Kunci: akal budi; menciptakan alat (tongkat pengait, tombak, jala); bahasa untuk berkomunikasi dan mewariskan kebudayaan."},
+{q:"32. Jelaskan mengapa bangsa Indonesia memasuki zaman sejarah pada abad ke-5 Masehi. Bukti tertulis apa yang menandainya?",hint:"Kunci: muncul keterangan tertulis pertama berupa prasasti — di Kutai masa Raja Mulawarman dan di Jawa Barat masa Raja Purnawarman."},
+{q:"33. Bandingkan cara manusia memperoleh makanan dan pola huniannya pada zaman Paleolitikum, Mesolitikum, dan Neolitikum.",hint:"Kunci: Paleolitikum — food gathering (berburu & meramu), nomaden; Mesolitikum — berburu & mengumpulkan, semi menetap (pantai/gua), gerabah; Neolitikum — food producing (bercocok tanam & beternak), menetap/sedenter."},
+{q:"34. Jelaskan apa itu kjokkenmoddinger dan informasi apa yang dapat diperoleh para ahli arkeologi dari peninggalan tersebut.",hint:"Kunci: sampah dapur (bahasa Denmark: kjokken = dapur, modding = sampah); tumpukan cangkang kerang/siput hingga 7 m; pantai timur Sumatra (Langsa–Medan); bukti manusia Mesolitikum tinggal di tepi pantai."},
+{q:"35. Jelaskan kebudayaan megalitikum. Sebutkan minimal tiga peninggalannya beserta fungsinya masing-masing.",hint:"Kunci: menhir — tugu batu penghormatan roh nenek moyang; dolmen — meja batu untuk sesaji; sarkofagus — keranda batu utuh; waruga — peti kubur; punden berundak — bangunan sesaji, dasar candi."}
+];
+const RIVALS=[
+ {name:'🪨 Kapak Trooper',emoji:'🪨',intro:'Ronde 1 — Zaman Batu Tua!'},
+ {name:'🗿 Menhir Lord',emoji:'🗿',intro:'Ronde 2 — Zaman Megalitikum!'},
+ {name:'🔥 Darth Logam',emoji:'🔥',intro:'Ronde 3 — Zaman Logam!'}
+];
+let qi=0,score=0,combo=0,answers=[],essayAns=[];
+let youHp=100,enemyHp=100,timerInt=null,timeLeft=20,answered=false;
+let audioCtx=null;
+function soundOn(){return document.getElementById('soundToggle').checked;}
+const MAXVOL=0.9;
+function beep(f,t0,d,type){if(!soundOn())return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(MAXVOL,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+d);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+d);}catch(e){}}
+function playCorrect(){[1568,2093,2637,3136].forEach((f,i)=>beep(f,i*.07,.22,'triangle'));beep(880,0,.35,'sawtooth');}
+function playWrong(){[330,262,196].forEach((f,i)=>beep(f,i*.16,.4));}
+function flyCoins(){['🪙','🪙','💰','🪙','🪙','💰'].forEach((e,i)=>{const c=document.createElement('div');c.className='coin';c.textContent=e;c.style.left=(8+Math.random()*84)+'%';c.style.animationDelay=(i*.12)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2400);});}
+function boom(e){const b=document.createElement('div');b.className='boom';b.textContent=e;document.body.appendChild(b);setTimeout(()=>b.remove(),900);}
+function showConcept(){document.getElementById('startScreen').classList.add('hidden');document.getElementById('conceptScreen').classList.remove('hidden');}
+function backToStart(){document.getElementById('conceptScreen').classList.add('hidden');document.getElementById('startScreen').classList.remove('hidden');}
+function startGame(){
+  const n=document.getElementById('stuName').value.trim();
+  if(!n){alert('Tuliskan namamu dulu, Pejuang 🙂');document.getElementById('stuName').focus();return;}
+  document.getElementById('youName').textContent=n;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.add('hidden');
+  document.getElementById('battleScreen').classList.remove('hidden');
+  qi=0;score=0;combo=0;answers=[];essayAns=[];youHp=100;enemyHp=100;
+  setRival(0);
+  renderQ();
+}
+function rivalIdx(){return Math.floor(qi/10);}
+function setRival(r){
+  const rv=RIVALS[r];
+  document.getElementById('enemyName').textContent=rv.name;
+  document.getElementById('enemyFighter').textContent=rv.emoji;
+  enemyHp=100;
+  document.getElementById('enemyHp').style.width='100%';
+  document.getElementById('enemyHpTxt').textContent='100';
+}
+function updateHp(){
+  document.getElementById('enemyHp').style.width=enemyHp+'%';
+  document.getElementById('enemyHpTxt').textContent=enemyHp;
+  document.getElementById('youHp').style.width=youHp+'%';
+  document.getElementById('youHpTxt').textContent=youHp;
+  document.getElementById('scoreLabel').textContent=score;
+  document.getElementById('comboLabel').textContent=combo;
+}
+function startTimer(){
+  clearInterval(timerInt);timeLeft=20;
+  document.getElementById('timerBar').style.width='100%';
+  timerInt=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('timerBar').style.width=(timeLeft/20*100)+'%';
+    if(timeLeft<=0){clearInterval(timerInt);answer(-1,null);}
+  },1000);
+}
+function renderQ(){
+  const q=MCQ[qi];
+  answered=false;
+  document.getElementById('qLabel').textContent='Soal '+(qi+1)+' / 30 • '+RIVALS[rivalIdx()].name;
+  document.getElementById('qText').textContent=(qi+1)+'. '+q.q;
+  const box=document.getElementById('opts');box.innerHTML='';
+  const fb=document.getElementById('fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('nextBtn').classList.add('hidden');
+  q.o.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=()=>answer(i,b);
+    box.appendChild(b);
+  });
+  updateHp();
+  startTimer();
+}
+function answer(i,btn){
+  if(answered)return;answered=true;clearInterval(timerInt);
+  const q=MCQ[qi];
+  const btns=document.querySelectorAll('#opts .opt');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.a;
+  answers.push({q:q.q,picked:i>=0?q.o[i]:'(Waktu habis)',correctAns:q.o[q.a],ok:correct,exp:q.e});
+  const fb=document.getElementById('fb');
+  const you=document.getElementById('youFighter'),en=document.getElementById('enemyFighter');
+  if(correct){
+    score++;combo++;
+    const dmg=combo>=3?25:20;
+    enemyHp=Math.max(0,enemyHp-dmg);
+    btn.classList.add('correct');
+    you.classList.add('attack');en.classList.add('hurt');
+    setTimeout(()=>{you.classList.remove('attack');en.classList.remove('hurt');},450);
+    fb.className='feedback ok';
+    fb.innerHTML='⚔️ <b>SERANGAN BERHASIL! −'+dmg+' HP musuh!</b>'+(combo>=3?' 🔥 Kombo x'+combo+'!':'')+'<br>'+q.e;
+    playCorrect();flyCoins();boom('💥');
+  }else{
+    combo=0;
+    youHp=Math.max(0,youHp-15);
+    if(btn)btn.classList.add('wrong');
+    btns[q.a].classList.add('correct');
+    en.classList.add('attack');you.classList.add('hurt');
+    setTimeout(()=>{en.classList.remove('attack');you.classList.remove('hurt');},450);
+    fb.className='feedback no';
+    fb.innerHTML=(i<0?'⏱️ <b>Waktu habis!</b> ':'❌ <b>Musuh menyerang balik! −15 HP kamu.</b> ')+'Jawaban benar: <b>'+q.o[q.a]+'</b>.<br>'+q.e;
+    playWrong();
+  }
+  fb.style.display='block';
+  updateHp();
+  const nb=document.getElementById('nextBtn');
+  if(youHp<=0){nb.textContent='💔 Kamu Kalah — Coba Lagi';}
+  else if(enemyHp<=0&&qi<29){nb.textContent='🏆 '+RIVALS[rivalIdx()].name+' Kalah! Lanjut →';}
+  else if(qi===29){nb.textContent='🏆 Lanjut ke Misi Essay ✍️';}
+  else{nb.textContent='Lanjut →';}
+  nb.classList.remove('hidden');
+}
+function nextQ(){
+  if(youHp<=0){
+    youHp=100;enemyHp=100;updateHp();
+    alert('HP-mu pulih! Coba lagi mengalahkan '+RIVALS[rivalIdx()].name+' 💪');
+    renderQ();return;
+  }
+  if(qi<29){
+    const nr=rivalIdx();
+    qi++;
+    if(rivalIdx()!==nr){setRival(rivalIdx());alert(RIVALS[rivalIdx()].intro+' 💥');}
+    renderQ();
+  }else{
+    document.getElementById('battleScreen').classList.add('hidden');
+    const es=document.getElementById('essayScreen');es.classList.remove('hidden');
+    const list=document.getElementById('essayList');list.innerHTML='';
+    ESSAY.forEach((e,i)=>{
+      const d=document.createElement('div');d.style.marginBottom='18px';
+      d.innerHTML='<p style="font-size:16px;line-height:1.5"><b>'+e.q+'</b><br><span style="color:#90a4ae;font-size:14px">Petunjuk: '+e.hint+'</span></p><textarea id="es'+i+'" placeholder="Tuliskan jawaban dan penjelasanmu di sini..."></textarea>';
+      list.appendChild(d);
+    });
+    window.scrollTo(0,0);
+  }
+}
+function finishGame(){
+  essayAns=ESSAY.map((e,i)=>({q:e.q,ans:document.getElementById('es'+i).value.trim()||'(Belum dijawab)'}));
+  document.getElementById('essayScreen').classList.add('hidden');
+  const rs=document.getElementById('resultScreen');rs.classList.remove('hidden');
+  document.getElementById('resName').textContent=document.getElementById('stuName').value.trim();
+  document.getElementById('resClass').textContent=document.getElementById('stuClass').value.trim()||'Kelas XI';
+  document.getElementById('finalScore').textContent=score;
+  const m=document.getElementById('resMsg');
+  m.textContent=score>=27?'🌟 Luar biasa, Pejuang! Galaksi prasejarah berhasil kau taklukkan!':score>=21?'👍 Hebat! Sedikit latihan lagi dan kamu jadi Master Sejarah!':score>=15?'💪 Usaha yang bagus! Baca lagi halaman konsepnya dan bertarung lagi!':'📖 Terus berlatih, Pejuang! Baca halaman konsep sekali lagi dan coba lagi!';
+  const rl=document.getElementById('reviewList');rl.innerHTML='';
+  answers.forEach((a,i)=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #3949ab;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5;background:rgba(255,255,255,.06)';
+    d.innerHTML='<b>'+(i+1)+'. '+a.q+'</b><br>Jawabanmu: <b style="color:'+(a.ok?'#69f0ae':'#ff8a80')+'">'+a.picked+' '+(a.ok?'✅':'❌')+'</b>'+(a.ok?'':'<br>Jawaban benar: <b>'+a.correctAns+'</b>')+'<br><span style="color:#b0bec5">'+a.exp+'</span>';
+    rl.appendChild(d);
+  });
+  const er=document.getElementById('essayReview');er.innerHTML='';
+  essayAns.forEach(a=>{
+    const d=document.createElement('div');
+    d.style.cssText='border:1px solid #3949ab;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5;white-space:pre-wrap;background:rgba(255,255,255,.06)';
+    d.innerHTML='<b>'+a.q+'</b><br>'+a.ans;
+    er.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
