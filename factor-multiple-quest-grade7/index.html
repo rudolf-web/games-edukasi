@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Factor &amp; Multiple Quest — 5 Games in 1 • Grade 7</title>
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#fff8e1,#ffe0b2);min-height:100vh;color:#3e2723}
+.container{max-width:980px;margin:0 auto;padding:20px}
+.card{background:#fffdf7;border-radius:20px;padding:28px 24px;box-shadow:0 10px 30px rgba(62,39,35,.15);margin-top:24px}
+h1{font-size:32px;text-align:center;color:#5d4037;line-height:1.25}
+h2{font-size:24px;color:#5d4037;margin-bottom:12px}
+.sub{text-align:center;color:#8d6e63;font-size:16px;margin-top:8px;line-height:1.5}
+.badge{display:inline-block;background:#ffecb3;color:#5d4037;padding:4px 14px;border-radius:20px;font-size:14px;font-weight:700;margin:4px}
+input[type=text]{width:100%;padding:13px 16px;font-size:17px;border:2px solid #d7ccc8;border-radius:12px;margin:8px 0}
+.btn{display:block;width:100%;padding:15px;font-size:19px;font-weight:700;border:none;border-radius:14px;cursor:pointer;margin-top:12px;color:#fff;background:linear-gradient(135deg,#6d4c41,#a1887f)}
+.btn.green{background:linear-gradient(135deg,#2e7d32,#66bb6a)}
+.btn.orange{background:linear-gradient(135deg,#e65100,#ff9800)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.mode-row{display:flex;gap:10px;margin:12px 0}
+.mode-btn{flex:1;padding:14px;font-size:17px;font-weight:800;border:2px solid #d7ccc8;border-radius:14px;background:#fff;cursor:pointer;color:#5d4037}
+.mode-btn.sel{border-color:#e65100;background:#fff3e0}
+/* board */
+.game-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.board{flex:0 0 auto;display:grid;grid-template-columns:repeat(10,54px);grid-template-rows:repeat(10,54px);gap:2px;background:#8d6e63;padding:6px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.cell{position:relative;background:#fff8e1;border-radius:6px;font-size:11px;font-weight:800;color:#8d6e63;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.1}
+.cell.dark{background:#ffecb3}
+.cell.ladder{background:#c8e6c9;color:#1b5e20}
+.cell.snake{background:#ffcdd2;color:#b71c1c}
+.cell.finish{background:gold;color:#5d4037}
+.cell .mk{font-size:17px}
+.cell .tg{font-size:9px;font-weight:700}
+.token{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.4);z-index:2}
+.token.you{background:#42a5f5}
+.token.bot{background:#ef5350}
+.tokens{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none}
+.side{flex:1;min-width:280px}
+.panel{background:#fff3e0;border-radius:14px;padding:16px;margin-bottom:14px}
+.panel h3{color:#e65100;margin-bottom:8px}
+.dice{font-size:64px;text-align:center;line-height:1}
+.dice.rolling{animation:shake .12s infinite}
+@keyframes shake{0%{transform:rotate(-8deg)}50%{transform:rotate(8deg)}100%{transform:rotate(0)}}
+.opt{display:block;width:100%;text-align:left;padding:12px 14px;font-size:16px;border:2px solid #d7ccc8;border-radius:12px;background:#fff;margin:8px 0;cursor:pointer;color:#3e2723}
+.opt:hover{border-color:#8d6e63;background:#fff8e1}
+.opt.correct{background:#c8e6c9;border-color:#43a047}
+.opt.wrong{background:#ffcdd2;border-color:#e53935}
+.opt:disabled{cursor:default}
+.feedback{padding:12px;border-radius:10px;margin-top:10px;font-size:15px;line-height:1.5;display:none}
+.feedback.ok{background:#e8f5e9;border:2px solid #43a047}
+.feedback.no{background:#fce4ec;border:2px solid #e53935}
+.log{max-height:150px;overflow-y:auto;font-size:14px;line-height:1.6}
+.log div{padding:3px 0;border-bottom:1px dashed #d7ccc8}
+.score-big{font-size:56px;font-weight:900;color:#5d4037;text-align:center}
+.concept h3{color:#e65100;margin:16px 0 6px;font-size:18px}
+.concept p,.concept li{font-size:16px;line-height:1.55}
+.concept ul{margin-left:22px}
+.legend{font-size:14px;line-height:1.7}
+.hidden{display:none}
+@media print{.btn{display:none!important}body{background:#fff}}
+@media(max-width:640px){.board{grid-template-columns:repeat(10,1fr);grid-template-rows:repeat(10,44px);width:100%}.cell{font-size:9px}.token{width:20px;height:20px;font-size:12px}}
+
+/* ===== Quest header & menu ===== */
+.quest-head{text-align:center;margin-top:18px}
+.quest-head h1{font-size:34px;color:#5d4037}
+.quest-bar{display:flex;gap:10px;justify-content:center;align-items:center;margin:14px 0;flex-wrap:wrap}
+.quest-bar input[type=text]{width:280px;margin:0}
+.quest-menu{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px}
+.qm-btn{padding:12px 16px;font-size:16px;font-weight:800;border:2px solid #d7ccc8;border-radius:999px;background:#fff;cursor:pointer;color:#5d4037}
+.qm-btn.sel{border-color:#e65100;background:#e65100;color:#fff}
+.game-section{margin-top:6px}
+/* ===== Shooting ===== */
+.sh-arena{position:relative;height:380px;background:linear-gradient(160deg,#0d1b2a,#1b3a5c);border-radius:14px;overflow:hidden;margin:12px 0}
+.sh-bubble{position:absolute;width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#90caf9);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#0d47a1;cursor:pointer;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.4);animation:shPop .25s ease}
+@keyframes shPop{from{transform:scale(.4)}to{transform:scale(1)}}
+.sh-hud{display:flex;justify-content:space-between;font-size:17px;font-weight:700;flex-wrap:wrap;gap:8px}
+/* ===== Factor tree ===== */
+.ft-tree{display:flex;flex-direction:column;align-items:center;margin:14px 0}
+.ft-node{display:inline-block;min-width:64px;padding:10px 16px;border-radius:12px;background:#ffe0b2;border:3px solid #e65100;font-size:22px;font-weight:900;color:#5d4037;cursor:pointer;text-align:center}
+.ft-node.prime{background:#c8e6c9;border-color:#43a047;cursor:default}
+.ft-node.done{background:#fff3e0;cursor:default}
+.ft-node.sel{outline:4px solid #ffd54f}
+.ft-children{display:flex;gap:26px;margin-top:10px}
+.ft-branch{display:flex;flex-direction:column;align-items:center}
+.ft-branch::before{content:'↙ ↘';color:#8d6e63;font-size:13px}
+.ft-pair{display:inline-block;padding:10px 16px;margin:5px;font-size:17px;font-weight:800;border:2px solid #e65100;border-radius:12px;background:#fff;cursor:pointer;color:#5d4037}
+.ft-pair:hover{background:#fff3e0}
+/* ===== Escape room ===== */
+.esc-door{font-size:80px;text-align:center;line-height:1.1}
+.esc-hearts{font-size:24px}
+.esc-room{font-size:15px;font-weight:800;color:#e65100}
+/* ===== Train station ===== */
+.tr-track{background:#eceff1;border-radius:12px;padding:12px;margin:10px 0}
+.tr-track h4{margin-bottom:6px;color:#37474f}
+.tr-chip{display:inline-block;min-width:44px;text-align:center;padding:6px 8px;margin:3px;border-radius:999px;background:#fff;border:2px solid #90a4ae;font-weight:800;color:#37474f}
+.tr-chip.meet{background:gold;border-color:#e65100;color:#5d4037}
+.tr-stations{display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap}
+.tr-st{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #bcaaa4;display:flex;align-items:center;justify-content:center;font-weight:900;color:#8d6e63}
+.tr-st.done{background:#c8e6c9;border-color:#43a047;color:#1b5e20}
+.tr-st.now{background:#ffe082;border-color:#e65100;color:#5d4037}
+.tr-train{font-size:44px;transition:margin-left 1s ease}
+
+</style>
+</head>
+<body>
+<div class="container">
+<div class="quest-head">
+<h1>🎯 Factor &amp; Multiple Quest</h1>
+<p class="sub">Matematika • Grade 7 • Factors, Multiples, HCF, LCM &amp; Prime Numbers<br>Lima game dalam satu file — pilih gamenya di menu!</p>
+<div class="quest-bar">
+<input type="text" id="stuName" placeholder="Nama kamu">
+<label style="font-size:16px"><input type="checkbox" id="soundToggle" checked style="width:18px;height:18px"> 🔊 Suara ON</label>
+</div>
+<nav class="quest-menu">
+<button class="qm-btn sel" data-g="snake" onclick="showGame('snake')">🐍 Snake &amp; Ladders</button>
+<button class="qm-btn" data-g="shoot" onclick="showGame('shoot')">🎯 Number Shooting</button>
+<button class="qm-btn" data-g="tree" onclick="showGame('tree')">🌳 Factor Tree</button>
+<button class="qm-btn" data-g="escape" onclick="showGame('escape')">🔐 HCF Escape Room</button>
+<button class="qm-btn" data-g="train" onclick="showGame('train')">🚂 Train Station</button>
+</nav>
+</div>
+
+<section class="game-section" id="game-snake">
+
+
+<div class="card" id="startScreen">
+<h1>🐍 Factor &amp; Multiple Quest<br>Snake and Ladders</h1>
+<p class="sub">Matematika • Grade 7<br>Lempar dadu, jawab soal Factors &amp; Multiples, naiki tangga, hindari ular — siapa yang sampai di 100 duluan?</p>
+<p style="text-align:center;margin-top:14px">
+<span class="badge">🐍 6 Ular</span>
+<span class="badge">🪜 6 Tangga</span>
+<span class="badge">❓ 36 Soal</span>
+<span class="badge">🎯 Sampai di 100</span>
+</p>
+<div class="mode-row">
+<button class="mode-btn sel" id="modeSolo" onclick="setMode('solo')">🧑 Solo Quest</button>
+<button class="mode-btn" id="modeBot" onclick="setMode('bot')">🤖 Vs Komputer</button>
+</div>
+<button class="btn orange" onclick="showConcept()">📖 Baca Konsep &amp; Peta Papan</button>
+<button class="btn" onclick="startGame()">▶ Mulai Bermain!</button>
+<p style="text-align:center;margin-top:16px;font-size:15px;color:#888">Guru: Rudolf A. Luhukay, S.T.</p>
+</div>
+
+<div class="card concept hidden" id="conceptScreen">
+<h2>📖 Konsep — Baca Dulu!</h2>
+<h3>1. Multiples — Kelipatan</h3>
+<p>Kelipatan suatu bilangan adalah hasil perkalian bilangan itu dengan 1, 2, 3, 4, … Kelipatan tidak pernah habis.</p>
+<p><b>Contoh:</b> kelipatan 6 = 6, 12, 18, 24, 30, 36, … • Kelipatan ke-5 dari 6 = 5 × 6 = <b>30</b></p>
+<h3>2. Factors — Faktor</h3>
+<p>Faktor adalah bilangan yang membagi habis suatu bilangan, tanpa sisa.</p>
+<p><b>Contoh:</b> faktor dari 24 = <b>1, 2, 3, 4, 6, 8, 12, 24</b> (ada 8 faktor).</p>
+<h3>3. HCF — Highest Common Factor (FPB)</h3>
+<p>FPB adalah faktor terbesar yang dimiliki bersama oleh dua bilangan atau lebih. Dengan faktorisasi prima, ambil pangkat <b>terkecil</b> dari faktor prima yang sama.</p>
+<p><b>Contoh:</b> 12 = 2² × 3 dan 18 = 2 × 3² → FPB = 2 × 3 = <b>6</b></p>
+<h3>4. LCM — Lowest Common Multiple (KPK)</h3>
+<p>KPK adalah kelipatan terkecil yang dimiliki bersama oleh dua bilangan atau lebih. Dengan faktorisasi prima, ambil pangkat <b>terbesar</b> dari setiap faktor prima.</p>
+<p><b>Contoh:</b> 6 = 2 × 3 dan 8 = 2³ → KPK = 2³ × 3 = <b>24</b></p>
+<h3>5. Prime Numbers — Bilangan Prima</h3>
+<p>Bilangan prima hanya punya dua faktor: 1 dan dirinya sendiri. Bilangan prima terkecil adalah <b>2</b>.</p>
+<p><b>Contoh:</b> 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, …</p>
+<h3>🗺️ Peta Papan</h3>
+<p class="legend" id="legendText"></p>
+<button class="btn" onclick="backToStart()">← Kembali</button>
+<button class="btn green" onclick="startGame()">▶ Saya Sudah Paham — Mulai Bermain!</button>
+</div>
+
+<div class="card hidden" id="gameScreen">
+<div class="game-wrap">
+<div class="board" id="board"></div>
+<div class="side">
+<div class="panel">
+<h3>🎲 Giliran: <span id="turnLabel">Kamu</span></h3>
+<div class="dice" id="diceFace">🎲</div>
+<p style="text-align:center;font-size:15px" id="diceText">Tekan tombol untuk melempar dadu!</p>
+<button class="btn green" id="rollBtn" onclick="rollDice()">🎲 Lempar Dadu</button>
+</div>
+<div class="panel hidden" id="qPanel">
+<h3 id="qTitle">❓ Soal</h3>
+<p id="qText" style="font-size:17px;line-height:1.5"></p>
+<div id="opts"></div>
+<div class="feedback" id="fb"></div>
+</div>
+<div class="panel">
+<h3>📊 Skor</h3>
+<p style="font-size:16px;line-height:1.8" id="statsText"></p>
+</div>
+<div class="panel">
+<h3>📜 Catatan Permainan</h3>
+<div class="log" id="log"></div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="card hidden" id="resultScreen">
+<h1 id="resTitle">🏆 Kamu Menang!</h1>
+<p style="text-align:center;font-size:19px;margin-top:8px"><span id="resName"></span> • <span id="resClass"></span></p>
+<div class="score-big"><span id="finalScore">0</span> benar</div>
+<p style="text-align:center;font-size:19px" id="resMsg"></p>
+<h2 style="margin-top:20px">📋 Pembahasan — Soal yang Dijawab</h2>
+<div id="reviewList"></div>
+<div style="margin-top:16px">
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="location.reload()">🔄 Main Lagi</button>
+</div>
+</div>
+
+
+</section>
+
+<!-- ============ GAME 2: NUMBER SHOOTING ============ -->
+<section class="game-section hidden" id="game-shoot">
+<div class="card">
+<h2>🎯 Prime Numbers: Number Shooting</h2>
+<p class="sub">Tembak hanya bilangan <b>PRIMA</b>! Bilangan prima hanya punya dua faktor: 1 dan dirinya sendiri.<br>60 detik • 3 nyawa • Tembakan benar +10, tembakan salah −5 dan −1 nyawa.</p>
+<div id="sh-start">
+<p style="font-size:16px;line-height:1.6">Bilangan akan muncul di langit malam. Klik bilangan prima secepat mungkin sebelum menghilang! Jangan tembak bilangan komposit seperti 9, 15, 21, 39 — bilangan itu punya faktor selain 1 dan dirinya sendiri.</p>
+<button class="btn green" onclick="shStart()">▶ Mulai Menembak!</button>
+</div>
+<div id="sh-play" class="hidden">
+<div class="sh-hud"><span>⏱ <b id="sh-time">60</b> detik</span><span>⭐ Skor: <b id="sh-score">0</b></span><span>❤️ <b id="sh-lives">❤️❤️❤️</b></span></div>
+<div class="sh-arena" id="sh-arena"></div>
+<p style="text-align:center;font-size:15px;color:#8d6e63">Klik hanya bilangan prima!</p>
+</div>
+<div id="sh-end" class="hidden">
+<h2>🏁 Waktu Habis!</h2>
+<div class="score-big"><span id="sh-final">0</span></div>
+<p style="text-align:center;font-size:18px" id="sh-msg"></p>
+<div id="sh-review"></div>
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="shStart()">🔄 Main Lagi</button>
+</div>
+</div>
+</section>
+
+<!-- ============ GAME 3: FACTOR TREE ============ -->
+<section class="game-section hidden" id="game-tree">
+<div class="card">
+<h2>🌳 Prime Factorisation: Prime Factor Tree Puzzle</h2>
+<p class="sub">Pecah bilangan menjadi pohon faktor sampai semua daunnya bilangan prima!<br>5 bilangan: 36, 48, 60, 72, 90. Klik kotak yang masih komposit, lalu pilih pasangan faktornya.</p>
+<div id="ft-start">
+<p style="font-size:16px;line-height:1.6">Contoh: 36 → 4 × 9 → 4 = 2 × 2, 9 = 3 × 3. Semua daun prima: 2, 2, 3, 3 → 36 = 2² × 3². Semakin sedikit pecahan yang kamu pakai, semakin bagus!</p>
+<button class="btn green" onclick="ftStart()">▶ Mulai Memecah!</button>
+</div>
+<div id="ft-play" class="hidden">
+<p style="font-size:17px">Ronde <b id="ft-round">1</b> / 5 • Skor: <b id="ft-score">0</b> • Pecahan dipakai: <b id="ft-splits">0</b></p>
+<h2 style="text-align:center;font-size:28px">Pecah bilangan <span id="ft-target" style="color:#e65100">36</span></h2>
+<div class="ft-tree" id="ft-tree"></div>
+<div id="ft-choices" style="text-align:center"></div>
+<div class="feedback" id="ft-fb"></div>
+<button class="btn green hidden" id="ft-next" onclick="ftNext()">Lanjut ke Bilangan Berikutnya →</button>
+</div>
+<div id="ft-end" class="hidden">
+<h2>🏆 Pohon Faktor Selesai!</h2>
+<div class="score-big"><span id="ft-final">0</span></div>
+<p style="text-align:center;font-size:18px" id="ft-msg"></p>
+<div id="ft-review"></div>
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="ftStart()">🔄 Main Lagi</button>
+</div>
+</div>
+</section>
+
+<!-- ============ GAME 4: HCF ESCAPE ROOM ============ -->
+<section class="game-section hidden" id="game-escape">
+<div class="card">
+<h2>🔐 HCF: HCF Escape Room</h2>
+<p class="sub">Kamu terkunci di 4 ruangan! Setiap pintu hanya terbuka dengan jawaban FPB (HCF) yang benar.<br>3 nyawa • Batas waktu 5 menit • Setiap ruangan 1 teka-teki FPB.</p>
+<div id="esc-start">
+<p style="font-size:16px;line-height:1.6">Ingat: FPB adalah faktor terbesar yang dimiliki bersama. Contoh: FPB dari 12 dan 18 adalah 6. Jawaban salah = −1 nyawa. Kehabisan nyawa atau waktu = terkunci selamanya!</p>
+<button class="btn green" onclick="escStart()">▶ Masuk Ruangan 1!</button>
+</div>
+<div id="esc-play" class="hidden">
+<div style="display:flex;justify-content:space-between;font-size:16px;flex-wrap:wrap;gap:8px">
+<span class="esc-room" id="esc-room">Ruangan 1 / 4</span>
+<span class="esc-hearts" id="esc-hearts">❤️❤️❤️</span>
+<span>⏱ <b id="esc-time">5:00</b></span>
+</div>
+<div class="esc-door" id="esc-door">🚪🔒</div>
+<h2 id="esc-title" style="text-align:center"></h2>
+<p id="esc-story" style="font-size:17px;line-height:1.6"></p>
+<div id="esc-opts"></div>
+<div class="feedback" id="esc-fb"></div>
+<button class="btn green hidden" id="esc-next" onclick="escNext()">🚪 Buka Pintu Berikutnya →</button>
+</div>
+<div id="esc-end" class="hidden">
+<h2 id="esc-endtitle">🏆 Kamu Lolos!</h2>
+<div class="score-big"><span id="esc-final">0</span></div>
+<p style="text-align:center;font-size:18px" id="esc-msg"></p>
+<div id="esc-review"></div>
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="escStart()">🔄 Main Lagi</button>
+</div>
+</div>
+</section>
+
+<!-- ============ GAME 5: LCM TRAIN STATION ============ -->
+<section class="game-section hidden" id="game-train">
+<div class="card">
+<h2>🚂 LCM: Multiples Train Station</h2>
+<p class="sub">Dua kereta berangkat dengan jadwal berbeda. Kapan keduanya tiba bersamaan di stasiun?<br>8 stasiun • Jawab dengan KPK (LCM) • 3 nyawa.</p>
+<div id="tr-start">
+<p style="font-size:16px;line-height:1.6">Ingat: KPK adalah kelipatan terkecil yang dimiliki bersama. Contoh: KPK dari 6 dan 8 adalah 24. Perhatikan papan kelipatan di setiap stasiun — kotak emas adalah pertemuan kedua kereta!</p>
+<button class="btn green" onclick="trStart()">▶ Berangkat ke Stasiun 1!</button>
+</div>
+<div id="tr-play" class="hidden">
+<div class="tr-stations" id="tr-stations"></div>
+<p style="font-size:17px">Stasiun <b id="tr-round">1</b> / 8 • Skor: <b id="tr-score">0</b> • <span id="tr-hearts">❤️❤️❤️</span></p>
+<div class="tr-track"><h4 id="tr-trackA">🚂 Kereta A</h4><div id="tr-multA"></div></div>
+<div class="tr-track"><h4 id="tr-trackB">🚂 Kereta B</h4><div id="tr-multB"></div></div>
+<p id="tr-q" style="font-size:18px;line-height:1.5"></p>
+<div id="tr-opts"></div>
+<div class="feedback" id="tr-fb"></div>
+<button class="btn green hidden" id="tr-next" onclick="trNext()">🚂 Lanjut ke Stasiun Berikutnya →</button>
+</div>
+<div id="tr-end" class="hidden">
+<h2 id="tr-endtitle">🏁 Perjalanan Selesai!</h2>
+<div class="score-big"><span id="tr-final">0</span> / 8</div>
+<p style="text-align:center;font-size:18px" id="tr-msg"></p>
+<div id="tr-review"></div>
+<button class="btn" onclick="window.print()">🖨️ Cetak Hasilku</button>
+<button class="btn orange" onclick="trStart()">🔄 Main Lagi</button>
+</div>
+</div>
+</section>
+
+<footer style="text-align:center;color:#8d6e63;font-size:14px;margin:28px 0 8px">Factor &amp; Multiple Quest • Matematika Grade 7<br>Disusun oleh Rudolf A. Luhukay, S.T.</footer>
+</div>
+<script>
+
+const QUESTIONS=[
+{q:"What is the 5th multiple of 6?",o:["24", "30", "36", "42"],a:1,e:"5 × 6 = 30."},
+{q:"Which number is a multiple of 7?",o:["40", "45", "49", "52"],a:2,e:"49 ÷ 7 = 7, so 49 is a multiple of 7."},
+{q:"What is the 4th multiple of 9?",o:["27", "32", "36", "45"],a:2,e:"4 × 9 = 36."},
+{q:"Which of these is NOT a multiple of 8?",o:["32", "40", "48", "54"],a:3,e:"54 ÷ 8 = 6 remainder 6, so 54 is not a multiple of 8."},
+{q:"The multiples of 12 are 12, 24, 36, … What comes next?",o:["40", "44", "48", "52"],a:2,e:"Multiples of 12 increase by 12: 36 + 12 = 48."},
+{q:"What is the 6th multiple of 5?",o:["25", "30", "35", "40"],a:1,e:"6 × 5 = 30."},
+{q:"Which number is a multiple of both 3 and 4?",o:["14", "18", "24", "30"],a:2,e:"24 ÷ 3 = 8 and 24 ÷ 4 = 6."},
+{q:"What is the 3rd multiple of 15?",o:["30", "40", "45", "60"],a:2,e:"3 × 15 = 45."},
+{q:"Which number is a factor of 36?",o:["5", "7", "9", "11"],a:2,e:"36 ÷ 9 = 4, so 9 is a factor of 36."},
+{q:"How many factors does 24 have?",o:["6", "7", "8", "10"],a:2,e:"Factors of 24: 1, 2, 3, 4, 6, 8, 12, 24 — that is 8 factors."},
+{q:"Which of these is NOT a factor of 48?",o:["6", "8", "12", "7"],a:3,e:"48 ÷ 7 is not exact, so 7 is not a factor of 48."},
+{q:"What are the factors of 18?",o:["1, 2, 3, 6, 9, 18", "1, 2, 4, 6, 9, 18", "1, 3, 6, 9, 12, 18", "2, 3, 6, 9, 18"],a:0,e:"18 = 1×18, 2×9, 3×6."},
+{q:"Is 7 a factor of 91?",o:["Yes, 91 ÷ 7 = 13", "No, 91 ÷ 7 = 12", "Yes, 91 ÷ 7 = 11", "No, 91 is a prime number"],a:0,e:"91 = 7 × 13."},
+{q:"How many factors does 30 have?",o:["6", "8", "10", "12"],a:1,e:"Factors of 30: 1, 2, 3, 5, 6, 10, 15, 30 — that is 8 factors."},
+{q:"The largest factor of 60 (other than 60 itself) is…",o:["20", "30", "40", "15"],a:1,e:"60 ÷ 30 = 2, and no factor between 30 and 60 divides 60."},
+{q:"Which pair are BOTH factors of 72?",o:["7 and 9", "8 and 9", "8 and 11", "6 and 14"],a:1,e:"72 ÷ 8 = 9 and 72 ÷ 9 = 8."},
+{q:"What is the HCF of 12 and 18?",o:["3", "6", "9", "12"],a:1,e:"Common factors of 12 and 18: 1, 2, 3, 6. The highest is 6."},
+{q:"What is the HCF of 24 and 36?",o:["6", "8", "12", "18"],a:2,e:"24 = 2³ × 3, 36 = 2² × 3². HCF uses the smallest powers: 2² × 3 = 12."},
+{q:"What is the HCF of 48 and 72?",o:["12", "16", "24", "36"],a:2,e:"48 = 2⁴ × 3, 72 = 2³ × 3². HCF = 2³ × 3 = 24."},
+{q:"What is the HCF of 15 and 25?",o:["3", "5", "10", "15"],a:1,e:"Common factors of 15 and 25: 1 and 5. The highest is 5."},
+{q:"What is the HCF of 14 and 21?",o:["3", "7", "14", "21"],a:1,e:"Common factors of 14 and 21: 1 and 7. The highest is 7."},
+{q:"What is the LCM of 6 and 8?",o:["12", "18", "24", "48"],a:2,e:"Multiples of 6: 6, 12, 18, 24… Multiples of 8: 8, 16, 24… The smallest common one is 24."},
+{q:"What is the LCM of 4 and 10?",o:["10", "20", "30", "40"],a:1,e:"Multiples of 4: 4, 8, 12, 16, 20… Multiples of 10: 10, 20… The smallest common one is 20."},
+{q:"What is the LCM of 9 and 12?",o:["18", "24", "36", "72"],a:2,e:"9 = 3², 12 = 2² × 3. LCM uses the largest powers: 2² × 3² = 36."},
+{q:"What is the LCM of 18, 24 and 40?",o:["120", "240", "360", "720"],a:2,e:"18 = 2 × 3², 24 = 2³ × 3, 40 = 2³ × 5. LCM = 2³ × 3² × 5 = 360."},
+{q:"What is the LCM of 5 and 7?",o:["12", "25", "35", "70"],a:2,e:"5 and 7 are both prime, so their LCM is 5 × 7 = 35."},
+{q:"Which number is a prime number?",o:["15", "17", "21", "27"],a:1,e:"17 has only two factors: 1 and 17."},
+{q:"Which number is NOT a prime number?",o:["23", "29", "31", "39"],a:3,e:"39 = 3 × 13, so 39 is composite."},
+{q:"What is the prime factorisation of 36?",o:["2 × 3²", "2² × 3²", "2³ × 3", "2 × 3³"],a:1,e:"36 = 4 × 9 = 2² × 3²."},
+{q:"What is the prime factorisation of 60?",o:["2 × 3 × 5", "2² × 3 × 5", "2² × 3² × 5", "2 × 3² × 5"],a:1,e:"60 = 4 × 15 = 2² × 3 × 5."},
+{q:"What is the smallest prime number?",o:["0", "1", "2", "3"],a:2,e:"2 is the smallest prime number (and the only even prime)."},
+{q:"How many prime numbers are there between 10 and 30?",o:["5", "6", "7", "8"],a:1,e:"They are 11, 13, 17, 19, 23 and 29 — that is 6 primes."},
+{q:"Rudi has 48 marbles and 72 stickers. He wants to make equal gift packs with nothing left over. What is the greatest number of packs he can make?",o:["12", "18", "24", "36"],a:2,e:"This is the HCF of 48 and 72, which is 24."},
+{q:"Bus A comes every 12 minutes and Bus B every 18 minutes. They leave together now. In how many minutes will they leave together again?",o:["24", "30", "36", "54"],a:2,e:"This is the LCM of 12 and 18, which is 36."},
+{q:"A rope 60 cm long is cut into equal pieces of 12 cm. How many pieces are there?",o:["4", "5", "6", "7"],a:1,e:"60 ÷ 12 = 5 pieces."},
+{q:"Which number is both a multiple of 6 and a factor of 72?",o:["10", "12", "14", "16"],a:1,e:"12 = 6 × 2, and 72 ÷ 12 = 6."}
+];
+const LADDERS={"6": 36, "9": 27, "12": 48, "20": 60, "28": 56, "33": 66};
+const SNAKES={"99": 11, "96": 24, "90": 30, "81": 3, "72": 18, "64": 16};
+let mode='solo',playerName='',turn='you',qIndex=0;
+let pos={you:0,bot:0},correct={you:0,bot:0},turns={you:0,bot:0},answered=[],diceVal=0,rolling=false,gameOver=false;
+let audioCtx=null;
+function soundOn(){return document.getElementById('soundToggle').checked;}
+const MAXVOL=0.9;
+function beep(f,t0,d,type){if(!soundOn())return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.setValueAtTime(MAXVOL,audioCtx.currentTime+t0);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+t0+d);o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+t0);o.stop(audioCtx.currentTime+t0+d);}catch(e){}}
+function playCorrect(){[1568,2093,2637,3136].forEach((f,i)=>beep(f,i*.07,.22,'triangle'));}
+function playWrong(){[330,262,196].forEach((f,i)=>beep(f,i*.16,.4));}
+function playLadder(){[523,659,784,1046,1318].forEach((f,i)=>beep(f,i*.09,.25,'sine'));}
+function playSnake(){[600,500,400,300,200].forEach((f,i)=>beep(f,i*.1,.25,'sawtooth'));}
+function playDice(){[300,500,700].forEach((f,i)=>beep(f,i*.06,.08,'square'));}
+function playWin(){[523,659,784,1046,784,1046,1318].forEach((f,i)=>beep(f,i*.13,.3,'triangle'));}
+function setMode(m){mode=m;document.getElementById('modeSolo').classList.toggle('sel',m==='solo');document.getElementById('modeBot').classList.toggle('sel',m==='bot');}
+function showConcept(){
+  document.getElementById('legendText').innerHTML=
+   '<b>🪜 Tangga (naik!):</b> '+Object.keys(LADDERS).map(k=>k+' → '+LADDERS[k]+' ('+k+' × '+(LADDERS[k]/k)+')').join(' • ')+
+   '<br><b>🐍 Ular (turun!):</b> '+Object.keys(SNAKES).map(k=>k+' → '+SNAKES[k]+' ('+SNAKES[k]+' adalah faktor dari '+k+')').join(' • ')+
+   '<br><b>Aturan:</b> jawab benar = maju sesuai dadu. Mendarat di dasar tangga = naik! Mendarat di kepala ular = meluncur turun! Harus mendarat <b>tepat di 100</b> (kelebihan memantul balik).';
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.remove('hidden');
+}
+function backToStart(){document.getElementById('conceptScreen').classList.add('hidden');document.getElementById('startScreen').classList.remove('hidden');}
+function cellNum(r,c){ // r=0 top row ... 9 bottom row; c=0..9 left..right
+  var rowFromBottom=9-r;
+  var n=rowFromBottom*10+1;
+  return (rowFromBottom%2===0)? n+c : n+9-c;
+}
+function buildBoard(){
+  var b=document.getElementById('board');b.innerHTML='';
+  for(var r=0;r<10;r++)for(var c=0;c<10;c++){
+    var n=cellNum(r,c);
+    var d=document.createElement('div');d.className='cell'+(((r+c)%2===0)?' dark':'');d.id='cell-'+n;
+    var inner='<span>'+n+'</span>';
+    if(n===100){d.classList.add('finish');inner='<span class="mk">🏆</span><span>100</span>';}
+    else if(LADDERS[n]){d.classList.add('ladder');inner='<span class="mk">🪜</span><span class="tg">→ '+LADDERS[n]+'</span>';}
+    else if(SNAKES[n]){d.classList.add('snake');inner='<span class="mk">🐍</span><span class="tg">→ '+SNAKES[n]+'</span>';}
+    d.innerHTML=inner+'<div class="tokens" id="tok-'+n+'"></div>';
+    b.appendChild(d);
+  }
+}
+function placeToken(who){
+  document.querySelectorAll('.token.'+who).forEach(t=>t.remove());
+  if(pos[who]===0)return;
+  var slot=document.getElementById('tok-'+pos[who]);
+  if(!slot)return;
+  var t=document.createElement('div');t.className='token '+who;t.textContent=who==='you'?'🧑':'🤖';
+  slot.appendChild(t);
+}
+function logMsg(m){var l=document.getElementById('log');var d=document.createElement('div');d.textContent=m;l.prepend(d);}
+function updateStats(){
+  document.getElementById('statsText').innerHTML=
+   '🧑 Kamu: kotak <b>'+pos.you+'</b> • ✅ '+correct.you+' benar • 🎲 '+turns.you+' lemparan'+
+   (mode==='bot'?'<br>🤖 Komputer: kotak <b>'+pos.bot+'</b> • ✅ '+correct.bot+' benar • 🎲 '+turns.bot+' lemparan':'');
+}
+function startGame(){
+  var n=document.getElementById('stuName').value.trim();
+  if(!n){alert('Tuliskan namamu dulu 🙂');document.getElementById('stuName').focus();return;}
+  playerName=n;
+  document.getElementById('startScreen').classList.add('hidden');
+  document.getElementById('conceptScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+  buildBoard();updateStats();
+  document.getElementById('turnLabel').textContent='Kamu';
+  logMsg('🎮 Permainan dimulai! '+playerName+' (solo) — lempar dadumu!');
+  if(mode==='bot')logMsg('🤖 Komputer ikut bermain!');
+}
+function rollDice(){
+  if(rolling||gameOver)return;
+  rolling=true;
+  document.getElementById('rollBtn').disabled=true;
+  var face=document.getElementById('diceFace');face.classList.add('rolling');playDice();
+  var ticks=0;
+  var iv=setInterval(function(){
+    face.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][Math.floor(Math.random()*6)];
+    if(++ticks>=8){
+      clearInterval(iv);face.classList.remove('rolling');
+      diceVal=1+Math.floor(Math.random()*6);
+      face.textContent=['⚀','⚁','⚂','⚃','⚄','⚅'][diceVal-1];
+      document.getElementById('diceText').textContent=(turn==='you'?'Kamu':'Komputer')+' mendapat '+diceVal+'! Jawab soal untuk melangkah.';
+      askQuestion();
+    }
+  },90);
+}
+function askQuestion(){
+  var q=QUESTIONS[qIndex%QUESTIONS.length];qIndex++;
+  var p=document.getElementById('qPanel');p.classList.remove('hidden');
+  document.getElementById('qTitle').textContent='❓ Soal — '+(turn==='you'?'Giliranmu':'Giliran Komputer');
+  document.getElementById('qText').textContent=q.q;
+  var box=document.getElementById('opts');box.innerHTML='';
+  var fb=document.getElementById('fb');fb.style.display='none';fb.className='feedback';
+  if(turn==='bot'){
+    setTimeout(function(){
+      var ok=Math.random()<0.7;
+      var pick=ok?q.a:((q.a+1+Math.floor(Math.random()*3))%4);
+      resolveAnswer(pick,q,true);
+    },1400);
+    return;
+  }
+  q.o.forEach(function(opt,i){
+    var b=document.createElement('button');b.className='opt';
+    b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=function(){resolveAnswer(i,q,false);};
+    box.appendChild(b);
+  });
+}
+function resolveAnswer(i,q,isBot){
+  var btns=document.querySelectorAll('#opts .opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var ok=i===q.a;
+  var who=turn;
+  answered.push({q:q.q,picked:q.o[i],correctAns:q.o[q.a],ok:ok,exp:q.e,who:who});
+  var fb=document.getElementById('fb');
+  if(ok){
+    correct[who]++;
+    if(btns[i])btns[i].classList.add('correct');
+    fb.className='feedback ok';fb.innerHTML='✅ <b>Benar!</b> '+q.e+' Kamu maju '+diceVal+' langkah!';
+    fb.style.display='block';playCorrect();
+    setTimeout(function(){moveToken(who,diceVal);},700);
+  }else{
+    if(btns[i])btns[i].classList.add('wrong');
+    if(btns[q.a])btns[q.a].classList.add('correct');
+    fb.className='feedback no';fb.innerHTML='❌ <b>Belum tepat.</b> Jawaban benar: <b>'+q.o[q.a]+'</b>.<br>'+q.e+' Kamu tetap di kotak '+pos[who]+'.';
+    fb.style.display='block';playWrong();
+    setTimeout(function(){endTurn();},1600);
+  }
+  updateStats();
+}
+function moveToken(who,steps){
+  var from=pos[who];
+  var target=from+steps;
+  if(target>100)target=100-(target-100);
+  turns[who]++;
+  var step=0;
+  var iv=setInterval(function(){
+    step++;
+    var cur=from+step;
+    if(cur>100)cur=100-(cur-100);
+    pos[who]=cur;placeToken(who);updateStats();
+    if(step>=steps){
+      clearInterval(iv);
+      checkSpecial(who);
+    }
+  },300);
+}
+function checkSpecial(who){
+  var p=pos[who],name=who==='you'?'Kamu':'Komputer';
+  if(LADDERS[p]){
+    var top=LADDERS[p];
+    logMsg('🪜 '+name+' naik tangga! '+p+' → '+top+' ('+p+' × '+(top/p)+' = '+top+')');
+    playLadder();
+    setTimeout(function(){pos[who]=top;placeToken(who);updateStats();afterMove(who);},600);
+  }else if(SNAKES[p]){
+    var tail=SNAKES[p];
+    logMsg('🐍 '+name+' kena ular! '+p+' → '+tail+' ('+tail+' adalah faktor dari '+p+')');
+    playSnake();
+    setTimeout(function(){pos[who]=tail;placeToken(who);updateStats();afterMove(who);},600);
+  }else{
+    afterMove(who);
+  }
+}
+function afterMove(who){
+  if(pos[who]===100){finishGame(who);return;}
+  endTurn();
+}
+function endTurn(){
+  if(gameOver)return;
+  document.getElementById('qPanel').classList.add('hidden');
+  document.getElementById('rollBtn').disabled=false;
+  rolling=false;
+  if(mode==='bot'){
+    turn=turn==='you'?'bot':'you';
+    document.getElementById('turnLabel').textContent=turn==='you'?'Kamu':'Komputer';
+    if(turn==='bot'){setTimeout(rollDice,900);}
+  }else{
+    document.getElementById('diceText').textContent='Lempar lagi dadumu!';
+  }
+  updateStats();
+}
+function finishGame(who){
+  gameOver=true;playWin();
+  document.getElementById('gameScreen').classList.add('hidden');
+  var rs=document.getElementById('resultScreen');rs.classList.remove('hidden');
+  var youWon=who==='you';
+  document.getElementById('resTitle').textContent=youWon?'🏆 Kamu Menang!':'🤖 Komputer Menang!';
+  document.getElementById('resName').textContent=playerName;
+  document.getElementById('resClass').textContent='Grade 7 • Factor & Multiple Quest';
+  document.getElementById('finalScore').textContent=correct.you;
+  var total=answered.filter(a=>a.who==='you').length;
+  document.getElementById('resMsg').textContent=youWon?
+    'Luar biasa! Kamu sampai di kotak 100 dengan '+correct.you+' jawaban benar dari '+total+' soal!':
+    'Komputer sampai di 100 duluan. Kamu menjawab '+correct.you+' soal dengan benar dari '+total+'. Coba lagi, kamu pasti bisa!';
+  var rl=document.getElementById('reviewList');rl.innerHTML='';
+  answered.filter(a=>a.who==='you').forEach(function(a,i){
+    var d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5';
+    d.innerHTML='<b>'+(i+1)+'. '+a.q+'</b><br>Jawabanmu: <b style="color:'+(a.ok?'#2e7d32':'#c62828')+'">'+a.picked+' '+(a.ok?'✅':'❌')+'</b>'+(a.ok?'':'<br>Jawaban benar: <b>'+a.correctAns+'</b>')+'<br><span style="color:#666">'+a.exp+'</span>';
+    rl.appendChild(d);
+  });
+  window.scrollTo(0,0);
+}
+buildBoard();
+
+</script>
+<script>
+
+/* ============ QUEST MENU ============ */
+function showGame(id){
+  if(id!=='shoot'){clearInterval(shTimer);clearInterval(shSpawn);}
+  if(id!=='escape'){clearInterval(escTimer);}
+  document.querySelectorAll('.game-section').forEach(function(s){s.classList.add('hidden');});
+  document.getElementById('game-'+id).classList.remove('hidden');
+  document.querySelectorAll('.qm-btn').forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-g')===id);});
+  window.scrollTo(0,0);
+}
+/* ============ SHARED HELPERS ============ */
+function qIsPrime(n){if(n<2)return false;for(var i=2;i*i<=n;i++)if(n%i===0)return false;return true;}
+function qFactors(n){var r=[];for(var i=1;i<=n;i++)if(n%i===0)r.push(i);return r;}
+function qSup(n){var m={'2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶'};return m[''+n]||('^'+n);}
+function qFactorStr(n){var leaves=[],m=n;for(var p=2;p*p<=m;p++){while(m%p===0){leaves.push(p);m/=p;}}if(m>1)leaves.push(m);leaves.sort(function(a,b){return a-b;});var parts=[],last=null,cnt=0;leaves.forEach(function(x){if(x===last)cnt++;else{if(last!==null)parts.push(last+(cnt>1?qSup(cnt):''));last=x;cnt=1;}});if(last!==null)parts.push(last+(cnt>1?qSup(cnt):''));return n+' = '+parts.join(' × ');}
+
+/* ============ GAME 2: NUMBER SHOOTING ============ */
+var PRIMES=[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
+var shTimer=null,shSpawn=null,shTime=60,shScore=0,shLives=3,shHits=[],shMiss=[];
+function shPickComposite(){var n;do{n=4+Math.floor(Math.random()*96);}while(qIsPrime(n));return n;}
+function shUpdate(){
+  document.getElementById('sh-time').textContent=shTime;
+  document.getElementById('sh-score').textContent=shScore;
+  document.getElementById('sh-lives').textContent='❤️'.repeat(Math.max(0,shLives))||'💔';
+}
+function shStart(){
+  shTime=60;shScore=0;shLives=3;shHits=[];shMiss=[];
+  document.getElementById('sh-start').classList.add('hidden');
+  document.getElementById('sh-end').classList.add('hidden');
+  document.getElementById('sh-play').classList.remove('hidden');
+  document.getElementById('sh-arena').innerHTML='';
+  shUpdate();
+  clearInterval(shTimer);clearInterval(shSpawn);
+  shTimer=setInterval(function(){shTime--;shUpdate();if(shTime<=0)shEnd();},1000);
+  shSpawn=setInterval(shSpawnBubble,1100);
+  shSpawnBubble();
+}
+function shSpawnBubble(){
+  var arena=document.getElementById('sh-arena');
+  if(!arena||arena.classList.length===0&&false)return;
+  if(arena.childElementCount>=7)return;
+  var n=Math.random()<0.45?PRIMES[Math.floor(Math.random()*PRIMES.length)]:shPickComposite();
+  var b=document.createElement('div');b.className='sh-bubble';b.textContent=n;
+  b.style.left=(Math.random()*80)+'%';b.style.top=(Math.random()*76)+'%';
+  b.onclick=function(){shShoot(b,n);};
+  arena.appendChild(b);
+  setTimeout(function(){if(b.parentNode)b.remove();},2600);
+}
+function shShoot(b,n){
+  if(shTime<=0)return;
+  if(qIsPrime(n)){
+    shScore+=10;shHits.push(n);playCorrect();
+    b.style.background='radial-gradient(circle at 35% 35%,#fff,#a5d6a7)';b.textContent='💥';
+    setTimeout(function(){if(b.parentNode)b.remove();},250);
+  }else{
+    shScore=Math.max(0,shScore-5);shLives--;shMiss.push({n:n,f:qFactors(n)});playWrong();
+    b.style.background='radial-gradient(circle at 35% 35%,#fff,#ef9a9a)';b.textContent='❌';
+    setTimeout(function(){if(b.parentNode)b.remove();},400);
+    if(shLives<=0)shEnd();
+  }
+  shUpdate();
+}
+function shEnd(){
+  clearInterval(shTimer);clearInterval(shSpawn);
+  document.getElementById('sh-arena').innerHTML='';
+  document.getElementById('sh-play').classList.add('hidden');
+  document.getElementById('sh-end').classList.remove('hidden');
+  document.getElementById('sh-final').textContent=shScore;
+  document.getElementById('sh-msg').textContent=
+    shScore>=120?'🌟 Luar biasa! Kamu penembak bilangan prima sejati!':
+    shScore>=70?'👍 Hebat! Sedikit latihan lagi dan kamu jadi master prima!':
+    '💪 Terus berlatih! Ingat: bilangan prima hanya punya faktor 1 dan dirinya sendiri.';
+  var rv=document.getElementById('sh-review');rv.innerHTML='';
+  var h=document.createElement('p');h.style.cssText='font-size:16px;margin-top:10px';
+  h.textContent='🎯 Prima yang kamu tembak ('+shHits.length+'): '+(shHits.length?shHits.join(', '):'—');
+  rv.appendChild(h);
+  if(shMiss.length){
+    var h2=document.createElement('p');h2.style.cssText='font-size:16px;margin-top:8px';
+    h2.innerHTML='<b>❌ Yang bukan prima (jangan ditembak!):</b>';
+    rv.appendChild(h2);
+    shMiss.forEach(function(m){
+      var d=document.createElement('div');
+      d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:15px';
+      d.textContent=m.n+' bukan prima — faktornya: '+m.f.join(', ');
+      rv.appendChild(d);
+    });
+  }
+}
+
+/* ============ GAME 3: FACTOR TREE ============ */
+var FT_ROUNDS=[36,48,60,72,90];
+var ftRound=0,ftTree=null,ftSplits=0,ftScore=0,ftSel=null,ftLog=[];
+function ftPairs(n){var r=[];for(var a=2;a*a<=n;a++){if(n%a===0){var b=n/a;if(b>=2)r.push([a,b]);}}return r;}
+function ftLeaves(node){if(!node.children)return[node.v];return ftLeaves(node.children[0]).concat(ftLeaves(node.children[1]));}
+function ftAllPrime(node){return ftLeaves(node).every(qIsPrime);}
+function ftMinSplits(n){var c=0,m=n;for(var p=2;p*p<=m;p++){while(m%p===0){c++;m/=p;}}if(m>1)c++;return Math.max(0,c-1);}
+function ftStart(){
+  ftRound=0;ftScore=0;ftLog=[];
+  document.getElementById('ft-start').classList.add('hidden');
+  document.getElementById('ft-end').classList.add('hidden');
+  document.getElementById('ft-play').classList.remove('hidden');
+  ftNewRound();
+}
+function ftNewRound(){
+  var n=FT_ROUNDS[ftRound];
+  ftTree={v:n,children:null};ftSplits=0;ftSel=null;
+  document.getElementById('ft-round').textContent=ftRound+1;
+  document.getElementById('ft-target').textContent=n;
+  document.getElementById('ft-next').classList.add('hidden');
+  var fb=document.getElementById('ft-fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('ft-choices').innerHTML='';
+  ftRender();ftUpdate();
+}
+function ftUpdate(){
+  document.getElementById('ft-score').textContent=ftScore;
+  document.getElementById('ft-splits').textContent=ftSplits;
+}
+function ftRender(){
+  var host=document.getElementById('ft-tree');host.innerHTML='';
+  (function build(node,el){
+    var box=document.createElement('div');
+    box.className='ft-node'+(qIsPrime(node.v)?' prime':(node.children?' done':''));
+    box.textContent=node.v+(qIsPrime(node.v)?' ★':'');
+    if(!node.children&&!qIsPrime(node.v)){
+      box.title='Klik untuk memecah '+node.v;
+      box.onclick=function(){ftSelect(node,box);};
+    }
+    el.appendChild(box);
+    if(node.children){
+      var row=document.createElement('div');row.className='ft-children';
+      node.children.forEach(function(ch){var w=document.createElement('div');w.className='ft-branch';build(ch,w);row.appendChild(w);});
+      el.appendChild(row);
+    }
+  })(ftTree,host);
+}
+function ftSelect(node,box){
+  ftSel=node;
+  document.querySelectorAll('.ft-node').forEach(function(b){b.classList.remove('sel');});
+  box.classList.add('sel');
+  var ch=document.getElementById('ft-choices');ch.innerHTML='<p style="font-size:16px">Pecah <b>'+node.v+'</b> menjadi…</p>';
+  ftPairs(node.v).forEach(function(pr){
+    var b=document.createElement('button');b.className='ft-pair';b.textContent=pr[0]+' × '+pr[1];
+    b.onclick=function(){ftSplit(node,pr);};
+    ch.appendChild(b);
+  });
+}
+function ftSplit(node,pr){
+  node.children=[{v:pr[0],children:null},{v:pr[1],children:null}];
+  ftSplits++;playCorrect();
+  document.getElementById('ft-choices').innerHTML='';
+  ftRender();ftUpdate();
+  if(ftAllPrime(ftTree)){
+    var n=FT_ROUNDS[ftRound];
+    ftScore+=100;
+    ftLog.push({n:n,splits:ftSplits,min:ftMinSplits(n),str:qFactorStr(n)});
+    var fb=document.getElementById('ft-fb');
+    fb.className='feedback ok';fb.style.display='block';
+    fb.innerHTML='🎉 <b>Semua daun prima!</b> '+qFactorStr(n)+'<br>Pecahan dipakai: '+ftSplits+' (paling sedikit: '+ftMinSplits(n)+')';
+    playWin();
+    document.getElementById('ft-next').classList.remove('hidden');
+    document.getElementById('ft-next').textContent=ftRound===FT_ROUNDS.length-1?'🏆 Lihat Hasil Akhir':'Lanjut ke Bilangan Berikutnya →';
+    ftUpdate();
+  }
+}
+function ftNext(){
+  if(ftRound<FT_ROUNDS.length-1){ftRound++;ftNewRound();}
+  else{
+    document.getElementById('ft-play').classList.add('hidden');
+    document.getElementById('ft-end').classList.remove('hidden');
+    document.getElementById('ft-final').textContent=ftScore;
+    var totalMin=ftLog.reduce(function(s,x){return s+x.min;},0);
+    var totalSp=ftLog.reduce(function(s,x){return s+x.splits;},0);
+    document.getElementById('ft-msg').textContent=
+      totalSp<=totalMin+2?'🌟 Luar biasa! Hampir semua pohonmu memakai pecahan paling sedikit!':
+      '👍 Bagus! Coba lagi dan cari cara memecah dengan pecahan paling sedikit!';
+    var rv=document.getElementById('ft-review');rv.innerHTML='';
+    ftLog.forEach(function(x){
+      var d=document.createElement('div');
+      d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:16px';
+      d.innerHTML='<b>'+x.str+'</b><br>Pecahan dipakai: '+x.splits+' • Paling sedikit: '+x.min;
+      rv.appendChild(d);
+    });
+  }
+}
+
+/* ============ GAME 4: HCF ESCAPE ROOM ============ */
+var ESC_ROOMS=[
+ {title:'🪢 Ruangan 1 — Tali',story:'Ada dua tali: 48 cm dan 72 cm. Keduanya harus dipotong menjadi potongan-potongan yang sama panjang, sepanjang mungkin, tanpa sisa. Berapa panjang tiap potongan?',opts:['12 cm','24 cm','36 cm','48 cm'],a:1,why:'FPB dari 48 dan 72 adalah 24. 48 = 2⁴ × 3, 72 = 2³ × 3² → FPB = 2³ × 3 = 24.',hint:'Cari faktor terbesar yang dimiliki 48 dan 72 bersama.'},
+ {title:'🟫 Ruangan 2 — Lantai',story:'Lantai berukuran 36 cm × 60 cm akan dipasangi ubin persegi terbesar yang mungkin, tanpa memotong ubin. Berapa sisi ubin itu?',opts:['6 cm','9 cm','12 cm','18 cm'],a:2,why:'FPB dari 36 dan 60 adalah 12. 36 = 2² × 3², 60 = 2² × 3 × 5 → FPB = 2² × 3 = 12.',hint:'Sisi ubin harus membagi habis 36 dan 60.'},
+ {title:'🎁 Ruangan 3 — Bingkisan',story:'Ibu punya 54 pensil dan 81 penghapus. Semuanya dibuat menjadi bingkisan yang sama banyak, tanpa sisa. Berapa bingkisan terbanyak yang bisa dibuat?',opts:['9 bingkisan','18 bingkisan','27 bingkisan','54 bingkisan'],a:2,why:'FPB dari 54 dan 81 adalah 27. 54 = 2 × 3³, 81 = 3⁴ → FPB = 3³ = 27.',hint:'Cari FPB dari 54 dan 81.'},
+ {title:'🔐 Ruangan 4 — Brankas Terakhir',story:'Brankas ini hanya terbuka dengan FPB dari 84 dan 126. Berapa kodenya?',opts:['14','21','28','42'],a:3,why:'FPB dari 84 dan 126 adalah 42. 84 = 2² × 3 × 7, 126 = 2 × 3² × 7 → FPB = 2 × 3 × 7 = 42.',hint:'84 = 2² × 3 × 7 dan 126 = 2 × 3² × 7.'}
+];
+var escRoom=0,escHearts=3,escTime=300,escTimer=null,escScore=0,escLog=[];
+function escFmt(t){return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
+function escStart(){
+  escRoom=0;escHearts=3;escTime=300;escScore=0;escLog=[];
+  document.getElementById('esc-start').classList.add('hidden');
+  document.getElementById('esc-end').classList.add('hidden');
+  document.getElementById('esc-play').classList.remove('hidden');
+  clearInterval(escTimer);
+  escTimer=setInterval(function(){escTime--;document.getElementById('esc-time').textContent=escFmt(escTime);if(escTime<=0)escFail('⏱ Waktu habis! Kamu terkunci di dalam!');},1000);
+  document.getElementById('esc-time').textContent=escFmt(escTime);
+  escAsk();
+}
+function escAsk(){
+  var r=ESC_ROOMS[escRoom];
+  document.getElementById('esc-room').textContent='Ruangan '+(escRoom+1)+' / 4';
+  document.getElementById('esc-hearts').textContent='❤️'.repeat(escHearts)||'💔';
+  document.getElementById('esc-door').textContent='🚪🔒';
+  document.getElementById('esc-title').textContent=r.title;
+  document.getElementById('esc-story').textContent=r.story;
+  var box=document.getElementById('esc-opts');box.innerHTML='';
+  var fb=document.getElementById('esc-fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('esc-next').classList.add('hidden');
+  r.opts.forEach(function(opt,i){
+    var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=function(){escAnswer(i,b);};
+    box.appendChild(b);
+  });
+}
+function escAnswer(i,btn){
+  var r=ESC_ROOMS[escRoom];
+  var btns=document.querySelectorAll('#esc-opts .opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('esc-fb');
+  if(i===r.a){
+    escScore+=100;
+    btn.classList.add('correct');
+    escLog.push({room:r.title,ok:true,why:r.why});
+    document.getElementById('esc-door').textContent='🚪🔓';
+    fb.className='feedback ok';fb.style.display='block';
+    fb.innerHTML='🔓 <b>Pintu terbuka!</b> '+r.why;
+    playCorrect();playLadder();
+    var nb=document.getElementById('esc-next');
+    nb.textContent=escRoom===ESC_ROOMS.length-1?'🏆 Keluar dari Gedung!':'🚪 Buka Pintu Berikutnya →';
+    nb.classList.remove('hidden');
+  }else{
+    escHearts--;
+    btn.classList.add('wrong');btns[r.a].classList.add('correct');
+    escLog.push({room:r.title,ok:false,why:r.why});
+    fb.className='feedback no';fb.style.display='block';
+    fb.innerHTML='❌ <b>Salah!</b> Jawaban benar: <b>'+r.opts[r.a]+'</b>.<br>Petunjuk: '+r.hint+'<br>'+r.why;
+    playWrong();
+    document.getElementById('esc-hearts').textContent='❤️'.repeat(Math.max(0,escHearts))||'💔';
+    if(escHearts<=0){setTimeout(function(){escFail('💔 Nyawamu habis! Kamu terkunci di dalam!');},1500);return;}
+    var nb=document.getElementById('esc-next');
+    nb.textContent=escRoom===ESC_ROOMS.length-1?'🏆 Keluar dari Gedung!':'🚪 Coba Pintu Berikutnya →';
+    nb.classList.remove('hidden');
+  }
+}
+function escNext(){
+  if(escRoom<ESC_ROOMS.length-1){escRoom++;escAsk();}
+  else escWin();
+}
+function escWin(){
+  clearInterval(escTimer);
+  document.getElementById('esc-play').classList.add('hidden');
+  document.getElementById('esc-end').classList.remove('hidden');
+  document.getElementById('esc-endtitle').textContent='🏆 Kamu Lolos!';
+  document.getElementById('esc-final').textContent=escScore;
+  document.getElementById('esc-msg').textContent='Kamu berhasil keluar dari semua ruangan! FPB sudah kamu kuasai!';
+  playWin();escReview();
+}
+function escFail(msg){
+  clearInterval(escTimer);
+  document.getElementById('esc-play').classList.add('hidden');
+  document.getElementById('esc-end').classList.remove('hidden');
+  document.getElementById('esc-endtitle').textContent='🔒 Gagal Meloloskan Diri';
+  document.getElementById('esc-final').textContent=escScore;
+  document.getElementById('esc-msg').textContent=msg+' Pelajari lagi pembahasannya di bawah, lalu coba lagi!';
+  escReview();
+}
+function escReview(){
+  var rv=document.getElementById('esc-review');rv.innerHTML='';
+  escLog.forEach(function(x){
+    var d=document.createElement('div');
+    d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5';
+    d.innerHTML='<b>'+x.room+'</b> '+(x.ok?'✅':'❌')+'<br><span style="color:#666">'+x.why+'</span>';
+    rv.appendChild(d);
+  });
+}
+
+/* ============ GAME 5: LCM TRAIN STATION ============ */
+var TR_ROUNDS=[
+ {a:4,b:6,opts:['8 menit','12 menit','18 menit','24 menit'],ans:1},
+ {a:6,b:8,opts:['12 menit','16 menit','24 menit','48 menit'],ans:2},
+ {a:5,b:10,opts:['5 menit','10 menit','15 menit','20 menit'],ans:1},
+ {a:8,b:12,opts:['16 menit','20 menit','24 menit','32 menit'],ans:2},
+ {a:9,b:12,opts:['18 menit','27 menit','36 menit','72 menit'],ans:2},
+ {a:10,b:15,opts:['20 menit','25 menit','30 menit','45 menit'],ans:2},
+ {a:12,b:18,opts:['24 menit','30 menit','36 menit','54 menit'],ans:2},
+ {a:18,b:24,opts:['36 menit','48 menit','54 menit','72 menit'],ans:3}
+];
+var trRound=0,trHearts=3,trScore=0,trLog=[];
+function trLcm(a,b){var g=a;var x=b;while(x){var t=x;x=g%x;g=t;}return a*b/g;}
+function trMults(n,upto){var r=[];for(var m=n;m<=upto;m+=n)r.push(m);return r;}
+function trStart(){
+  trRound=0;trHearts=3;trScore=0;trLog=[];
+  document.getElementById('tr-start').classList.add('hidden');
+  document.getElementById('tr-end').classList.add('hidden');
+  document.getElementById('tr-play').classList.remove('hidden');
+  trAsk();
+}
+function trStations(){
+  var host=document.getElementById('tr-stations');host.innerHTML='';
+  for(var i=0;i<8;i++){
+    var d=document.createElement('div');
+    d.className='tr-st'+(i<trRound?' done':(i===trRound?' now':''));
+    d.textContent=i<trRound?'✓':(i+1);
+    host.appendChild(d);
+  }
+}
+function trAsk(){
+  var r=TR_ROUNDS[trRound];
+  var L=trLcm(r.a,r.b);
+  trStations();
+  document.getElementById('tr-round').textContent=trRound+1;
+  document.getElementById('tr-score').textContent=trScore;
+  document.getElementById('tr-hearts').textContent='❤️'.repeat(Math.max(0,trHearts))||'💔';
+  document.getElementById('tr-trackA').textContent='🚂 Kereta A — tiap '+r.a+' menit';
+  document.getElementById('tr-trackB').textContent='🚆 Kereta B — tiap '+r.b+' menit';
+  function chips(host,base){
+    var h=document.getElementById(host);h.innerHTML='';
+    trMults(base,L).forEach(function(m){
+      var c=document.createElement('span');
+      c.className='tr-chip'+(m===L?' meet':'');c.textContent=m+(m===L?' ★':'');
+      h.appendChild(c);
+    });
+  }
+  chips('tr-multA',r.a);chips('tr-multB',r.b);
+  document.getElementById('tr-q').innerHTML='Kereta A datang setiap <b>'+r.a+' menit</b> dan Kereta B setiap <b>'+r.b+' menit</b>. Keduanya baru saja berangkat bersama. <b>Dalam berapa menit keduanya tiba bersamaan lagi?</b>';
+  var box=document.getElementById('tr-opts');box.innerHTML='';
+  var fb=document.getElementById('tr-fb');fb.style.display='none';fb.className='feedback';
+  document.getElementById('tr-next').classList.add('hidden');
+  r.opts.forEach(function(opt,i){
+    var b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opt;
+    b.onclick=function(){trAnswer(i,b);};
+    box.appendChild(b);
+  });
+}
+function trAnswer(i,btn){
+  var r=TR_ROUNDS[trRound];
+  var L=trLcm(r.a,r.b);
+  var btns=document.querySelectorAll('#tr-opts .opt');
+  btns.forEach(function(b){b.disabled=true;});
+  var fb=document.getElementById('tr-fb');
+  var ok=i===r.ans;
+  if(ok){
+    trScore+=100;btn.classList.add('correct');
+    fb.className='feedback ok';
+    fb.innerHTML='🚂 <b>Benar! Kereta berangkat!</b> KPK dari '+r.a+' dan '+r.b+' adalah <b>'+L+'</b> menit. Kelipatan '+r.a+': '+trMults(r.a,L).join(', ')+'. Kelipatan '+r.b+': '+trMults(r.b,L).join(', ')+'.';
+    playCorrect();playLadder();
+  }else{
+    trHearts--;
+    btn.classList.add('wrong');btns[r.ans].classList.add('correct');
+    fb.className='feedback no';
+    fb.innerHTML='❌ <b>Belum tepat.</b> Jawaban benar: <b>'+r.opts[r.ans]+'</b>. KPK dari '+r.a+' dan '+r.b+' adalah <b>'+L+'</b> menit. Kelipatan '+r.a+': '+trMults(r.a,L).join(', ')+'. Kelipatan '+r.b+': '+trMults(r.b,L).join(', ')+'.';
+    playWrong();
+  }
+  trLog.push({q:'Kereta tiap '+r.a+' & '+r.b+' menit',ok:ok,ans:r.opts[r.ans],lcm:L});
+  fb.style.display='block';
+  document.getElementById('tr-hearts').textContent='❤️'.repeat(Math.max(0,trHearts))||'💔';
+  document.getElementById('tr-score').textContent=trScore;
+  var nb=document.getElementById('tr-next');
+  nb.textContent=trRound===TR_ROUNDS.length-1?'🏁 Lihat Hasil Akhir':'🚂 Lanjut ke Stasiun Berikutnya →';
+  nb.classList.remove('hidden');
+  if(trHearts<=0){nb.textContent='🏁 Lihat Hasil Akhir';}
+}
+function trNext(){
+  if(trRound<TR_ROUNDS.length-1&&trHearts>0){trRound++;trAsk();}
+  else{
+    document.getElementById('tr-play').classList.add('hidden');
+    document.getElementById('tr-end').classList.remove('hidden');
+    var correct=trLog.filter(function(x){return x.ok;}).length;
+    document.getElementById('tr-final').textContent=correct;
+    document.getElementById('tr-endtitle').textContent=trHearts<=0?'😢 Perjalanan Terhenti':'🏁 Perjalanan Selesai!';
+    document.getElementById('tr-msg').textContent=
+      correct===8?'🌟 Sempurna! Semua kereta tiba tepat waktu berkat kamu!':
+      correct>=6?'👍 Hebat! Hampir semua stasiun kamu lewati!':
+      '💪 Terus berlatih! Ingat: cari kelipatan terkecil yang sama dari kedua bilangan.';
+    if(correct>=6)playWin();
+    var rv=document.getElementById('tr-review');rv.innerHTML='';
+    trLog.forEach(function(x,i){
+      var d=document.createElement('div');
+      d.style.cssText='border:1px solid #ddd;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:15px;line-height:1.5';
+      d.innerHTML='<b>Stasiun '+(i+1)+': '+x.q+'</b> '+(x.ok?'✅':'❌')+'<br>Jawaban: <b>'+x.ans+'</b> (KPK = '+x.lcm+' menit)';
+      rv.appendChild(d);
+    });
+  }
+}
+
+</script>
+</body>
+</html>
