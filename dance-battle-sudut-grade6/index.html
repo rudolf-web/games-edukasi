@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dance Battle: Sudut — Matematika Kelas 6</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+    color: #fff;
+    background: #0f0a1e;
+    background-image:
+      radial-gradient(600px 400px at 15% -5%, rgba(168, 85, 247, .55), transparent 60%),
+      radial-gradient(500px 380px at 90% 10%, rgba(236, 72, 153, .45), transparent 60%),
+      radial-gradient(500px 500px at 50% 110%, rgba(59, 130, 246, .4), transparent 60%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  #app { max-width: 760px; margin: 0 auto; padding: 12px 12px 40px; }
+  .hidden { display: none !important; }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: rgba(255, 255, 255, .08);
+    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: 20px; padding: 10px 14px; backdrop-filter: blur(6px);
+    box-shadow: 0 0 24px rgba(168, 85, 247, .35);
+  }
+  .logo { font-size: 34px; line-height: 1; filter: drop-shadow(0 0 8px rgba(236, 72, 153, .8)); }
+  .title h1 {
+    margin: 0; font-size: 24px; letter-spacing: 1px; font-family: "Arial Black", Arial, sans-serif;
+    background: linear-gradient(90deg, #f0abfc, #ec4899, #818cf8, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 10px rgba(236, 72, 153, .55));
+  }
+  .title p { margin: 2px 0 0; font-size: 13px; color: #d8b4fe; }
+  .spacer { flex: 1; }
+  .pill {
+    background: rgba(0, 0, 0, .35); border: 2px solid #a855f7; color: #f5d0fe;
+    border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 14px; white-space: nowrap;
+  }
+  .pill.combo { border-color: #ec4899; color: #fbcfe8; }
+  .pill.combo.hot { background: #ec4899; color: #fff; box-shadow: 0 0 14px #ec4899; animation: pulseGlow .5s ease-in-out infinite alternate; }
+  .pill.fever {
+    border-color: #facc15; color: #fef08a; background: #a16207;
+    box-shadow: 0 0 16px #facc15; animation: pulseGlow .3s ease-in-out infinite alternate;
+  }
+  @keyframes pulseGlow { from { transform: scale(1); } to { transform: scale(1.07); } }
+  .iconbtn {
+    width: 42px; height: 42px; border-radius: 12px; border: 2px solid rgba(255, 255, 255, .25);
+    background: rgba(255, 255, 255, .1); color: #fff; font-size: 20px; cursor: pointer;
+  }
+  .iconbtn.off { opacity: .45; }
+
+  /* ---------- cards & buttons ---------- */
+  .card {
+    background: rgba(255, 255, 255, .07);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 22px; padding: 20px; margin-top: 14px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .35);
+  }
+  .card.center { text-align: center; }
+  .card.light { background: #fffdf7; color: #1f2937; border: 2px solid #f0abfc; box-shadow: 0 8px 30px rgba(236, 72, 153, .35); }
+  .btn {
+    display: inline-block; border: none; cursor: pointer; font-weight: 800; font-size: 18px; color: #fff;
+    border-radius: 999px; padding: 14px 32px; font-family: inherit;
+    background: linear-gradient(90deg, #ec4899, #a855f7, #3b82f6);
+    box-shadow: 0 6px 20px rgba(236, 72, 153, .5), inset 0 -3px 0 rgba(0, 0, 0, .25);
+    transition: transform .08s ease;
+  }
+  .btn:active { transform: scale(.95); }
+  .btn.ghost {
+    background: rgba(255, 255, 255, .1); color: #f5d0fe;
+    border: 2px solid #c084fc; box-shadow: none;
+  }
+  .muted { color: #c4b5fd; font-size: 13px; }
+  .howto {
+    background: rgba(0, 0, 0, .3); border: 2px dashed #c084fc; border-radius: 16px;
+    padding: 12px 16px; font-size: 15px; line-height: 1.7; text-align: left; margin: 14px 0;
+  }
+  .worldchips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0; }
+  .wchip { border-radius: 999px; padding: 6px 14px; font-weight: 800; font-size: 13px; color: #fff; box-shadow: 0 0 10px rgba(255,255,255,.25); }
+  .trophy { font-size: 56px; line-height: 1; }
+  .grad-text {
+    font-family: "Arial Black", Arial, sans-serif;
+    background: linear-gradient(90deg, #f0abfc, #ec4899, #818cf8, #22d3ee);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* ---------- stage (dancer + floor) ---------- */
+  #stageWrap {
+    position: relative; overflow: hidden; border-radius: 22px; margin-top: 14px;
+    border: 2px solid rgba(240, 171, 252, .5);
+    background: linear-gradient(180deg, #1e1033 0%, #2a1650 55%, #12081f 100%);
+    box-shadow: 0 0 30px rgba(168, 85, 247, .45);
+  }
+  .beams {
+    position: absolute; inset: -60%; pointer-events: none; opacity: .35;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(236, 72, 153, .5) 12deg, transparent 24deg, transparent 60deg, rgba(34, 211, 238, .5) 72deg, transparent 84deg, transparent 120deg, rgba(250, 204, 21, .45) 132deg, transparent 144deg, transparent 180deg, rgba(168, 85, 247, .5) 192deg, transparent 204deg, transparent 240deg, rgba(236, 72, 153, .5) 252deg, transparent 264deg, transparent 300deg, rgba(34, 211, 238, .5) 312deg, transparent 324deg);
+    animation: spinSlow 14s linear infinite;
+  }
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+  .floatnote {
+    position: absolute; font-size: 26px; opacity: .85; pointer-events: none;
+    animation: floatUp 3.2s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(255,255,255,.6));
+  }
+  @keyframes floatUp { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-16px) rotate(10deg); } }
+  #dancerWrap { position: relative; display: flex; justify-content: center; padding-top: 8px; }
+  #dancerSvg { width: 210px; height: 294px; filter: drop-shadow(0 0 18px rgba(236, 72, 153, .65)); }
+  .armR, .armL, .legL, .legR, .headG, .bodyG { transform-box: view-box; }
+  .armR { transform-origin: 128px 92px; }
+  .armL { transform-origin: 72px 92px; }
+  .legL { transform-origin: 88px 152px; }
+  .legR { transform-origin: 112px 152px; }
+  .headG { transform-origin: 100px 74px; }
+  /* idle: gentle sway */
+  #dancerWrap.idle #dancerSvg { animation: sway 1.8s ease-in-out infinite; }
+  @keyframes sway { 0%, 100% { transform: translateY(0) rotate(-1.5deg); } 50% { transform: translateY(-5px) rotate(1.5deg); } }
+  /* dancing: energetic TikTok groove */
+  #dancerWrap.dancing #dancerSvg { animation: groove .5s ease-in-out infinite; }
+  @keyframes groove { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-16px) rotate(3deg); } }
+  #dancerWrap.dancing .armR { animation: woahR .5s ease-in-out infinite; }
+  @keyframes woahR { 0%, 100% { transform: rotate(-28deg); } 50% { transform: rotate(22deg); } }
+  #dancerWrap.dancing .armL { animation: woahL .5s ease-in-out infinite; }
+  @keyframes woahL { 0%, 100% { transform: rotate(18deg); } 50% { transform: rotate(-20deg); } }
+  #dancerWrap.dancing .legL { animation: kickL .5s ease-in-out infinite; }
+  @keyframes kickL { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-14deg); } }
+  #dancerWrap.dancing .legR { animation: kickR .5s ease-in-out infinite; }
+  @keyframes kickR { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(4deg); } }
+  #dancerWrap.dancing .headG { animation: bob .5s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: rotate(-6deg) translateY(0); } 50% { transform: rotate(6deg) translateY(-3px); } }
+  /* FEVER: faster + stronger glow */
+  #dancerWrap.fever #dancerSvg { animation: groove .28s ease-in-out infinite; filter: drop-shadow(0 0 26px rgba(250, 204, 21, .9)); }
+  #dancerWrap.fever .armR { animation: woahR .28s ease-in-out infinite; }
+  #dancerWrap.fever .armL { animation: woahL .28s ease-in-out infinite; }
+  #dancerWrap.fever .legL { animation: kickL .28s ease-in-out infinite; }
+  #dancerWrap.fever .legR { animation: kickR .28s ease-in-out infinite; }
+  #dancerWrap.fever .headG { animation: bob .28s ease-in-out infinite; }
+  /* sad: slump */
+  #dancerWrap.sad #dancerSvg { animation: slump .4s ease forwards; filter: drop-shadow(0 0 8px rgba(100,116,139,.6)) grayscale(.4); }
+  @keyframes slump { to { transform: rotate(7deg) translateY(8px); } }
+  /* dance floor */
+  #floor {
+    position: relative; height: 74px; margin-top: -6px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.14) 0 2px, transparent 2px 62px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.10) 0 2px, transparent 2px 24px),
+      linear-gradient(90deg, #ec4899, #a855f7, #3b82f6, #22d3ee, #ec4899);
+    background-size: auto, auto, 200% 100%;
+    opacity: .9;
+  }
+  body.fever #floor { animation: floorFlash .35s linear infinite; }
+  @keyframes floorFlash { 0% { filter: hue-rotate(0deg) brightness(1.2); } 50% { filter: hue-rotate(120deg) brightness(1.8); } 100% { filter: hue-rotate(360deg) brightness(1.2); } }
+  #eq { position: absolute; left: 0; right: 0; bottom: 0; height: 26px; display: flex; align-items: flex-end; gap: 4px; padding: 0 18px; pointer-events: none; }
+  #eq i { flex: 1; background: linear-gradient(180deg, #22d3ee, #ec4899); border-radius: 4px 4px 0 0; height: 30%; animation: eqB 0.6s ease-in-out infinite alternate; }
+  #eq i:nth-child(2n) { animation-duration: .45s; background: linear-gradient(180deg, #facc15, #a855f7); }
+  #eq i:nth-child(3n) { animation-duration: .75s; }
+  @keyframes eqB { from { height: 18%; } to { height: 100%; } }
+  body.fever #eq i { animation-duration: .22s; }
+
+  /* ---------- game screen ---------- */
+  #stageBar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #stageBadge { font-weight: 800; color: #fff; border-radius: 999px; padding: 6px 14px; font-size: 14px; box-shadow: 0 0 12px rgba(255,255,255,.3); }
+  #roundText { font-weight: 800; color: #f5d0fe; font-size: 14px; }
+  .progress { height: 12px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; margin-top: 10px; }
+  #progressBar { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #ec4899, #a855f7, #22d3ee); transition: width .4s ease; box-shadow: 0 0 10px #ec4899; }
+  #qText { font-size: 19px; font-weight: 800; color: #1f2937; margin: 6px 0 4px; }
+  #qHint { font-size: 14px; color: #9d174d; background: #fce7f3; border-radius: 10px; padding: 6px 10px; display: inline-block; margin-top: 6px; }
+  #figBox svg { width: 100%; max-width: 340px; height: auto; display: block; margin: 6px auto 0; }
+  #answers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .ans {
+    display: flex; align-items: center; gap: 10px; min-height: 68px; cursor: pointer;
+    border: none; border-radius: 18px; padding: 10px 14px; text-align: left; font-family: inherit;
+    color: #fff; box-shadow: 0 6px 16px rgba(0,0,0,.4), inset 0 -3px 0 rgba(0,0,0,.25);
+    transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+  }
+  .ans:active { transform: scale(.96); }
+  .ans .alet {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.95);
+    color: #1f2937; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center;
+  }
+  .ans .aval { font-size: 26px; font-weight: 800; }
+  .ans.c0 { background: linear-gradient(135deg, #f97316, #ea580c); }
+  .ans.c1 { background: linear-gradient(135deg, #ec4899, #db2777); }
+  .ans.c2 { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .ans.c3 { background: linear-gradient(135deg, #0ea5e9, #2563eb); }
+  .ans.wrong { filter: grayscale(.8) brightness(.6); opacity: .55; animation: shakeX .3s ease; }
+  .ans.correct { outline: 4px solid #4ade80; box-shadow: 0 0 22px #4ade80; animation: popOk .35s ease; }
+  .ans:disabled { cursor: default; }
+  @keyframes shakeX { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  @keyframes popOk { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  #feedback { margin-top: 14px; }
+  .fb-ok { background: #f0fdf4; border: 2px solid #86efac; color: #14532d; border-radius: 16px; padding: 14px; }
+  .fb-bad { background: #fef2f2; border: 2px solid #fca5a5; color: #7f1d1d; border-radius: 16px; padding: 14px; }
+  .fb-ok h3, .fb-bad h3 { margin: 0 0 6px; }
+  .fb-ok p, .fb-bad p { margin: 4px 0; line-height: 1.55; }
+
+  /* ---------- concept overlay ---------- */
+  #conceptOverlay {
+    position: fixed; inset: 0; background: rgba(10, 4, 24, .82); z-index: 50;
+    display: flex; align-items: flex-start; justify-content: center; padding: 20px 12px; overflow-y: auto;
+  }
+  #conceptOverlay .card { max-width: 760px; width: 100%; background: #fffdf7; color: #1f2937; }
+  #ruleGrid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  @media (min-width: 560px) { #ruleGrid { grid-template-columns: 1fr 1fr; } }
+  .rule { border: 2px solid #f0abfc; border-radius: 16px; padding: 12px; background: #fff; }
+  .rule h4 { margin: 0 0 4px; color: #9d174d; }
+  .rule p { margin: 0; font-size: 14px; line-height: 1.5; }
+  .rule svg { width: 100%; height: auto; display: block; margin-top: 6px; }
+
+  /* ---------- final review ---------- */
+  .revitem { background: #fff; color: #1f2937; border-radius: 14px; padding: 12px; margin-top: 10px; text-align: left; border: 2px solid #e5e7eb; }
+  .revitem.correct { border-color: #86efac; }
+  .revitem.wrong { border-color: #fca5a5; }
+  .revitem svg { width: 100%; max-width: 300px; height: auto; display: block; margin: 6px auto 0; }
+  .revitem p { margin: 6px 0 0; line-height: 1.5; }
+  #finalScore { font-size: 34px; font-weight: 800; margin: 4px 0; }
+
+  @media print {
+    body { background: #fff; }
+    header, #stageWrap, #answers, #conceptOverlay, .btn, .howto { display: none !important; }
+    .card, .revitem { box-shadow: none; border: 1px solid #999; }
+    #app { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="logo">🎧</div>
+    <div class="title">
+      <h1>DANCE BATTLE: SUDUT</h1>
+      <p>Penari Sudut • Matematika Kelas 6</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="pill" id="scorePill">⭐ Skor: 0</span>
+    <span class="pill combo" id="comboPill">🔥 Combo ×0</span>
+    <span class="pill fever hidden" id="feverPill">⚡ FEVER MODE</span>
+    <button class="iconbtn" id="musicBtn" title="Musik">🎵</button>
+    <button class="iconbtn" id="soundBtn" title="Suara">🔊</button>
+    <button class="iconbtn" id="bookBtn" title="Buku Petunjuk">📖</button>
+  </header>
+
+  <!-- ============ START ============ -->
+  <section id="screen-start" class="card center">
+    <div class="trophy">🕺✨</div>
+    <h2 class="grad-text" style="font-size:28px;margin:8px 0">DANCE BATTLE: SUDUT</h2>
+    <p style="line-height:1.6;margin:6px 0">
+      Lantai dansa Kerajaan Sudut sedang sepi… Semua sudut bersembunyi!
+      Jawab soal sudut dengan benar, dan penari kita akan nge-dance mengikuti beat-nya. 💃🕺<br>
+      Kombo beruntun = <b>FEVER MODE</b> — musik makin nge-beat, lantai makin menyala! ⚡
+    </p>
+    <div class="worldchips" id="worldChips"></div>
+    <div class="howto">
+      🕺 <b>Cara main:</b> Lihat gambar sudutnya, lalu <b>ketuk jawaban A / B / C / D</b> yang benar. Gampang — tinggal ketuk, tanpa membidik!<br>
+      🎵 Jawaban benar = penari nge-dance + poin. Jawaban salah = coba lagi, kombo saja yang hilang.<br>
+      🔥 Jawaban benar beruntun = <b>combo</b> naik. Combo ×3 atau lebih = <b>FEVER MODE</b>!<br>
+      📖 Belum hafal aturannya? Buka <b>Buku Petunjuk</b> di pojok kanan atas.
+    </div>
+    <button class="btn" id="startBtn">▶ &nbsp;MULAI BERDANSA</button>
+    <p class="muted" style="font-size:13px;margin-top:12px">20 lagu • 5 panggung • Tanpa hitungan waktu — santai saja!</p>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="screen-game" class="hidden">
+    <div class="card" style="padding:14px 16px">
+      <div id="stageBar">
+        <span id="stageBadge">🕺 Panggung 1 — Hutan</span>
+        <span id="roundText">Lagu 1 / 20</span>
+      </div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <div class="card light" style="margin-top:12px">
+        <p id="qText"></p>
+        <span id="qHint"></span>
+        <div id="figBox"></div>
+      </div>
+    </div>
+
+    <div id="stageWrap">
+      <div class="beams"></div>
+      <span class="floatnote" style="left:8%;top:14px">🎵</span>
+      <span class="floatnote" style="left:22%;top:44px;animation-delay:.7s">✨</span>
+      <span class="floatnote" style="right:20%;top:30px;animation-delay:1.1s">🔥</span>
+      <span class="floatnote" style="right:7%;top:52px;animation-delay:.4s">🎶</span>
+      <div id="dancerWrap" class="idle">
+        <svg id="dancerSvg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg" aria-label="Penari">
+          <!-- sneakers + baggy pants -->
+          <g class="legL">
+            <path d="M88,150 L78,202 L74,240" fill="none" stroke="#1e3a8a" stroke-width="24" stroke-linecap="round"/>
+            <rect x="56" y="238" width="34" height="15" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <rect x="56" y="249" width="34" height="6" rx="3" fill="#ec4899"/>
+          </g>
+          <g class="legR">
+            <path d="M112,150 L126,200 L132,238" fill="none" stroke="#1e3a8a" stroke-width="24" stroke-linecap="round"/>
+            <rect x="118" y="236" width="34" height="15" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <rect x="118" y="247" width="34" height="6" rx="3" fill="#22d3ee"/>
+          </g>
+          <!-- hoodie body -->
+          <g class="bodyG">
+            <path d="M66,86 Q100,72 134,86 L140,150 Q100,162 60,150 Z" fill="#a855f7" stroke="#6b21a8" stroke-width="3"/>
+            <path d="M66,86 Q100,72 134,86 L134,96 Q100,110 66,96 Z" fill="#c084fc"/>
+            <rect x="92" y="118" width="16" height="22" rx="6" fill="#7c3aed"/>
+            <path d="M88,100 L86,122 M112,100 L114,122" stroke="#e9d5ff" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="100" cy="128" r="4" fill="#facc15"/>
+          </g>
+          <!-- left arm: bent across body -->
+          <g class="armL">
+            <path d="M72,92 L50,116 L80,128" fill="none" stroke="#a855f7" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="80" cy="128" r="9" fill="#f2c29b"/>
+          </g>
+          <!-- right arm: raised, doing the woah -->
+          <g class="armR">
+            <path d="M128,92 L152,62 L146,32" fill="none" stroke="#a855f7" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="146" cy="30" r="9" fill="#f2c29b"/>
+          </g>
+          <!-- head with backwards cap -->
+          <g class="headG">
+            <circle cx="100" cy="52" r="22" fill="#f2c29b"/>
+            <path d="M78,52 Q78,28 100,28 Q122,28 122,52 Q110,40 100,40 Q90,40 78,52 Z" fill="#ec4899"/>
+            <ellipse cx="72" cy="44" rx="12" ry="6" fill="#db2777" transform="rotate(-18 72 44)"/>
+            <circle cx="92" cy="52" r="2.6" fill="#1f2937"/>
+            <circle cx="108" cy="52" r="2.6" fill="#1f2937"/>
+            <path d="M92,62 Q100,69 108,62" fill="none" stroke="#1f2937" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="86" cy="58" r="3.5" fill="#fda4af" opacity=".7"/>
+            <circle cx="114" cy="58" r="3.5" fill="#fda4af" opacity=".7"/>
+          </g>
+        </svg>
+      </div>
+      <div id="floor"><div id="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+    </div>
+
+    <div id="answers"></div>
+    <div id="feedback"></div>
+  </section>
+
+  <!-- ============ STAGE COMPLETE ============ -->
+  <section id="screen-stage" class="card center hidden">
+    <div class="trophy" id="stageEmoji">🎉</div>
+    <h2 id="stageTitle" class="grad-text" style="font-size:26px;margin:6px 0">Panggung Selesai!</h2>
+    <p id="stageText" style="line-height:1.6"></p>
+    <p id="stageScore" style="font-weight:800;font-size:18px;color:#f0abfc"></p>
+    <button class="btn" id="nextStageBtn">Lanjut ke Panggung Berikutnya ➜</button>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="screen-final" class="card center hidden">
+    <div class="trophy">🏆</div>
+    <h2 class="grad-text" style="font-size:26px;margin:6px 0">BINTANG PANGGUNG!</h2>
+    <p>Kamu berhasil menyelesaikan semua 20 lagu. Kerajaan Sudut kembali bergoyang! 🎉</p>
+    <p id="finalScore" class="grad-text">0 poin</p>
+    <p id="finalStats" style="font-weight:800"></p>
+    <div id="reviewBox" style="margin-top:14px"></div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn" id="printBtn">🖨️ Cetak Hasil</button>
+      <button class="btn ghost" id="againBtn">🔁 Main Lagi</button>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPT OVERLAY ============ -->
+  <div id="conceptOverlay" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 style="margin:0;color:#9d174d">📖 Buku Petunjuk — Aturan Sudut</h2>
+        <button class="iconbtn" id="closeBookBtn" title="Tutup" style="color:#1f2937;border-color:#d1d5db;background:#f3f4f6">✖️</button>
+      </div>
+      <p style="margin:8px 0 0;color:#4b5563">Pelajari dulu 6 aturan ini — semuanya dipakai di 20 lagu!</p>
+      <div id="ruleGrid"></div>
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn" id="closeBookBtn2">Siap, Ayo Berdansa! 🕺</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------- figure helpers (copied verbatim from Angle Archer) ---------------- */
+const SVGNS = "http://www.w3.org/2000/svg";
+const INK = "#1f2937", TEAL = "#0f766e", GOLD = "#b45309", RED = "#dc2626";
+
+function P(cx, cy, r, deg) {
+  const a = deg * Math.PI / 180;
+  return [cx + r * Math.cos(a), cy - r * Math.sin(a)];
+}
+function arcPath(cx, cy, r, a1, a2) {
+  const p1 = P(cx, cy, r, a1), p2 = P(cx, cy, r, a2);
+  return `M ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} A ${r} ${r} 0 0 0 ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+}
+function angTo(x1, y1, x2, y2) { return Math.atan2(-(y2 - y1), x2 - x1) * 180 / Math.PI; }
+function norm180(a) { while (a <= -180) a += 360; while (a > 180) a -= 360; return a; }
+function cornerArc(V, U, W, r) {
+  const a1 = angTo(V[0], V[1], U[0], U[1]);
+  const a2 = angTo(V[0], V[1], W[0], W[1]);
+  const d = norm180(a2 - a1);
+  const p1 = P(V[0], V[1], r, a1), p2 = P(V[0], V[1], r, a1 + d);
+  const sweep = d > 0 ? 0 : 1;
+  return `M ${p1[0].toFixed(1)} ${p1[1].toFixed(1)} A ${r} ${r} 0 0 ${sweep} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+}
+function txt(x, y, s, size, fill, weight) {
+  return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-size="${size}" font-weight="${weight || 800}" fill="${fill || INK}" text-anchor="middle">${s}</text>`;
+}
+function figWrap(inner) {
+  return `<svg viewBox="0 0 300 220" xmlns="${SVGNS}">${inner}</svg>`;
+}
+
+/* Garis lurus: sudut diketahui `g` di kiri, "?" di kanan. */
+function figStraight(g) {
+  const cx = 150, cy = 130, ray = 180 - g;
+  const p = P(cx, cy, 96, ray);
+  const lMid = P(cx, cy, 66, 180 - g / 2), rMid = P(cx, cy, 86, ray / 2);
+  return figWrap(`
+    <line x1="28" y1="${cy}" x2="272" y2="${cy}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 36, ray, 180)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 52, 0, ray)}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(lMid[0], lMid[1] + 7, g + "°", 21, TEAL)}
+    ${txt(rMid[0], rMid[1] + 8, "?", 26, RED)}
+    <circle cx="${cx}" cy="${cy}" r="4" fill="${INK}"/>`);
+}
+
+/* Sudut siku-siku dibagi dua: `g` dari alas, "?" sisanya. */
+function figRight(g) {
+  const cx = 140, cy = 165, p = P(cx, cy, 100, g);
+  const gMid = P(cx, cy, 68, g / 2), qMid = P(cx, cy, 88, (g + 90) / 2);
+  return figWrap(`
+    <line x1="${cx}" y1="${cy}" x2="262" y2="${cy}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${cx}" y2="48" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+    <path d="M ${cx + 20} ${cy} L ${cx + 20} ${cy - 20} L ${cx} ${cy - 20}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 40, 0, g)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 58, g, 90)}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(gMid[0], gMid[1] + 7, g + "°", 21, TEAL)}
+    ${txt(qMid[0], qMid[1] + 8, "?", 26, RED)}
+    <circle cx="${cx}" cy="${cy}" r="4" fill="${INK}"/>`);
+}
+
+/* Dua garis berpotongan: sudut `g` di kanan atas; "?" bertolak belakang
+   (adj=false) atau bersebelahan/berpelurus (adj=true). */
+function figCross(g, adj) {
+  const cx = 150, cy = 110;
+  const a = P(cx, cy, 105, g), b = P(cx, cy, 105, g + 180);
+  const gMid = P(cx, cy, 56, g / 2);
+  const qMid = adj ? P(cx, cy, 56, (g + 180) / 2) : P(cx, cy, 56, 180 + g / 2);
+  const qArc = adj ? arcPath(cx, cy, 32, g, 180) : arcPath(cx, cy, 32, 180, 180 + g);
+  return figWrap(`
+    <line x1="30" y1="${cy}" x2="270" y2="${cy}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 32, 0, g)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${qArc}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(gMid[0], gMid[1] + 7, g + "°", 21, TEAL)}
+    ${txt(qMid[0], qMid[1] + 8, "?", 26, RED)}
+    <circle cx="${cx}" cy="${cy}" r="4" fill="${INK}"/>`);
+}
+
+/* Sudut di satu titik: vals = sudut diketahui, satu sektor "?" (indeks u). */
+function figPoint(vals, u) {
+  const cx = 150, cy = 112, R = 92;
+  const all = vals.slice(); all.splice(u, 0, 360 - vals.reduce((a, b) => a + b, 0));
+  let inner = `<circle cx="${cx}" cy="${cy}" r="4" fill="${INK}"/>`, cum = 0;
+  const radii = [30, 46, 62, 78];
+  all.forEach((v, i) => {
+    const a1 = cum, a2 = cum + v; cum = a2;
+    const end = P(cx, cy, R, a1);
+    inner += `<line x1="${cx}" y1="${cy}" x2="${end[0].toFixed(1)}" y2="${end[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>`;
+    const mid = (a1 + a2) / 2, rr = radii[i % radii.length];
+    const lp = P(cx, cy, rr + 34, mid);
+    inner += `<path d="${arcPath(cx, cy, rr, a1, a2)}" fill="none" stroke="${i === u ? RED : TEAL}" stroke-width="3"/>`;
+    inner += txt(lp[0], lp[1] + 7, i === u ? "?" : v + "°", i === u ? 26 : 20, i === u ? RED : TEAL);
+  });
+  return figWrap(inner);
+}
+
+/* Segitiga: sudut alas a dan b diketahui, sudut puncak "?". */
+function figTriangle(a, b) {
+  const A = [55, 178], B = [245, 178];
+  const t = (B[0] - A[0]) * Math.sin(b * Math.PI / 180) / Math.sin((a + b) * Math.PI / 180);
+  const C = [A[0] + t * Math.cos(a * Math.PI / 180), A[1] - t * Math.sin(a * Math.PI / 180)];
+  const f = v => v.toFixed(1);
+  const lA = P(A[0], A[1], 46, a / 2), lB = P(B[0], B[1], 46, 180 - b / 2);
+  const cxC = (A[0] + B[0] + C[0]) / 3, cyC = (A[1] + B[1] + C[1]) / 3 + 14;
+  return figWrap(`
+    <polygon points="${f(A[0])},${f(A[1])} ${f(B[0])},${f(B[1])} ${f(C[0])},${f(C[1])}" fill="#ecfdf5" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+    <path d="${cornerArc(A, B, C, 24)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${cornerArc(B, A, C, 24)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${cornerArc(C, A, B, 24)}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(lA[0], lA[1] + 7, a + "°", 21, TEAL)}
+    ${txt(lB[0], lB[1] + 7, b + "°", 21, TEAL)}
+    ${txt(cxC, cyC, "?", 26, RED)}`);
+}
+
+/* Segiempat: tiga sudut diketahui (a,b,c), satu "?" di kanan bawah. */
+function figQuad(a, b, c) {
+  const V = [[62, 172], [112, 58], [228, 52], [248, 172]];
+  const pts = V.map(v => v[0] + "," + v[1]).join(" ");
+  const lbl = [[88, 148, a], [126, 84, b], [208, 80, c], [222, 148, "?"]];
+  let inner = `<polygon points="${pts}" fill="#eff6ff" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
+  for (let i = 0; i < 4; i++) {
+    const U = V[(i + 3) % 4], W = V[(i + 1) % 4];
+    inner += `<path d="${cornerArc(V[i], U, W, 22)}" fill="none" stroke="${i === 3 ? RED : TEAL}" stroke-width="3"/>`;
+  }
+  lbl.forEach(([x, y, s]) => { inner += txt(x, y, s === "?" ? "?" : s + "°", s === "?" ? 26 : 20, s === "?" ? RED : TEAL); });
+  return figWrap(inner);
+}
+
+/* Segitiga dengan sisi AC diperpanjang: "?" adalah sudut LUAR di puncak C. */
+function figTriangleExterior(a, b) {
+  const A = [55, 178], B = [245, 178];
+  const t = (B[0] - A[0]) * Math.sin(b * Math.PI / 180) / Math.sin((a + b) * Math.PI / 180);
+  const C = [A[0] + t * Math.cos(a * Math.PI / 180), A[1] - t * Math.sin(a * Math.PI / 180)];
+  const dx = C[0] - A[0], dy = C[1] - A[1], len = Math.hypot(dx, dy);
+  const E = [C[0] + dx / len * 50, C[1] + dy / len * 50];
+  const f = v => v.toFixed(1);
+  const lA = P(A[0], A[1], 46, a / 2), lB = P(B[0], B[1], 46, 180 - b / 2);
+  const dE = angTo(C[0], C[1], E[0], E[1]), dB = angTo(C[0], C[1], B[0], B[1]);
+  const bis = dE + norm180(dB - dE) / 2;
+  const lp = P(C[0], C[1], 56, bis);
+  return figWrap(`
+    <polygon points="${f(A[0])},${f(A[1])} ${f(B[0])},${f(B[1])} ${f(C[0])},${f(C[1])}" fill="#ecfdf5" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="${f(C[0])}" y1="${f(C[1])}" x2="${f(E[0])}" y2="${f(E[1])}" stroke="${INK}" stroke-width="3" stroke-dasharray="7 5"/>
+    <path d="${cornerArc(A, B, C, 24)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${cornerArc(B, A, C, 24)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${cornerArc(C, E, B, 28)}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(lA[0], lA[1] + 7, a + "°", 21, TEAL)}
+    ${txt(lB[0], lB[1] + 7, b + "°", 21, TEAL)}
+    ${txt(lp[0], lp[1] + 8, "?", 26, RED)}`);
+}
+
+/* Garis lurus tiga sudut: `g1`,`g2` diketahui, "?" ketiga. */
+function figStraight3(g1, g2) {
+  const cx = 150, cy = 140;
+  const r1 = 180 - g1, r2 = r1 - g2;
+  const p1 = P(cx, cy, 100, r1), p2 = P(cx, cy, 100, r2);
+  const m1 = P(cx, cy, 66, 180 - g1 / 2), m2 = P(cx, cy, 66, r1 - g2 / 2), m3 = P(cx, cy, 88, r2 / 2);
+  return figWrap(`
+    <line x1="28" y1="${cy}" x2="272" y2="${cy}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${p1[0].toFixed(1)}" y2="${p1[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+    <line x1="${cx}" y1="${cy}" x2="${p2[0].toFixed(1)}" y2="${p2[1].toFixed(1)}" stroke="${INK}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 34, r1, 180)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 34, r2, r1)}" fill="none" stroke="${TEAL}" stroke-width="3"/>
+    <path d="${arcPath(cx, cy, 50, 0, r2)}" fill="none" stroke="${RED}" stroke-width="3"/>
+    ${txt(m1[0], m1[1] + 7, g1 + "°", 20, TEAL)}
+    ${txt(m2[0], m2[1] + 7, g2 + "°", 20, TEAL)}
+    ${txt(m3[0], m3[1] + 8, "?", 26, RED)}
+    <circle cx="${cx}" cy="${cy}" r="4" fill="${INK}"/>`);
+}
+
+/* ---------------- 20 questions (copied verbatim — answers already verified) ---------------- */
+const WORLDS = [
+  { name: "Hutan", emoji: "🌳", sky1: "#7dd3fc", sky2: "#dcfce7", ground: "#65a30d", badge: "#166534" },
+  { name: "Gurun", emoji: "🏜️", sky1: "#fde68a", sky2: "#fef3c7", ground: "#d97706", badge: "#92400e" },
+  { name: "Kastil", emoji: "🏰", sky1: "#c4b5fd", sky2: "#ede9fe", ground: "#6d28d9", badge: "#4c1d95" },
+  { name: "Langit", emoji: "☁️", sky1: "#93c5fd", sky2: "#dbeafe", ground: "#0284c7", badge: "#0c4a6e" },
+  { name: "Gunung Berapi", emoji: "🌋", sky1: "#fca5a5", sky2: "#fee2e2", ground: "#7f1d1d", badge: "#7f1d1d" },
+];
+
+const QUESTIONS = [
+  { w: 0, fig: () => figStraight(65),  opts: [115, 65, 25, 90],  correct: 0,
+    hint: "Sudut pada garis lurus berjumlah 180°.",
+    work: "180° − 65° = 115°." },
+  { w: 0, fig: () => figRight(28),    opts: [62, 28, 118, 90],  correct: 0,
+    hint: "Sudut siku-siku berjumlah 90°.",
+    work: "90° − 28° = 62°." },
+  { w: 0, fig: () => figStraight(132), opts: [48, 132, 42, 78], correct: 0,
+    hint: "Sudut pada garis lurus berjumlah 180°.",
+    work: "180° − 132° = 48°." },
+  { w: 0, fig: () => figRight(35),    opts: [55, 35, 125, 145], correct: 0,
+    hint: "Sudut siku-siku berjumlah 90°.",
+    work: "90° − 35° = 55°." },
+  { w: 1, fig: () => figCross(78),    opts: [78, 102, 12, 90],  correct: 0,
+    hint: "Sudut bertolak belakang besarnya sama.",
+    work: "Sudut ? bertolak belakang dengan 78°, jadi sama besar: 78°." },
+  { w: 1, fig: () => figPoint([90, 120, 85], 3), opts: [65, 55, 75, 295], correct: 0,
+    hint: "Sudut di satu titik berjumlah 360°.",
+    work: "360° − (90° + 120° + 85°) = 360° − 295° = 65°." },
+  { w: 1, fig: () => figCross(110, true), opts: [70, 110, 20, 90], correct: 0,
+    hint: "Sudut berpelurus berjumlah 180°.",
+    work: "Sudut ? berpelurus dengan 110°: 180° − 110° = 70°." },
+  { w: 1, fig: () => figPoint([150, 90], 2), opts: [120, 60, 30, 210], correct: 0,
+    hint: "Sudut di satu titik berjumlah 360°.",
+    work: "360° − (150° + 90°) = 360° − 240° = 120°." },
+  { w: 2, fig: () => figTriangle(50, 60), opts: [70, 60, 110, 50], correct: 0,
+    hint: "Jumlah sudut segitiga 180°.",
+    work: "180° − (50° + 60°) = 180° − 110° = 70°." },
+  { w: 2, fig: () => figTriangle(90, 35), opts: [55, 35, 90, 125], correct: 0,
+    hint: "Jumlah sudut segitiga 180°.",
+    work: "180° − (90° + 35°) = 180° − 125° = 55°." },
+  { w: 2, fig: () => figTriangle(75, 75), opts: [30, 75, 105, 150], correct: 0,
+    hint: "Jumlah sudut segitiga 180°.",
+    work: "180° − (75° + 75°) = 180° − 150° = 30°." },
+  { w: 2, fig: () => figTriangle(42, 98), opts: [40, 42, 98, 140], correct: 0,
+    hint: "Jumlah sudut segitiga 180°.",
+    work: "180° − (42° + 98°) = 180° − 140° = 40°." },
+  { w: 3, fig: () => figQuad(90, 85, 95), opts: [90, 85, 95, 270], correct: 0,
+    hint: "Jumlah sudut segiempat 360°.",
+    work: "360° − (90° + 85° + 95°) = 360° − 270° = 90°." },
+  { w: 3, fig: () => figRight(40),    opts: [50, 40, 130, 90],  correct: 0,
+    hint: "Sudut siku-siku berjumlah 90°.",
+    work: "90° − 40° = 50°." },
+  { w: 3, fig: () => figStraight3(45, 90), opts: [45, 90, 135, 55], correct: 0,
+    hint: "Sudut pada garis lurus berjumlah 180°.",
+    work: "180° − (45° + 90°) = 180° − 135° = 45°." },
+  { w: 3, fig: () => figQuad(80, 110, 70), opts: [100, 80, 110, 260], correct: 0,
+    hint: "Jumlah sudut segiempat 360°.",
+    work: "360° − (80° + 110° + 70°) = 360° − 260° = 100°." },
+  { w: 4, fig: () => figPoint([100, 100, 80], 3), opts: [80, 100, 60, 280], correct: 0,
+    hint: "Sudut di satu titik berjumlah 360°.",
+    work: "360° − (100° + 100° + 80°) = 360° − 280° = 80°." },
+  { w: 4, fig: () => figTriangleExterior(63, 57), opts: [120, 60, 57, 63], correct: 0,
+    hint: "Cari sudut dalam segitiga dulu, baru sudut luarnya.",
+    work: "Sudut dalam ketiga = 180° − (63° + 57°) = 60°. Sudut luar ? = 180° − 60° = 120°." },
+  { w: 4, fig: () => figStraight3(60, 60), opts: [60, 90, 45, 30], correct: 0,
+    hint: "Tiga sudut sama besar pada garis lurus.",
+    work: "Ketiga sudut sama besar dan berjumlah 180°: 180° ÷ 3 = 60°." },
+  { w: 4, fig: () => figStraight3(90, 45), opts: [45, 90, 135, 55], correct: 0,
+    hint: "Sudut pada garis lurus berjumlah 180°.",
+    work: "180° − (90° + 45°) = 180° − 135° = 45°." },
+];
+
+/* ---------------- concept page (copied verbatim) ---------------- */
+const RULES = [
+  { t: "1. Sudut Berpenyiku", d: "Dua sudut yang jumlahnya 90° (membentuk sudut siku-siku). Contoh: 28° + 62° = 90°.", fig: () => figRight(28) },
+  { t: "2. Sudut Berpelurus", d: "Dua sudut pada satu garis lurus, jumlahnya 180°. Contoh: 65° + 115° = 180°.", fig: () => figStraight(65) },
+  { t: "3. Sudut Bertolak Belakang", d: "Sudut yang saling berhadapan besarnya sama.", fig: () => figCross(78) },
+  { t: "4. Sudut di Satu Titik", d: "Semua sudut yang mengelilingi satu titik berjumlah 360°.", fig: () => figPoint([90, 120, 85], 3) },
+  { t: "5. Sudut dalam Segitiga", d: "Jumlah ketiga sudut segitiga selalu 180°.", fig: () => figTriangle(50, 60) },
+  { t: "6. Sudut dalam Segiempat", d: "Jumlah keempat sudut segiempat selalu 360°.", fig: () => figQuad(90, 85, 95) },
+];
+function renderRules() {
+  $("ruleGrid").innerHTML = RULES.map(r =>
+    `<div class="rule"><h4>${r.t}</h4><p>${r.d}</p>${r.fig()}</div>`).join("");
+}
+
+/* ---------------- Audio (Web Audio API, all synthesised — modern pop/hip-hop beat) ---------------- */
+const AudioSys = {
+  ctx: null, master: null, noiseBuf: null,
+  sfxOn: true, musicOn: true, fever: false,
+  musicTimer: null, musicStep: 0, nextNote: 0,
+
+  init() {
+    if (this.ctx) { if (this.ctx.state === "suspended") this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.9; /* overall cap at 90% */
+    this.master.connect(this.ctx.destination);
+    const len = this.ctx.sampleRate;
+    this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = this.noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  },
+
+  tone(freq, dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+    osc.type = o.type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    if (o.slide) osc.frequency.exponentialRampToValueAtTime(Math.max(20, o.slide), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(this.master);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  },
+
+  noise(dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.noiseBuf; src.loop = true;
+    const f = this.ctx.createBiquadFilter();
+    f.type = o.type || "bandpass";
+    f.frequency.setValueAtTime(o.freq || 1200, t);
+    if (o.slideTo) f.frequency.exponentialRampToValueAtTime(o.slideTo, t + dur);
+    f.Q.value = o.q || 1;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master);
+    src.start(t); src.stop(t + dur + 0.05);
+  },
+
+  /* --- SFX --- */
+  riff() { /* correct: bright synth arpeggio, very TikTok */
+    const notes = [440, 523.25, 659.25, 880];
+    notes.forEach((f, i) => this.tone(f, 0.16, { type: "square", gain: 0.09, at: i * 0.055 }));
+    this.tone(110, 0.22, { gain: 0.3, slide: 55 });
+    this.noise(0.08, { gain: 0.14, freq: 3000, slideTo: 800 });
+  },
+  thud() { /* wrong: dull thud + low womp */
+    this.tone(130, 0.28, { gain: 0.3, slide: 65 });
+    this.tone(220, 0.32, { type: "square", gain: 0.07, slide: 150, at: 0.02 });
+    this.noise(0.12, { gain: 0.12, freq: 400, type: "lowpass" });
+  },
+  riser() { /* entering FEVER MODE */
+    this.noise(0.5, { gain: 0.16, freq: 400, slideTo: 5000, q: 1.5 });
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, 0.18, { type: "square", gain: 0.09, at: i * 0.06 }));
+  },
+  fanfare() {
+    const seq = [[523.25, 0], [659.25, 0.12], [783.99, 0.24], [1046.5, 0.36], [783.99, 0.52], [1046.5, 0.66]];
+    seq.forEach(([f, at]) => this.tone(f, 0.26, { type: "square", gain: 0.09, at }));
+    this.tone(110, 0.5, { gain: 0.28, slide: 55 });
+  },
+
+  /* --- background music: modern pop / hip-hop beat --- */
+  mtone(freq, dur, gain, type, slide) {
+    if (!this.ctx) return;
+    const t = this.nextNote;
+    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+    osc.type = type || "triangle";
+    osc.frequency.setValueAtTime(freq, t);
+    if (slide) osc.frequency.exponentialRampToValueAtTime(Math.max(20, slide), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(this.master);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  },
+  mnoise(dur, gain, freq, type) {
+    if (!this.ctx) return;
+    const t = this.nextNote;
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.noiseBuf; src.loop = true;
+    const f = this.ctx.createBiquadFilter();
+    f.type = type || "highpass"; f.frequency.setValueAtTime(freq, t); f.Q.value = 1;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master);
+    src.start(t); src.stop(t + dur + 0.05);
+  },
+  startMusic() {
+    if (!this.ctx || this.musicTimer) return;
+    this.musicStep = 0;
+    this.nextNote = this.ctx.currentTime + 0.1;
+    this.musicTimer = setInterval(() => this.scheduleMusic(), 120);
+  },
+  stopMusic() { if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; } },
+  scheduleMusic() {
+    if (!this.ctx || !this.musicOn) return;
+    const stepDur = this.fever ? 0.19 : 0.30; /* ~100 BPM 8ths, faster in FEVER */
+    const BASS = { 0: 55, 2: 55, 3: 65.41, 5: 55, 6: 49, 8: 55, 10: 82.41, 11: 73.42, 13: 65.41, 14: 49 };
+    const MEL = { 0: 440, 3: 523.25, 6: 587.33, 10: 659.25, 12: 783.99 };
+    while (this.nextNote < this.ctx.currentTime + 0.35) {
+      const s = this.musicStep % 16;
+      if (s === 0 || s === 4 || s === 8 || s === 12 || (this.fever && s === 14))
+        this.mtone(130, 0.16, 0.5, "sine", 45); /* kick */
+      if (s === 4 || s === 12) this.mnoise(0.12, 0.16, 1800, "bandpass"); /* snare/clap */
+      if (s % 2 === 1 || this.fever) this.mnoise(0.035, 0.05, 7500, "highpass"); /* hat */
+      if (BASS[s]) this.mtone(BASS[s], stepDur * 0.95, 0.24, "sine", BASS[s] * 0.94); /* 808 bass */
+      if (MEL[s]) this.mtone(MEL[s], 0.22, 0.045, "square"); /* synth pluck */
+      this.nextNote += stepDur;
+      this.musicStep++;
+    }
+  }
+};
+
+/* ---------------- game state ---------------- */
+const $ = id => document.getElementById(id);
+const state = {
+  round: 0, score: 0, combo: 0, bestCombo: 0,
+  attempts: 0, results: [], order: [0, 1, 2, 3],
+  roundDone: false, started: false, dancing: false, sad: false
+};
+const LETTERS = ["A", "B", "C", "D"];
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+/* ONE screen switcher — every transition goes through here (Angle Archer bug fix). */
+function showScreen(id) {
+  ["screen-start", "screen-game", "screen-stage", "screen-final"].forEach(s => $(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function updateStats() {
+  $("scorePill").textContent = "⭐ Skor: " + state.score;
+  const cp = $("comboPill");
+  cp.textContent = "🔥 Combo ×" + state.combo;
+  cp.classList.toggle("hot", state.combo >= 3);
+  const fever = state.combo >= 3;
+  document.body.classList.toggle("fever", fever);
+  $("feverPill").classList.toggle("hidden", !fever);
+  AudioSys.fever = fever;
+  applyDancer();
+}
+function applyDancer() {
+  const w = $("dancerWrap");
+  if (!w) return;
+  w.className = state.sad ? "sad" : (state.combo >= 3 ? "fever" : (state.dancing ? "dancing" : "idle"));
+}
+function setStage(w) {
+  const W = WORLDS[w];
+  const badge = $("stageBadge");
+  badge.textContent = "🕺 Panggung " + (w + 1) + " — " + W.name + " " + W.emoji;
+  badge.style.background = W.badge;
+  $("stageWrap").style.borderColor = W.sky1;
+}
+
+/* ---------------- round flow ---------------- */
+function loadRound(i) {
+  showScreen("screen-game"); /* entering a round ALWAYS shows the game screen */
+  const q = QUESTIONS[i];
+  state.round = i; state.attempts = 0; state.roundDone = false;
+  state.dancing = false; state.sad = false;
+  setStage(q.w);
+  $("roundText").textContent = "Lagu " + (i + 1) + " / 20";
+  $("progressBar").style.width = (i / 20 * 100) + "%";
+  $("qText").textContent = "Berapakah besar sudut yang ditandai “?” ?";
+  $("qHint").textContent = "💡 Kunci: " + q.hint;
+  $("figBox").innerHTML = q.fig();
+  $("feedback").innerHTML = "";
+  renderAnswers();
+  applyDancer();
+}
+function renderAnswers() {
+  const q = QUESTIONS[state.round];
+  state.order = shuffle([0, 1, 2, 3]); /* which option goes to which button */
+  $("answers").innerHTML = state.order.map((optIdx, i) =>
+    `<button class="ans c${i}" data-opt="${optIdx}"><span class="alet">${LETTERS[i]}</span><span class="aval">${q.opts[optIdx]}°</span></button>`
+  ).join("");
+}
+function tapAnswer(optIdx, btnEl) {
+  if (state.roundDone) return;
+  const q = QUESTIONS[state.round];
+  if (optIdx === q.correct) {
+    const wasFever = state.combo >= 3;
+    const firstTap = state.attempts === 0;
+    const newCombo = firstTap ? state.combo + 1 : 0;
+    let pts;
+    if (firstTap) { pts = 100 + 25 * Math.min(newCombo - 1, 4); state.combo = newCombo; }
+    else if (state.attempts === 1) { pts = 50; state.combo = 0; }
+    else { pts = 25; state.combo = 0; }
+    state.bestCombo = Math.max(state.bestCombo, state.combo);
+    state.score += pts;
+    state.roundDone = true;
+    state.results.push({ q: state.round, attempts: state.attempts, pts });
+    state.dancing = true; state.sad = false;
+    if (btnEl && btnEl.classList) btnEl.classList.add("correct");
+    document.querySelectorAll("#answers .ans").forEach(b => { b.disabled = true; });
+    AudioSys.riff();
+    if (state.combo >= 3 && !wasFever) AudioSys.riser();
+    updateStats();
+    $("feedback").innerHTML = `<div class="fb-ok">
+      <h3>🎉 BENAR! +${pts} poin ${state.combo >= 2 ? "— Combo ×" + state.combo + " 🔥" : ""}</h3>
+      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
+      <button class="btn" id="nextBtn" style="margin-top:8px">${state.round === 19 ? "Lihat Hasil 🏆" : (state.round + 1) % 4 === 0 ? "Panggung Selesai! 🎉" : "Lagu Berikutnya ➜"}</button>
+    </div>`;
+    $("nextBtn").addEventListener("click", advance);
+  } else {
+    AudioSys.thud();
+    state.attempts++;
+    state.combo = 0;
+    state.dancing = false; state.sad = true;
+    updateStats();
+    if (btnEl) {
+      if (btnEl.classList) btnEl.classList.add("wrong");
+      btnEl.disabled = true;
+    }
+    $("feedback").innerHTML = `<div class="fb-bad">
+      <h3>💥 Aduh, itu ${q.opts[optIdx]}° — bukan yang benar!</h3>
+      <p>Combo hilang, tapi tenang — ketuk lagi! Ingat: ${q.hint}</p>
+    </div>`;
+    setTimeout(() => { state.sad = false; applyDancer(); }, 900);
+  }
+}
+function advance() {
+  AudioSys.init();
+  const next = state.round + 1;
+  if (next >= 20) { showFinal(); return; }
+  if (next % 4 === 0) { showStageComplete(next / 4 - 1, next / 4); return; }
+  loadRound(next);
+}
+function showStageComplete(doneIdx, nextIdx) {
+  const W = WORLDS[doneIdx], N = WORLDS[nextIdx];
+  $("stageEmoji").textContent = W.emoji + " 🎉";
+  $("stageTitle").textContent = "Panggung " + W.name + " Tuntas!";
+  $("stageText").textContent = "Keren banget! Kamu sudah menyelesaikan 4 lagu di Panggung " + W.name +
+    ". Beat berikutnya menunggumu di Panggung " + N.name + " " + N.emoji + ".";
+  $("stageScore").textContent = "Skor sementara: " + state.score;
+  $("nextStageBtn").textContent = "Lanjut ke Panggung " + N.name + " " + N.emoji + " ➜";
+  AudioSys.fanfare();
+  showScreen("screen-stage");
+}
+
+/* ---------------- final screen ---------------- */
+function showFinal() {
+  const firstTry = state.results.filter(r => r.attempts === 0).length;
+  $("finalScore").textContent = state.score + " poin";
+  $("finalStats").textContent = "Benar di jawaban pertama: " + firstTry + "/20  •  Combo terbaik: ×" + state.bestCombo;
+  let html = "<h3 style='text-align:center;margin-bottom:12px;color:#1f2937'>📋 Review Jawaban</h3>";
+  state.results.forEach(r => {
+    const q = QUESTIONS[r.q], W = WORLDS[q.w];
+    const cls = r.attempts === 0 ? "correct" : "wrong";
+    const note = r.attempts === 0 ? "✅ jawaban pertama!" : "↩️ benar setelah " + r.attempts + "× mencoba";
+    html += `<div class="revitem ${cls}">
+      <b>Lagu ${r.q + 1} — Panggung ${W.name} ${W.emoji}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} poin
+      ${q.fig()}
+      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
+    </div>`;
+  });
+  $("reviewBox").innerHTML = html;
+  $("progressBar").style.width = "100%";
+  AudioSys.fanfare();
+  showScreen("screen-final");
+}
+
+/* ---------------- wiring ---------------- */
+function resetGame() {
+  state.round = 0; state.score = 0; state.combo = 0; state.bestCombo = 0;
+  state.attempts = 0; state.results = []; state.roundDone = false;
+  state.dancing = false; state.sad = false;
+  updateStats();
+}
+$("startBtn").addEventListener("click", () => {
+  AudioSys.init();
+  if (AudioSys.musicOn) AudioSys.startMusic();
+  state.started = true;
+  resetGame();
+  loadRound(0);
+});
+$("bookBtn").addEventListener("click", () => { renderRules(); $("conceptOverlay").classList.remove("hidden"); });
+$("closeBookBtn").addEventListener("click", () => $("conceptOverlay").classList.add("hidden"));
+$("closeBookBtn2").addEventListener("click", () => $("conceptOverlay").classList.add("hidden"));
+$("conceptOverlay").addEventListener("click", e => { if (e.target === $("conceptOverlay")) $("conceptOverlay").classList.add("hidden"); });
+$("soundBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.sfxOn = !AudioSys.sfxOn;
+  $("soundBtn").textContent = AudioSys.sfxOn ? "🔊" : "🔇";
+  $("soundBtn").classList.toggle("off", !AudioSys.sfxOn);
+  if (AudioSys.sfxOn) AudioSys.riff();
+});
+$("musicBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.musicOn = !AudioSys.musicOn;
+  $("musicBtn").textContent = AudioSys.musicOn ? "🎵" : "🚫";
+  $("musicBtn").classList.toggle("off", !AudioSys.musicOn);
+  if (AudioSys.musicOn) AudioSys.startMusic(); else AudioSys.stopMusic();
+});
+$("answers").addEventListener("click", e => {
+  const b = e.target && e.target.closest ? e.target.closest("button.ans") : null;
+  if (!b || state.roundDone) return;
+  tapAnswer(parseInt(b.dataset.opt, 10), b);
+});
+$("nextStageBtn").addEventListener("click", () => { showScreen("screen-game"); loadRound(state.round + 1); });
+$("printBtn").addEventListener("click", () => window.print());
+$("againBtn").addEventListener("click", () => { resetGame(); showScreen("screen-start"); });
+
+$("worldChips").innerHTML = WORLDS.map((w, i) =>
+  `<span class="wchip" style="background:${w.badge}">${w.emoji} Panggung ${i + 1} — ${w.name}</span>`).join("");
+</script>
+</body>
+</html>
