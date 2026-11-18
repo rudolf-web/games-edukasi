@@ -749,6 +749,7 @@ function renderTargets() {
 function loadRound(i) {
   const q = QUESTIONS[i];
   state.round = i; state.attempts = 0; state.roundDone = false; state.flying = false;
+  showScreen("screen-game"); /* entering a round always shows the game screen (fixes dead "Lanjut ke Dunia" button) */
   setWorld(q.w);
   $("roundText").textContent = "Misi " + (i + 1) + " / 20";
   $("progressBar").style.width = (i / 20 * 100) + "%";
