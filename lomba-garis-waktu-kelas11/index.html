@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lomba Garis Waktu — Antropologi Kelas XI</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: linear-gradient(180deg, #1e1b4b 0%, #4c1d95 45%, #7c2d12 100%);
+    min-height: 100vh; color: #1e293b; }
+  #app { max-width: 860px; margin: 0 auto; padding: 12px; }
+  header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    background: rgba(255,255,255,.95); border-radius: 18px; padding: 10px 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+  header h1 { font-size: 20px; margin: 0; color: #4c1d95; line-height: 1.1; }
+  header .sub { font-size: 12px; color: #64748b; margin: 0; }
+  .spacer { flex: 1; }
+  .pill { background: #fef3c7; border: 2px solid #f59e0b; color: #92400e;
+    border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 14px; white-space: nowrap; }
+  .pill.pos { background: #ede9fe; border-color: #8b5cf6; color: #4c1d95; }
+  .iconbtn { width: 42px; height: 42px; font-size: 20px; border-radius: 12px;
+    border: 2px solid #d1d5db; background: #fff; cursor: pointer; }
+  .iconbtn.off { opacity: .45; }
+  .card { background: #fffdf7; border-radius: 22px; padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35); margin-top: 14px; }
+  .center { text-align: center; }
+  .hidden { display: none !important; }
+  .btn { display: inline-block; border: none; cursor: pointer; font-weight: 800;
+    font-size: 18px; color: #fff; border-radius: 999px; padding: 13px 30px;
+    background: linear-gradient(180deg, #8b5cf6, #6d28d9); box-shadow: 0 5px 0 #4c1d95; }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #4c1d95; }
+  .btn.green { background: linear-gradient(180deg, #22c55e, #16a34a); box-shadow: 0 5px 0 #14532d; }
+  .btn.green:active { box-shadow: 0 2px 0 #14532d; }
+  .btn.ghost { background: #fff; color: #4c1d95; border: 2px solid #c4b5fd; box-shadow: none; }
+  .muted { color: #64748b; }
+  .howto { text-align: left; background: #ede9fe; border: 2px dashed #a78bfa;
+    border-radius: 16px; padding: 12px 18px; font-size: 15px; line-height: 1.65; margin: 14px 0; }
+  .erachips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0; }
+  .echip { border-radius: 999px; padding: 6px 14px; font-weight: 800; font-size: 13px; color: #fff; }
+  /* ---------- race track ---------- */
+  #trackWrap { background: linear-gradient(180deg, #fef3c7, #fde68a); border-radius: 18px;
+    padding: 14px; margin-top: 12px; box-shadow: inset 0 0 0 2px #f59e0b; }
+  #stations { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 10px; }
+  .station { flex: 1; text-align: center; font-size: 11px; font-weight: 800; color: #78350f; }
+  .station .dot { width: 14px; height: 14px; border-radius: 50%; background: #fff;
+    border: 3px solid #b45309; margin: 0 auto 3px; }
+  .station.done .dot { background: #22c55e; border-color: #14532d; }
+  .lane { position: relative; height: 44px; border-bottom: 2px dashed rgba(120,53,15,.35); }
+  .lane:last-child { border-bottom: none; }
+  .lane .who { position: absolute; left: 0; top: 10px; font-size: 12px; font-weight: 800; color: #78350f; z-index: 2; }
+  .runner { position: absolute; top: 2px; font-size: 30px; line-height: 1;
+    transition: left .7s ease; filter: drop-shadow(0 3px 2px rgba(0,0,0,.35)); z-index: 1; }
+  .runner .tag { display: block; font-size: 10px; font-weight: 800; text-align: center; color: #1e293b;
+    background: rgba(255,255,255,.85); border-radius: 999px; padding: 0 5px; margin-top: 1px; }
+  .finish-flag { position: absolute; right: 0; top: -6px; font-size: 26px; }
+  #standings { font-size: 13px; font-weight: 700; color: #78350f; margin-top: 8px; }
+  .progress { height: 12px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+  .progress > div { height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899); width: 0%; transition: width .5s; }
+  /* ---------- era cards (3D flip) ---------- */
+  #eraCards { display: flex; gap: 8px; margin-top: 12px; }
+  .era-card { flex: 1; perspective: 600px; min-height: 92px; }
+  .era-inner { position: relative; width: 100%; height: 100%; min-height: 92px;
+    transform-style: preserve-3d; transition: transform .7s; }
+  .era-card.flipped .era-inner { transform: rotateY(180deg); }
+  .era-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6px 2px; color: #fff; font-weight: 800; font-size: 11px; text-align: center;
+    box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+  .era-face .eicon { width: 44px; height: 44px; }
+  .era-face.back { transform: rotateY(180deg); }
+  .era-face .chk { font-size: 26px; }
+  /* ---------- question ---------- */
+  #missionCard { margin-top: 14px; }
+  #qText { font-size: 18px; font-weight: 700; line-height: 1.5; margin: 4px 0; }
+  #qHint { font-size: 13px; color: #92400e; background: #fef3c7; border-radius: 10px;
+    padding: 5px 10px; display: inline-block; margin-top: 4px; }
+  #eraIconBox { display: flex; justify-content: center; margin: 8px 0 2px; }
+  #eraIconBox .bigicon { width: 110px; height: 110px; filter: drop-shadow(0 8px 8px rgba(0,0,0,.35)); }
+  .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .opt { border: 2px solid #c4b5fd; background: #fff; border-radius: 14px; padding: 12px 10px;
+    font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; line-height: 1.35; color: #1e293b; }
+  .opt:active { transform: scale(.97); }
+  .opt .letter { display: inline-block; width: 26px; height: 26px; line-height: 26px; text-align: center;
+    border-radius: 50%; background: #ede9fe; color: #4c1d95; margin-right: 6px; font-size: 14px; }
+  .opt.wrong { opacity: .45; text-decoration: line-through; }
+  .opt.right { background: #dcfce7; border-color: #22c55e; }
+  .order-items { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 14px; }
+  .ochip { border: 2px solid #f59e0b; background: #fffbeb; border-radius: 999px; padding: 10px 16px;
+    font-size: 15px; font-weight: 800; cursor: pointer; color: #78350f; }
+  .ochip:active { transform: scale(.95); }
+  .ochip.locked { background: #dcfce7; border-color: #22c55e; color: #14532d; cursor: default; }
+  .ochip.shake { animation: shake .4s; border-color: #ef4444; background: #fee2e2; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  #orderSeq { margin-top: 12px; font-size: 15px; font-weight: 700; color: #4c1d95; min-height: 24px; }
+  .fb-ok { background: #dcfce7; border: 2px solid #22c55e; border-radius: 14px; padding: 12px; margin-top: 12px; text-align: left; }
+  .fb-bad { background: #fee2e2; border: 2px solid #ef4444; border-radius: 14px; padding: 12px; margin-top: 12px; text-align: left; }
+  .fb-ok h3, .fb-bad h3 { margin: 0 0 6px; }
+  .fb-ok p, .fb-bad p { margin: 4px 0; line-height: 1.5; }
+  /* ---------- podium (3D feel) ---------- */
+  #podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px;
+    margin: 18px 0 6px; perspective: 700px; }
+  .pod { width: 30%; border-radius: 12px 12px 0 0; color: #fff; font-weight: 800; padding: 10px 4px;
+    box-shadow: 0 10px 20px rgba(0,0,0,.4); transform: rotateX(8deg); }
+  .pod .pemoji { font-size: 34px; display: block; }
+  .pod .pname { font-size: 14px; display: block; margin-top: 2px; }
+  .pod .ppos { font-size: 12px; opacity: .9; }
+  .pod.first { height: 150px; background: linear-gradient(180deg, #fbbf24, #b45309); }
+  .pod.second { height: 115px; background: linear-gradient(180deg, #cbd5e1, #64748b); }
+  .pod.third { height: 90px; background: linear-gradient(180deg, #d97706, #92400e); }
+  .revitem { text-align: left; background: #fff; border: 2px solid #e2e8f0; border-radius: 14px;
+    padding: 12px; margin: 10px 0; }
+  .revitem.correct { border-color: #22c55e; }
+  .revitem.wrong { border-color: #f59e0b; }
+  .revitem p { margin: 6px 0 0; line-height: 1.5; }
+  /* ---------- concept overlay ---------- */
+  #conceptOverlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 50;
+    overflow-y: auto; padding: 16px; }
+  #conceptOverlay .card { max-width: 760px; margin: 20px auto; width: 100%; }
+  .rule { border: 2px solid #e2e8f0; border-radius: 14px; padding: 12px; margin: 10px 0; text-align: left; }
+  .rule h4 { margin: 0 0 4px; color: #4c1d95; }
+  .rule p { margin: 4px 0; line-height: 1.55; }
+  .rule .ricon { float: right; width: 64px; height: 64px; margin-left: 8px; }
+  #aimHint { text-align: center; color: #fff; font-weight: 700; margin-top: 8px; font-size: 13px;
+    text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+  @media print { header, .btn, #conceptOverlay { display: none !important; } }
+  @media (max-width: 560px) { .opts { grid-template-columns: 1fr; } header h1 { font-size: 17px; } }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <h1>🏁 LOMBA GARIS WAKTU</h1>
+      <p class="sub">Antropologi Kelas XI • Kebudayaan Zaman Prasejarah</p>
+    </div>
+    <div class="spacer"></div>
+    <span class="pill" id="scorePill">⭐ Skor: 0</span>
+    <span class="pill pos" id="posPill">🥇 Posisi: 1 / 4</span>
+    <button class="iconbtn" id="musicBtn" title="Musik">🎵</button>
+    <button class="iconbtn" id="soundBtn" title="Suara">🔊</button>
+    <button class="iconbtn" id="bookBtn" title="Peta Zaman">🗺️</button>
+  </header>
+
+  <!-- ============ START ============ -->
+  <section id="screen-start" class="card center">
+    <div style="font-size:64px;line-height:1">🏁🕰️🏺</div>
+    <h2 style="color:#4c1d95;margin:8px 0">Lomba Garis Waktu</h2>
+    <p style="line-height:1.6">Kamu dan 3 pelari lain berlomba menyusuri garis waktu — dari <b>Zaman Batu Tua</b> sampai <b>Zaman Logam</b>! Jawab soal dengan benar untuk berlari maju. Tapi hati-hati: para pesaing terus bergerak, jadi jangan terlalu lama berpikir. Siapa yang paling dulu sampai di garis finis?</p>
+    <div class="erachips" id="startEraChips"></div>
+    <div class="howto">
+      🏃 <b>Cara main:</b> Jawab soal untuk berlari.<br>
+      ✅ Jawaban benar percobaan pertama = <b>+100 poin dan lari 2 langkah</b>.<br>
+      🔁 Jawaban salah tidak membuatmu maju — coba lagi (poin lebih kecil).<br>
+      🧩 Soal urutan: ketuk kartu <b>sesuai urutan waktu yang benar</b>.<br>
+      🏆 Yang pertama mencapai garis finis menang! Ada podium di akhir.
+    </div>
+    <button class="btn" id="startBtn">▶ &nbsp;MULAI BALAPAN</button>
+    <p class="muted" style="font-size:13px;margin-top:12px">21 putaran • 5 zaman • Tanpa hitungan mundur per soal — tapi pesaing terus berlari!</p>
+  </section>
+
+  <!-- ============ RACE ============ -->
+  <section id="screen-race" class="hidden">
+    <div id="trackWrap">
+      <div id="stations"></div>
+      <div id="lanes"></div>
+      <div id="standings"></div>
+      <div class="finish-flag" style="position:relative;text-align:right;margin-top:-8px">🏁</div>
+      <div class="progress"><div id="progressBar"></div></div>
+    </div>
+    <div id="eraCards"></div>
+    <div class="card" id="missionCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <span id="roundText" style="font-weight:800;color:#4c1d95">Putaran 1 / 21</span>
+        <span id="eraBadge" style="font-weight:800;color:#fff;border-radius:999px;padding:5px 12px;font-size:13px;background:#3f5a3e">🪓 Paleolitikum</span>
+      </div>
+      <div id="eraIconBox"></div>
+      <p id="qText"></p>
+      <span id="qHint"></span>
+      <div class="opts" id="optsBox"></div>
+      <div id="orderBox" class="hidden">
+        <div class="order-items" id="orderItems"></div>
+        <div id="orderSeq"></div>
+      </div>
+      <div id="feedback"></div>
+    </div>
+    <div id="aimHint">💡 Jawab benar untuk berlari — pesaingmu tidak menunggu!</div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="screen-final" class="card center hidden">
+    <div style="font-size:56px;line-height:1">🏆</div>
+    <h2 id="finalTitle" style="color:#4c1d95;margin:6px 0">Balapan Selesai!</h2>
+    <p id="finalSub" style="line-height:1.6"></p>
+    <div id="podium"></div>
+    <p id="finalScore" style="font-weight:800;font-size:20px;color:#92400e"></p>
+    <p id="finalStats" style="color:#475569"></p>
+    <div id="reviewBox"></div>
+    <button class="btn" id="printBtn">🖨️ Cetak Hasil</button>
+    <button class="btn ghost" id="againBtn">🔄 Main Lagi</button>
+  </section>
+
+  <!-- ============ CONCEPT OVERLAY ============ -->
+  <div id="conceptOverlay" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2 style="color:#4c1d95;margin:0">🗺️ Peta Zaman</h2>
+        <button class="iconbtn" id="closeBookBtn" title="Tutup">✖️</button>
+      </div>
+      <p class="muted" style="line-height:1.55">Zaman prasejarah adalah masa sebelum manusia mengenal tulisan. Menurut Soekmono, prasejarah dimulai ketika manusia mulai berkebudayaan dan berakhir ketika manusia mengenal tulisan. Istilah lainnya: <b>praaksara</b> dan <b>nirleka</b>.</p>
+      <div id="petaGrid"></div>
+      <h3 style="color:#4c1d95">📅 Tanggal Penting</h3>
+      <div style="text-align:left;line-height:1.7">
+        <p>• <b>±4000 SM</b> — Bangsa Sumeria dan Mesir mengakhiri zaman prasejarah (sudah mengenal tulisan).</p>
+        <p>• <b>Abad ke-5 M</b> — Indonesia memasuki zaman sejarah: prasasti Kutai (Raja Mulawarman) dan Jawa Barat (Raja Purnawarman).</p>
+        <p>• <b>1934</b> — Kebudayaan Ngandong ditemukan von Koenigswald.</p>
+        <p>• <b>1935</b> — Kebudayaan Pacitan ditemukan von Koenigswald di Sungai Baksoko, Punung.</p>
+        <p>• <b>1941</b> — Von Koenigswald menemukan fosil Meganthropus paleojavanicus di Sangiran.</p>
+        <p>• <b>1954</b> — Soekmono diangkat menjadi Kepala Dinas Purbakala (hingga 1974).</p>
+        <p>• <b>2016</b> — Penggalian situs Tanjungsari, Karawang.</p>
+      </div>
+      <h3 style="color:#4c1d95">🌍 Zaman Geologi</h3>
+      <div style="text-align:left;line-height:1.7">
+        <p>• <b>Azoikum</b> — Bumi baru terbentuk, belum ada kehidupan.</p>
+        <p>• <b>Palaeozoikum</b> — ±340 juta tahun; flora dan fauna mulai ada.</p>
+        <p>• <b>Mesozoikum</b> — ±140 juta tahun; zaman reptil.</p>
+        <p>• <b>Neozoikum / Kenozoikum</b> — ±60 juta tahun sampai sekarang; Tersier dan Kuarter (manusia muncul di Kuarter).</p>
+      </div>
+      <button class="btn green" id="closeBookBtn2">Siap, Ayo Balapan! 🏁</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ================= audio ================= */
+const AudioSys = {
+  ctx: null, master: null, noiseBuf: null, sfxOn: true, musicOn: true, musicTimer: null,
+  init() {
+    if (this.ctx) { if (this.ctx.resume) this.ctx.resume(); return; }
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.9; /* overall cap at 90% */
+    this.master.connect(this.ctx.destination);
+    const len = this.ctx.sampleRate;
+    this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = this.noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  },
+  tone(freq, dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+    osc.type = o.type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    if (o.slide) osc.frequency.exponentialRampToValueAtTime(Math.max(20, o.slide), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(this.master);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  },
+  noise(dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.noiseBuf; src.loop = true;
+    const f = this.ctx.createBiquadFilter();
+    f.type = o.type || "bandpass";
+    f.frequency.setValueAtTime(o.freq || 1200, t);
+    if (o.slideTo) f.frequency.exponentialRampToValueAtTime(o.slideTo, t + dur);
+    f.Q.value = o.q || 1;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master);
+    src.start(t); src.stop(t + dur + 0.05);
+  },
+  whistle() { /* race start whistle: two sharp blasts */
+    this.tone(2100, 0.18, { type: "square", gain: 0.12 });
+    this.tone(2100, 0.35, { type: "square", gain: 0.12, at: 0.25 });
+  },
+  chime() { /* correct: bright arpeggio */
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, 0.22, { gain: 0.16, at: i * 0.07 }));
+  },
+  cheer() { /* crowd cheer: filtered noise swell */
+    this.noise(0.7, { gain: 0.12, freq: 900, q: 0.6, type: "bandpass" });
+    [659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, 0.25, { gain: 0.1, at: 0.05 + i * 0.08 }));
+  },
+  thud() { /* wrong: dull thud + descending tone */
+    this.noise(0.15, { gain: 0.25, freq: 300, type: "lowpass" });
+    this.tone(220, 0.25, { gain: 0.14, slide: 110 });
+  },
+  sting() { /* rival overtakes: short alert */
+    this.tone(392, 0.12, { type: "triangle", gain: 0.14 });
+    this.tone(311, 0.16, { type: "triangle", gain: 0.14, at: 0.12 });
+  },
+  fanfare() { /* finish fanfare */
+    const seq = [[523.25, 0], [523.25, 0.14], [659.25, 0.28], [783.99, 0.42], [1046.5, 0.58], [783.99, 0.78], [1046.5, 0.94]];
+    seq.forEach(([f, at]) => this.tone(f, 0.3, { gain: 0.16, at }));
+  },
+  startMusic() {
+    if (!this.ctx || this.musicTimer) return;
+    const bass = [110, 110, 130.81, 98];
+    let i = 0;
+    this.musicTimer = setInterval(() => {
+      if (!this.musicOn) return;
+      this.tone(bass[i % 4], 0.5, { type: "triangle", gain: 0.05 });
+      this.tone(bass[i % 4] * 2, 0.2, { type: "sine", gain: 0.03, at: 0.25 });
+      i++;
+    }, 500);
+  },
+  stopMusic() { if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; } },
+};
+
+/* ================= data ================= */
+const $ = id => document.getElementById(id);
+const TRACK_LEN = 24;
+const STATION_STEPS = [5, 10, 14, 19, 24]; /* step at which each era is reached */
+const ERAS = [
+  { name: "Paleolitikum", emoji: "🪓", sub: "Zaman Batu Tua", badge: "#3f5a3e",
+    color: "linear-gradient(180deg,#86a383,#3f5a3e)",
+    desc: "Zaman batu tertua. Alat dibuat dari batu dengan tradisi Oldowan — membenturkan batu pada batu yang lebih keras. Berlangsung pada zaman Pleistosen, ±600.000 tahun. Contoh: kebudayaan Pacitan (1935) dan Ngandong (1934)." },
+  { name: "Mesolitikum", emoji: "🐚", sub: "Zaman Batu Tengah", badge: "#0e7490",
+    color: "linear-gradient(180deg,#38bdf8,#0e7490)",
+    desc: "Zaman peralihan. Manusia mulai semi menetap di tepi pantai dan gua (abris sous roche), membuat gerabah dari tanah liat. Tinggalan terkenal: Kjokkenmoddinger — tumpukan sampah dapur setinggi 7 m di pantai timur Sumatra." },
+  { name: "Neolitikum", emoji: "🌾", sub: "Zaman Batu Muda", badge: "#4d7c0f",
+    color: "linear-gradient(180deg,#a3e635,#4d7c0f)",
+    desc: "Revolusi kehidupan: food producing — bercocok tanam dan beternak, hidup menetap (sedenter). Alat batu diasah halus: kapak persegi (von Heine Geldern) dan kapak lonjong." },
+  { name: "Megalitikum", emoji: "🗿", sub: "Zaman Batu Besar", badge: "#6d28d9",
+    color: "linear-gradient(180deg,#c4b5fd,#6d28d9)",
+    desc: "Kebudayaan batu besar yang berkaitan dengan kehidupan religius. Hasilnya: menhir, dolmen, peti kubur, sarkofagus, waruga, dan punden berundak — bentuk dasar candi." },
+  { name: "Logam", emoji: "⚒️", sub: "Zaman Logam", badge: "#92400e",
+    color: "linear-gradient(180deg,#fbbf24,#92400e)",
+    desc: "Manusia mengenal logam: tembaga (tidak didapatkan di Asia Tenggara), perunggu (tembaga + timah), dan besi (dilebur dari bijihnya, butuh panas jauh lebih tinggi). Berakhirnya Zaman Besi menandai berakhirnya zaman prasejarah." },
+];
+
+/* Big attractive dimensional SVG icons (gradients + shadows, 3D feel) */
+function iconSVG(era, size) {
+  const s = size || 110;
+  const defs = `<defs>
+    <linearGradient id="gA${era}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/><stop offset="100%" stop-color="#000000" stop-opacity=".18"/></linearGradient>
+    <filter id="sh${era}" x="-.3" y="-.3" width="1.6" height="1.6"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-opacity="0.35"/></filter>
+  </defs>`;
+  if (era === 0) return `<svg class="bigicon" width="${s}" height="${s}" viewBox="0 0 120 120" filter="url(#sh0)">${defs}
+    <ellipse cx="60" cy="104" rx="34" ry="7" fill="#000" opacity=".18"/>
+    <rect x="52" y="34" width="16" height="66" rx="8" fill="#8b5a2b"/><rect x="52" y="34" width="7" height="66" rx="3.5" fill="#a9743f"/>
+    <path d="M28 44 Q60 6 96 40 Q92 62 60 62 Q32 62 28 44Z" fill="#7d8a7a" stroke="#4b5a48" stroke-width="3"/>
+    <path d="M28 44 Q60 6 96 40 Q92 62 60 62 Q32 62 28 44Z" fill="url(#gA0)"/>
+    <path d="M40 34 Q60 18 82 32" stroke="#e8f0e6" stroke-width="4" fill="none" opacity=".7" stroke-linecap="round"/></svg>`;
+  if (era === 1) return `<svg class="bigicon" width="${s}" height="${s}" viewBox="0 0 120 120" filter="url(#sh1)">${defs}
+    <ellipse cx="60" cy="104" rx="34" ry="7" fill="#000" opacity=".18"/>
+    <path d="M60 18 Q96 22 100 58 Q102 92 60 100 Q20 94 22 58 Q24 24 60 18Z" fill="#fb923c" stroke="#c2410c" stroke-width="3"/>
+    <path d="M60 18 Q96 22 100 58 Q102 92 60 100 Q20 94 22 58 Q24 24 60 18Z" fill="url(#gA1)"/>
+    <path d="M60 30 Q82 34 84 56 Q85 78 60 84" stroke="#fff7ed" stroke-width="5" fill="none" opacity=".8" stroke-linecap="round"/>
+    <path d="M60 44 Q72 47 73 58 Q73 68 60 71" stroke="#fed7aa" stroke-width="4" fill="none" opacity=".8" stroke-linecap="round"/>
+    <circle cx="60" cy="58" r="5" fill="#7c2d12"/></svg>`;
+  if (era === 2) return `<svg class="bigicon" width="${s}" height="${s}" viewBox="0 0 120 120" filter="url(#sh2)">${defs}
+    <ellipse cx="60" cy="104" rx="34" ry="7" fill="#000" opacity=".18"/>
+    <rect x="56" y="48" width="8" height="54" rx="4" fill="#65a30d"/>
+    <g fill="#a3e635" stroke="#4d7c0f" stroke-width="2">
+      <ellipse cx="60" cy="22" rx="8" ry="16" transform="rotate(0 60 22)"/>
+      <ellipse cx="46" cy="34" rx="7" ry="14" transform="rotate(-35 46 34)"/>
+      <ellipse cx="74" cy="34" rx="7" ry="14" transform="rotate(35 74 34)"/>
+      <ellipse cx="48" cy="52" rx="6" ry="12" transform="rotate(-30 48 52)"/>
+      <ellipse cx="72" cy="52" rx="6" ry="12" transform="rotate(30 72 52)"/>
+    </g>
+    <g fill="#a3e635" stroke="#4d7c0f" stroke-width="2" opacity=".9">
+      <ellipse cx="60" cy="22" rx="8" ry="16" fill="url(#gA2)"/>
+    </g></svg>`;
+  if (era === 3) return `<svg class="bigicon" width="${s}" height="${s}" viewBox="0 0 120 120" filter="url(#sh3)">${defs}
+    <ellipse cx="60" cy="104" rx="38" ry="7" fill="#000" opacity=".18"/>
+    <path d="M44 100 L46 30 Q60 14 74 30 L76 100 Z" fill="#94a3b8" stroke="#475569" stroke-width="3"/>
+    <path d="M44 100 L46 30 Q60 14 74 30 L76 100 Z" fill="url(#gA3)"/>
+    <path d="M50 34 Q60 24 70 34" stroke="#f1f5f9" stroke-width="4" fill="none" opacity=".8" stroke-linecap="round"/>
+    <circle cx="60" cy="56" r="6" fill="#475569"/><circle cx="52" cy="72" r="4" fill="#475569"/><circle cx="68" cy="72" r="4" fill="#475569"/></svg>`;
+  return `<svg class="bigicon" width="${s}" height="${s}" viewBox="0 0 120 120" filter="url(#sh4)">${defs}
+    <ellipse cx="60" cy="104" rx="34" ry="7" fill="#000" opacity=".18"/>
+    <rect x="52" y="36" width="16" height="64" rx="8" fill="#78350f"/><rect x="52" y="36" width="7" height="64" rx="3.5" fill="#92400e"/>
+    <path d="M26 46 Q60 4 98 42 Q94 66 60 66 Q30 66 26 46Z" fill="#f59e0b" stroke="#92400e" stroke-width="3"/>
+    <path d="M26 46 Q60 4 98 42 Q94 66 60 66 Q30 66 26 46Z" fill="url(#gA4)"/>
+    <path d="M40 36 Q60 18 84 34" stroke="#fef3c7" stroke-width="4" fill="none" opacity=".85" stroke-linecap="round"/>
+    <circle cx="60" cy="48" r="5" fill="#92400e"/></svg>`;
+}
+
+const RIVALS = [
+  { name: "Kiko", emoji: "🦊", color: "#ea580c", p: 0.72 },
+  { name: "Sari", emoji: "🐼", color: "#db2777", p: 0.60 },
+  { name: "Bimo", emoji: "🐸", color: "#16a34a", p: 0.48 },
+];
+const YOU = { name: "Kamu", emoji: "🏃", color: "#2563eb" };
+
+/* ---- 21 rounds: 15 multiple-choice (A–E) + 6 ordering tasks ---- */
+/* MC: opts[0] is the correct answer; display order is shuffled at render time. */
+const QUESTIONS = [
+  { t: "mc", era: 0, q: "Kapak perimbas (chopper) adalah peninggalan kebudayaan apa?",
+    opts: ["Pacitan", "Ngandong", "Mousterian", "Sangiran", "Tanjungsari"], correct: 0,
+    hint: "💡 Kunci: kapak perimbas ditemukan di Sungai Baksoko.",
+    work: "Kapak perimbas (chopper) ditemukan di Sungai Baksoko, Desa Punung, Pacitan pada 1935 oleh von Koenigswald." },
+  { t: "mc", era: 0, q: "Kebudayaan Pacitan ditemukan pada tahun berapa?",
+    opts: ["1935", "1934", "1941", "1954", "2016"], correct: 0,
+    hint: "💡 Kunci: von Koenigswald menemukannya sebelum Sangiran.",
+    work: "Von Koenigswald menemukan kebudayaan Pacitan pada 1935. Kebudayaan Ngandong ditemukan 1934, sedangkan fosil Meganthropus di Sangiran ditemukan 1941." },
+  { t: "ord", era: 0, q: "Urutkan zaman-zaman prasejarah berikut dari yang PALING TUA:",
+    items: ["Paleolitikum", "Mesolitikum", "Neolitikum", "Megalitikum", "Logam"],
+    hint: "💡 Kunci: ikuti urutan bab dalam buku.",
+    work: "Urutan zaman prasejarah menurut buku: Paleolitikum → Mesolitikum → Neolitikum → Megalitikum → Logam." },
+  { t: "mc", era: 0, q: "Serpih Pilah adalah peninggalan kebudayaan apa?",
+    opts: ["Ngandong", "Pacitan", "Megalitikum", "Tanjungsari", "Sangiran"], correct: 0,
+    hint: "💡 Kunci: alat kecil dari batu yang sangat indah, dekat Sangiran.",
+    work: "Serpih Pilah berasal dari kebudayaan Ngandong dan berfungsi sebagai pisau, belati, dan alat penusuk." },
+  { t: "mc", era: 1, q: "Apa yang dimaksud dengan Kjokkenmoddinger?",
+    opts: ["Tumpukan sampah dapur dari cangkang kerang dan siput", "Meja batu untuk meletakkan sesaji", "Keranda dari batu utuh", "Tugu batu penghormat roh leluhur", "Alat penusuk dari tanduk rusa"], correct: 0,
+    hint: "💡 Kunci: dari bahasa Denmark — kjokken = dapur, modding = sampah.",
+    work: "Kjokkenmoddinger adalah tumpukan sampah dapur berupa cangkang kerang dan siput yang mencapai tinggi 7 meter." },
+  { t: "ord", era: 0, q: "Urutkan penemuan dan peristiwa berikut dari yang PALING AWAL:",
+    items: ["Ngandong 1934", "Pacitan 1935", "Sangiran 1941", "Soekmono Kepala Dinas 1954", "Tanjungsari 2016"],
+    hint: "💡 Kunci: perhatikan tahunnya.",
+    work: "Ngandong ditemukan 1934, Pacitan 1935, Meganthropus di Sangiran 1941, Soekmono menjadi Kepala Dinas Purbakala 1954, dan penggalian Tanjungsari dilakukan 2016." },
+  { t: "mc", era: 1, q: "Kjokkenmoddinger banyak dijumpai di daerah mana?",
+    opts: ["Pantai timur Sumatra, dari Langsa hingga Medan", "Pacitan, Jawa Timur", "Sangiran, Jawa Tengah", "Rante Kalimbuang, Tana Toraja", "Pasemah, Sumatra Selatan"], correct: 0,
+    hint: "💡 Kunci: tumpukan kerang di tepi pantai timur Sumatra.",
+    work: "Kjokkenmoddinger dijumpai sepanjang pantai timur Sumatra, dari Langsa di Aceh hingga Medan." },
+  { t: "mc", era: 2, q: "Zaman apakah yang ditandai dengan food producing, yaitu menghasilkan makanan sendiri dengan bercocok tanam?",
+    opts: ["Neolitikum", "Paleolitikum", "Mesolitikum", "Megalitikum", "Zaman Logam"], correct: 0,
+    hint: "💡 Kunci: revolusi kehidupan manusia prasejarah.",
+    work: "Neolitikum adalah revolusi kehidupan: manusia tidak lagi menggantungkan diri pada alam, melainkan bercocok tanam dan beternak, serta hidup menetap (sedenter)." },
+  { t: "mc", era: 2, q: "Siapa yang pertama kali memberi nama kapak persegi?",
+    opts: ["Robert von Heine Geldern", "Von Koenigswald", "Soekmono", "E. Dubois", "R. P. Soejono"], correct: 0,
+    hint: "💡 Kunci: nama pemberinya berasal dari Belanda.",
+    work: "Robert von Heine Geldern yang pertama memberi nama kapak persegi; bentuknya persegi panjang atau trapesium." },
+  { t: "ord", era: 0, q: "Urutkan zaman geologi berikut dari yang PALING TUA:",
+    items: ["Azoikum", "Palaeozoikum", "Mesozoikum", "Neozoikum"],
+    hint: "💡 Kunci: Azoikum adalah zaman ketika Bumi baru terbentuk.",
+    work: "Urutan zaman geologi: Azoikum → Palaeozoikum (±340 juta tahun) → Mesozoikum (±140 juta tahun, zaman reptil) → Neozoikum (±60 juta tahun)." },
+  { t: "mc", era: 2, q: "Kapak persegi ukuran kecil yang berfungsi untuk mengerjakan kayu disebut...",
+    opts: ["Tarah", "Beliung", "Pacul", "Kapak lonjong", "Kapak genggam"], correct: 0,
+    hint: "💡 Kunci: ukuran besarnya bernama beliung atau pacul.",
+    work: "Kapak persegi ukuran besar disebut beliung atau pacul, sedangkan ukuran kecil bernama tarah dan berfungsi mengerjakan kayu." },
+  { t: "mc", era: 3, q: "Apa fungsi menhir?",
+    opts: ["Menghormati roh nenek moyang", "Meletakkan sesaji", "Menyimpan jenazah", "Menggiling padi", "Menumbuk padi"], correct: 0,
+    hint: "💡 Kunci: tugu batu yang berkaitan dengan kehidupan religius.",
+    work: "Menhir adalah tugu batu yang dibuat untuk menghormati roh nenek moyang." },
+  { t: "mc", era: 3, q: "Berapa jumlah seluruh menhir yang ditemukan di Rante Kalimbuang, Tana Toraja?",
+    opts: ["102 buah", "54 buah", "24 buah", "78 buah", "120 buah"], correct: 0,
+    hint: "💡 Kunci: 54 kecil + 24 sedang + 24 besar.",
+    work: "Di Rante Kalimbuang terdapat 102 menhir: 54 kecil, 24 sedang, dan 24 besar." },
+  { t: "ord", era: 0, q: "Urutkan zaman-zaman berikut dari yang PALING LAMA berlangsung:",
+    items: ["Palaeozoikum — 340 juta tahun", "Mesozoikum — 140 juta tahun", "Neozoikum — 60 juta tahun", "Pleistosen — 600.000 tahun"],
+    hint: "💡 Kunci: bandingkan angkanya — juta vs ribu.",
+    work: "Palaeozoikum berlangsung ±340 juta tahun, Mesozoikum ±140 juta tahun, Neozoikum ±60 juta tahun, sedangkan Pleistosen hanya ±600.000 tahun." },
+  { t: "mc", era: 3, q: "Apa yang dimaksud dengan dolmen?",
+    opts: ["Meja batu untuk meletakkan sesaji", "Keranda dari batu utuh", "Tugu batu penghormat roh", "Bangunan untuk sesaji berbentuk berundak", "Kapak batu persegi"], correct: 0,
+    hint: "💡 Kunci: meja batu yang kakinya berupa menhir.",
+    work: "Dolmen adalah meja batu yang kakinya berupa tugu batu (menhir), biasanya untuk meletakkan sesaji; kadang di bawahnya terdapat kuburan." },
+  { t: "mc", era: 4, q: "Perunggu adalah logam campuran dari...",
+    opts: ["Tembaga dan timah", "Besi dan timah", "Tembaga dan besi", "Batu dan timah", "Emas dan tembaga"], correct: 0,
+    hint: "💡 Kunci: logam campuran yang lebih keras dari tembaga.",
+    work: "Perunggu adalah hasil pencampuran tembaga dan timah, lebih keras daripada tembaga." },
+  { t: "ord", era: 0, q: "Urutkan tradisi dan alat berikut dari yang PALING TUA:",
+    items: ["Oldowan", "Mousterian", "Kapak Persegi", "Perunggu"],
+    hint: "💡 Kunci: Oldowan dari Paleolitikum Tua, Mousterian dari Paleolitikum Madya.",
+    work: "Oldowan dari Paleolitikum Tua, Mousterian dari Paleolitikum Madya (Le Moustier, Perancis), Kapak Persegi dari Neolitikum, dan Perunggu dari Zaman Logam." },
+  { t: "mc", era: 4, q: "Bagaimana dengan zaman tembaga di Asia Tenggara?",
+    opts: ["Tidak didapatkan di Asia Tenggara", "Ditemukan di Pacitan", "Ditemukan di Sangiran", "Berlangsung paling lama", "Berakhir pada 1941"], correct: 0,
+    hint: "💡 Kunci: tembaga hanya dikenal di beberapa bagian dunia saja.",
+    work: "Tembaga hanya dikenal di beberapa bagian dunia saja; di Asia Tenggara, termasuk Indonesia, tidak didapatkan zaman tembaga." },
+  { t: "mc", era: 0, q: "Von Koenigswald menemukan fosil Meganthropus paleojavanicus di Sangiran pada tahun...",
+    opts: ["1941", "1935", "1934", "1954", "2016"], correct: 0,
+    hint: "💡 Kunci: setelah Pacitan (1935) dan sebelum Soekmono (1954).",
+    work: "Von Koenigswald menemukan fosil Meganthropus paleojavanicus di Sangiran pada 1941." },
+  { t: "mc", era: 4, q: "Bangsa Indonesia memasuki zaman sejarah sejak...",
+    opts: ["Abad ke-5 Masehi", "4000 tahun SM", "Abad ke-20", "Tahun 1935", "600.000 tahun lalu"], correct: 0,
+    hint: "💡 Kunci: prasasti pertama di Kutai pada masa Raja Mulawarman.",
+    work: "Bangsa Indonesia memasuki zaman sejarah sejak abad ke-5 Masehi, ditandai prasasti di Kutai pada masa Raja Mulawarman dan di Jawa Barat pada masa Raja Purnawarman." },
+  { t: "ord", era: 4, q: "Urutkan zaman logam berikut sesuai urutan dalam buku:",
+    items: ["Zaman Tembaga", "Zaman Perunggu", "Zaman Besi"],
+    hint: "💡 Kunci: tembaga, lalu perunggu, lalu besi.",
+    work: "Zaman Logam dibagi menjadi Zaman Tembaga, Zaman Perunggu (tembaga + timah), lalu Zaman Besi (dilebur dari bijihnya dan butuh panas jauh lebih tinggi)." },
+];
+
+/* ================= state ================= */
+const state = {
+  round: 0, score: 0, combo: 0, bestCombo: 0,
+  attempts: 0, mistakes: 0, results: [],
+  studentPos: 0, rivals: [], raceOver: false, started: false, roundDone: false,
+  orderSeq: [], orderLocked: 0, flipped: [false, false, false, false, false],
+  rivalTimer: null, place: 0,
+};
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function showScreen(id) {
+  ["screen-start", "screen-race", "screen-final"].forEach(s => $(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function rankOf() {
+  const all = [{ name: YOU.name, pos: state.studentPos, score: state.score, me: true }]
+    .concat(state.rivals.map(r => ({ name: r.name, pos: r.pos, score: 0, me: false })));
+  all.sort((a, b) => (b.pos - a.pos) || (b.score - a.score));
+  return all.findIndex(a => a.me) + 1;
+}
+function updateStats() {
+  $("scorePill").textContent = "⭐ Skor: " + state.score;
+  $("posPill").textContent = "🥇 Posisi: " + rankOf() + " / 4";
+  $("progressBar").style.width = (state.studentPos / TRACK_LEN * 100) + "%";
+  const line = [{ name: YOU.name, emoji: YOU.emoji, pos: state.studentPos }]
+    .concat(state.rivals.map(r => ({ name: r.name, emoji: r.emoji, pos: r.pos })))
+    .sort((a, b) => b.pos - a.pos)
+    .map(r => r.emoji + " " + r.name + " " + r.pos).join("  •  ");
+  $("standings").textContent = "Klasemen: " + line;
+}
+
+/* ================= track & era cards ================= */
+function buildTrack() {
+  let st = "";
+  ERAS.forEach((e, i) => {
+    st += `<div class="station" data-era="${i}"><div class="dot"></div>${e.emoji} ${e.name}</div>`;
+  });
+  $("stations").innerHTML = st;
+  const lanes = [{ name: YOU.name, emoji: YOU.emoji, color: YOU.color, me: true }]
+    .concat(RIVALS.map(r => ({ name: r.name, emoji: r.emoji, color: r.color, me: false })));
+  $("lanes").innerHTML = lanes.map((r, i) =>
+    `<div class="lane"><span class="who" style="color:${r.color}">${r.emoji} ${r.name}</span>
+      <div class="runner" id="runner${i}" style="left:calc(46px + (100% - 80px) * 0)">
+        <span>${r.emoji}</span><span class="tag">${r.name}</span></div></div>`).join("");
+  $("eraCards").innerHTML = ERAS.map((e, i) =>
+    `<div class="era-card" id="eraCard${i}"><div class="era-inner">
+      <div class="era-face" style="background:${e.color}">${iconSVG(i, 44)}<span>${e.emoji} ${e.name}</span><span style="font-weight:600;font-size:10px">${e.sub}</span></div>
+      <div class="era-face back" style="background:${e.color}"><span class="chk">✅</span><span>Tercapai!</span><span style="font-weight:600;font-size:10px">${e.name}</span></div>
+    </div></div>`).join("");
+}
+function renderTrack() {
+  const pos = [state.studentPos].concat(state.rivals.map(r => r.pos));
+  pos.forEach((p, i) => {
+    const el = $("runner" + i);
+    if (el) el.style.left = "calc(46px + (100% - 80px) * " + Math.min(p, TRACK_LEN) / TRACK_LEN + ")";
+  });
+  STATION_STEPS.forEach((step, i) => {
+    const done = state.studentPos >= step;
+    if (done && !state.flipped[i]) {
+      state.flipped[i] = true;
+      const card = $("eraCard" + i);
+      if (card) card.classList.add("flipped");
+      const st = document.querySelectorAll("#stations .station")[i];
+      if (st) st.classList.add("done");
+      AudioSys.chime();
+    }
+  });
+  updateStats();
+}
+
+/* ================= rounds ================= */
+function loadRound(i) {
+  const q = QUESTIONS[i];
+  state.round = i; state.attempts = 0; state.mistakes = 0; state.roundDone = false;
+  state.orderSeq = []; state.orderLocked = 0;
+  showScreen("screen-race");
+  const E = ERAS[q.era];
+  $("roundText").textContent = "Putaran " + (i + 1) + " / " + QUESTIONS.length;
+  const badge = $("eraBadge");
+  badge.textContent = E.emoji + " " + E.name;
+  badge.style.background = E.badge;
+  $("eraIconBox").innerHTML = iconSVG(q.era, 110);
+  $("qText").textContent = q.q;
+  $("qHint").textContent = q.hint;
+  $("feedback").innerHTML = "";
+  if (q.t === "mc") {
+    $("optsBox").classList.remove("hidden");
+    $("orderBox").classList.add("hidden");
+    renderMC(q);
+  } else {
+    $("optsBox").classList.add("hidden");
+    $("orderBox").classList.remove("hidden");
+    renderOrder(q);
+  }
+  renderTrack();
+}
+function renderMC(q) {
+  const order = shuffle([0, 1, 2, 3, 4]);
+  const letters = ["A", "B", "C", "D", "E"];
+  state.mcOrder = order;
+  $("optsBox").innerHTML = order.map((optIdx, i) =>
+    `<button class="opt" data-o="${optIdx}"><span class="letter">${letters[i]}</span>${q.opts[optIdx]}</button>`).join("");
+}
+function renderOrder(q) {
+  state.ordOrder = shuffle(q.items.map((_, i) => i));
+  $("orderItems").innerHTML = state.ordOrder.map(idx =>
+    `<button class="ochip" data-item="${idx}">${q.items[idx]}</button>`).join("");
+  $("orderSeq").textContent = "Urutanmu: — (ketuk kartu sesuai urutan waktu yang benar)";
+}
+function completeRound(pts, steps, correctText) {
+  const q = QUESTIONS[state.round];
+  state.roundDone = true;
+  const firstTry = state.attempts === 0 && state.mistakes === 0;
+  if (firstTry) { state.combo++; } else { state.combo = 0; }
+  state.bestCombo = Math.max(state.bestCombo, state.combo);
+  state.score += pts;
+  state.results.push({ q: state.round, attempts: state.attempts, mistakes: state.mistakes, pts, correctText });
+  const last = state.results.length === QUESTIONS.length;
+  $("feedback").innerHTML = `<div class="card fb-ok">
+    <h3>✅ Benar! +${pts} poin — kamu lari ${steps} langkah! ${state.combo >= 2 ? "🔥 Kombo ×" + state.combo : ""}</h3>
+    <p><b>Jawaban benar: ${correctText}.</b> ${q.work}</p>
+    <button class="btn green" id="nextBtn" style="margin-top:8px">${last ? "Lihat Hasil 🏆" : "Putaran Berikutnya ➜"}</button>
+  </div>`;
+  $("nextBtn").onclick = advance; /* onclick (not addEventListener): the button is re-created each round */
+  advanceStudent(steps);
+}
+function advance() {
+  if (state.raceOver) return;
+  const next = state.round + 1;
+  if (next >= QUESTIONS.length) { finishRace(); return; }
+  loadRound(next);
+}
+function advanceStudent(steps) {
+  state.studentPos = Math.min(state.studentPos + steps, TRACK_LEN);
+  renderTrack();
+  checkFinish();
+}
+function answerMC(optIdx, btnEl) {
+  if (state.raceOver || state.roundDone) return;
+  const q = QUESTIONS[state.round];
+  if (optIdx === q.correct) {
+    if (btnEl) btnEl.classList.add("right");
+    AudioSys.chime(); AudioSys.cheer();
+    const firstTry = state.attempts === 0;
+    const pts = firstTry ? 100 : (state.attempts === 1 ? 50 : 25);
+    const steps = firstTry ? 2 : 1;
+    completeRound(pts, steps, q.opts[q.correct]);
+  } else {
+    AudioSys.thud();
+    state.attempts++;
+    state.combo = 0;
+    updateStats();
+    if (btnEl) { btnEl.classList.add("wrong"); btnEl.disabled = true; }
+    $("feedback").innerHTML = `<div class="card fb-bad">
+      <h3>💥 Bukan itu — coba lagi!</h3>
+      <p>Ingat: ${q.hint}</p></div>`;
+  }
+}
+function tapOrder(itemIdx, btnEl) {
+  if (state.raceOver || state.roundDone) return;
+  const q = QUESTIONS[state.round];
+  if (q.items[state.orderLocked] === q.items[itemIdx]) {
+    state.orderSeq.push(q.items[itemIdx]);
+    state.orderLocked++;
+    if (btnEl) btnEl.classList.add("locked");
+    AudioSys.chime();
+    $("orderSeq").textContent = "Urutanmu: " + state.orderSeq.map((s, i) => (i + 1) + ". " + s).join(" → ");
+    if (state.orderLocked === q.items.length) {
+      AudioSys.cheer();
+      const pts = state.mistakes === 0 ? 100 : (state.mistakes === 1 ? 50 : 25);
+      const steps = state.mistakes === 0 ? 2 : 1;
+      completeRound(pts, steps, q.items.join(" → "));
+    }
+  } else {
+    AudioSys.thud();
+    state.mistakes++;
+    state.combo = 0;
+    updateStats();
+    if (btnEl) {
+      btnEl.classList.add("shake");
+      setTimeout(() => btnEl.classList.remove("shake"), 450);
+    }
+    $("feedback").innerHTML = `<div class="card fb-bad">
+      <h3>💥 Urutan itu belum tepat — coba lagi!</h3>
+      <p>Ingat: ${q.hint}</p></div>`;
+  }
+}
+
+/* ================= rivals ================= */
+function rivalTick() {
+  if (state.raceOver || !state.started) return;
+  const prevRank = rankOf();
+  state.rivals.forEach(r => {
+    let p = r.p;
+    if (r.pos <= state.studentPos - 8) p += 0.12; /* rubber-band: catch up */
+    if (r.pos >= state.studentPos + 8) p -= 0.12; /* rubber-band: slow down */
+    if (Math.random() < p) r.pos = Math.min(r.pos + 1, TRACK_LEN);
+  });
+  renderTrack();
+  const newRank = rankOf();
+  if (newRank > prevRank) AudioSys.sting(); /* a rival overtook the student */
+  checkFinish();
+}
+function checkFinish() {
+  if (state.raceOver) return;
+  const someoneDone = state.studentPos >= TRACK_LEN || state.rivals.some(r => r.pos >= TRACK_LEN);
+  if (someoneDone) finishRace();
+}
+
+/* ================= finish ================= */
+function finishRace() {
+  if (state.raceOver) return;
+  state.raceOver = true;
+  if (state.rivalTimer) { clearInterval(state.rivalTimer); state.rivalTimer = null; }
+  AudioSys.stopMusic();
+  AudioSys.fanfare();
+  const all = [{ name: YOU.name, emoji: YOU.emoji, color: YOU.color, pos: state.studentPos, score: state.score, me: true }]
+    .concat(state.rivals.map(r => ({ name: r.name, emoji: r.emoji, color: r.color, pos: r.pos, score: 0, me: false })));
+  all.sort((a, b) => (b.pos - a.pos) || (b.score - a.score));
+  state.place = all.findIndex(a => a.me) + 1;
+  const bonus = state.place === 1 ? 200 : state.place === 2 ? 100 : state.place === 3 ? 50 : 0;
+  state.score += bonus;
+  const medals = ["🥇", "🥈", "🥉", "4️⃣"];
+  const podiumOrder = [all[1], all[0], all[2]]; /* classic 3-step podium: 2nd, 1st, 3rd */
+  $("podium").innerHTML = podiumOrder.map((r, i) => {
+    const place = all.indexOf(r) + 1;
+    const cls = place === 1 ? "first" : place === 2 ? "second" : "third";
+    return `<div class="pod ${cls}"><span class="pemoji">${r.emoji}</span><span class="pname">${r.name}</span><span class="ppos">${medals[place - 1]} Juara ${place} • ${r.pos} langkah</span></div>`;
+  }).join("");
+  $("finalTitle").textContent = state.place === 1 ? "🏆 KAMU MENANG!" : "Balapan Selesai!";
+  $("finalSub").textContent = state.place === 1
+    ? "Luar biasa! Kamu yang pertama mencapai garis finis dan menjuarai Lomba Garis Waktu!"
+    : "Kamu finis di posisi ke-" + state.place + " dari 4 pelari. Coba lagi dan rebut juara pertama!";
+  $("finalScore").textContent = state.score + " poin" + (bonus ? " (termasuk bonus finis +" + bonus + ")" : "");
+  const firstTry = state.results.filter(r => r.attempts === 0 && r.mistakes === 0).length;
+  $("finalStats").textContent = "Benar di percobaan pertama: " + firstTry + "/" + state.results.length +
+    "  •  Kombo terbaik: ×" + state.bestCombo + "  •  Langkah: " + state.studentPos + "/" + TRACK_LEN;
+  let html = "<h3 style='text-align:center;margin-bottom:12px'>📋 Review Jawaban</h3>";
+  state.results.forEach(r => {
+    const q = QUESTIONS[r.q], E = ERAS[q.era];
+    const cls = (r.attempts === 0 && r.mistakes === 0) ? "correct" : "wrong";
+    const note = (r.attempts === 0 && r.mistakes === 0) ? "✅ percobaan pertama!" : "↩️ benar setelah mencoba";
+    html += `<div class="revitem ${cls}">
+      <b>Putaran ${r.q + 1} — ${E.emoji} ${E.name}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} poin
+      <p><b>${q.q}</b></p>
+      <p><b>Jawaban benar: ${r.correctText}.</b> ${q.work}</p>
+    </div>`;
+  });
+  $("reviewBox").innerHTML = html;
+  $("progressBar").style.width = "100%";
+  updateStats();
+  showScreen("screen-final");
+}
+
+/* ================= concept page ================= */
+function renderPeta() {
+  $("petaGrid").innerHTML = ERAS.map((e, i) =>
+    `<div class="rule"><span class="ricon">${iconSVG(i, 64)}</span>
+      <h4>${i + 1}. ${e.emoji} ${e.name} — ${e.sub}</h4><p>${e.desc}</p></div>`).join("");
+}
+
+/* ================= wiring ================= */
+function resetGame() {
+  state.round = 0; state.score = 0; state.combo = 0; state.bestCombo = 0;
+  state.attempts = 0; state.mistakes = 0; state.results = [];
+  state.studentPos = 0; state.raceOver = false; state.roundDone = false;
+  state.orderSeq = []; state.orderLocked = 0; state.flipped = [false, false, false, false, false];
+  state.rivals = RIVALS.map(r => ({ name: r.name, emoji: r.emoji, color: r.color, p: r.p, pos: 0 }));
+  if (state.rivalTimer) { clearInterval(state.rivalTimer); state.rivalTimer = null; }
+  updateStats();
+}
+$("startBtn").addEventListener("click", () => {
+  AudioSys.init();
+  if (AudioSys.musicOn) AudioSys.startMusic();
+  AudioSys.whistle();
+  state.started = true;
+  resetGame();
+  buildTrack();
+  loadRound(0);
+  state.rivalTimer = setInterval(rivalTick, 2500);
+});
+$("bookBtn").addEventListener("click", () => { renderPeta(); $("conceptOverlay").classList.remove("hidden"); });
+$("closeBookBtn").addEventListener("click", () => $("conceptOverlay").classList.add("hidden"));
+$("closeBookBtn2").addEventListener("click", () => $("conceptOverlay").classList.add("hidden"));
+$("conceptOverlay").addEventListener("click", e => { if (e.target === $("conceptOverlay")) $("conceptOverlay").classList.add("hidden"); });
+$("soundBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.sfxOn = !AudioSys.sfxOn;
+  $("soundBtn").textContent = AudioSys.sfxOn ? "🔊" : "🔇";
+  $("soundBtn").classList.toggle("off", !AudioSys.sfxOn);
+  if (AudioSys.sfxOn) AudioSys.chime();
+});
+$("musicBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.musicOn = !AudioSys.musicOn;
+  $("musicBtn").textContent = AudioSys.musicOn ? "🎵" : "🚫";
+  $("musicBtn").classList.toggle("off", !AudioSys.musicOn);
+  if (AudioSys.musicOn) AudioSys.startMusic(); else AudioSys.stopMusic();
+});
+$("optsBox").addEventListener("click", e => {
+  const t = e.target.closest ? e.target.closest("[data-o]") : e.target;
+  if (!t || t.dataset === undefined || t.dataset.o === undefined) return;
+  answerMC(parseInt(t.dataset.o, 10), t);
+});
+$("orderItems").addEventListener("click", e => {
+  const t = e.target.closest ? e.target.closest("[data-item]") : e.target;
+  if (!t || t.dataset === undefined || t.dataset.item === undefined) return;
+  if (t.classList && t.classList.contains("locked")) return;
+  tapOrder(parseInt(t.dataset.item, 10), t);
+});
+$("printBtn").addEventListener("click", () => window.print());
+$("againBtn").addEventListener("click", () => { resetGame(); showScreen("screen-start"); });
+
+/* start-screen era chips */
+$("startEraChips").innerHTML = ERAS.map(e =>
+  `<span class="echip" style="background:${e.badge}">${e.emoji} ${e.name}</span>`).join("");
+</script>
+</body>
+</html>
