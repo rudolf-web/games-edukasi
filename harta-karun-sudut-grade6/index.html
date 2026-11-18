@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Perburuan Harta Karun Sudut — Matematika Kelas 6</title>
+<title>Angle Treasure Hunt — Grade 6 Mathematics</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; }
@@ -60,6 +60,7 @@
     background: rgba(255, 255, 255, .12); color: #fff; font-size: 20px; cursor: pointer;
   }
   .iconbtn.off { opacity: .45; }
+  .langbtn { width: auto; padding: 0 12px; font-size: 14px; font-weight: 800; letter-spacing: .5px; }
   #coinPop {
     position: absolute; right: 150px; top: 54px; z-index: 3; pointer-events: none;
     font-size: 22px; font-weight: 800; color: #facc15; text-shadow: 0 2px 4px rgba(0,0,0,.7);
@@ -201,39 +202,40 @@
   <header>
     <div class="logo">🧭</div>
     <div class="title">
-      <h1>PERBURUAN HARTA KARUN SUDUT</h1>
-      <p>Penjelajah Sudut • Matematika Kelas 6</p>
+      <h1 id="appTitle">ANGLE TREASURE HUNT</h1>
+      <p id="appSubtitle">Angle Explorer • Grade 6 Mathematics</p>
     </div>
     <div class="spacer"></div>
-    <span class="pill" id="scorePill">⭐ Skor: 0</span>
+    <span class="pill" id="scorePill">⭐ Score: 0</span>
     <span class="pill combo" id="comboPill">🔥 Combo ×0</span>
-    <span class="pill coin" id="coinPill">🪙 Koin: 0</span>
-    <button class="iconbtn" id="musicBtn" title="Musik">🎵</button>
-    <button class="iconbtn" id="soundBtn" title="Suara">🔊</button>
-    <button class="iconbtn" id="bookBtn" title="Buku Petunjuk">📖</button>
+    <span class="pill coin" id="coinPill">🪙 Coins: 0</span>
+    <button class="iconbtn langbtn" id="langBtn" title="Bahasa Indonesia">EN</button>
+    <button class="iconbtn" id="musicBtn" title="Music">🎵</button>
+    <button class="iconbtn" id="soundBtn" title="Sound">🔊</button>
+    <button class="iconbtn" id="bookBtn" title="Guidebook">📖</button>
     <span id="coinPop"></span>
   </header>
 
   <!-- ============ START ============ -->
   <section id="screen-start" class="card center">
     <div class="trophy">🌿🏛️🔦</div>
-    <h2 class="grad-text" style="font-size:27px;margin:8px 0">PERBURUAN HARTA KARUN SUDUT</h2>
-    <p style="line-height:1.6;margin:6px 0">
-      Jauh di dalam <b>hutan rimba</b>, tersembunyi sebuah <b>kuil kuno</b> berisi harta karun.
-      Hanya penjelajah yang bisa membaca sudut-sudut rahasia yang bisa menemukannya!<br>
-      Ikuti jejak peta, jawab <b>20 soal sudut</b>, lewati <b>5 zona hutan</b> yang menegangkan,
-      dan buka peti harta karun di Kuil Harta Karun! 🗺️💰
+    <h2 id="startTitle" class="grad-text" style="font-size:27px;margin:8px 0">ANGLE TREASURE HUNT</h2>
+    <p id="startStory" style="line-height:1.6;margin:6px 0">
+      Deep inside the <b>jungle</b>, a hidden <b>ancient temple</b> holds a treasure.
+      Only an explorer who can read the secret angles can find it!<br>
+      Follow the map trail, answer <b>20 angle questions</b>, cross <b>5 thrilling jungle zones</b>,
+      and open the treasure chest in the Treasure Temple! 🗺️💰
     </p>
     <div class="worldchips" id="worldChips"></div>
-    <div class="howto">
-      🧭 <b>Cara main:</b> Lihat gambar sudutnya, lalu <b>ketuk jawaban A / B / C / D</b> yang benar. Gampang — tinggal ketuk, tanpa membidik dan tanpa hitungan waktu!<br>
-      🪙 Jawaban benar = <b>koin emas</b> + penjelajah maju satu pemberhentian di peta.<br>
-      💥 Jawaban salah = coba lagi, kombo saja yang hilang.<br>
-      🧰 Setiap zona selesai, sebuah <b>peti harta</b> terbuka dengan bonus koin!<br>
-      📖 Belum hafal aturannya? Buka <b>Buku Petunjuk</b> di pojok kanan atas.
+    <div class="howto" id="howtoBox">
+      🧭 <b>How to play:</b> Look at the angle picture, then <b>tap the correct answer A / B / C / D</b>. Easy — just tap, no aiming and no time limit!<br>
+      🪙 A correct answer = <b>gold coins</b> + the explorer moves one stop forward on the map.<br>
+      💥 A wrong answer = try again, you only lose your combo.<br>
+      🧰 Every zone you finish opens a <b>treasure chest</b> with a coin bonus!<br>
+      📖 Don't know the rules yet? Open the <b>Guidebook</b> in the top-right corner.
     </div>
-    <button class="btn" id="startBtn">▶ &nbsp;MULAI PETUALANGAN</button>
-    <p class="muted" style="font-size:13px;margin-top:12px">20 pemberhentian • 5 zona hutan • Tanpa hitungan waktu — santai saja!</p>
+    <button class="btn" id="startBtn">▶ &nbsp;START THE ADVENTURE</button>
+    <p id="startNote" class="muted" style="font-size:13px;margin-top:12px">20 stops • 5 jungle zones • No time limit — take it easy!</p>
   </section>
 
   <!-- ============ GAME ============ -->
@@ -243,8 +245,8 @@
     </div>
     <div class="card" style="padding:14px 16px">
       <div id="stageBar">
-        <span id="stageBadge">🧭 Zona 1 — Pintu Rimba</span>
-        <span id="roundText">Pemberhentian 1 / 20</span>
+        <span id="stageBadge">🧭 Zone 1 — Jungle Gate</span>
+        <span id="roundText">Stop 1 / 20</span>
       </div>
       <div class="progress"><div id="progressBar"></div></div>
       <div style="margin-top:12px">
@@ -261,24 +263,24 @@
   <!-- ============ STAGE COMPLETE ============ -->
   <section id="screen-stage" class="card center hidden">
     <div class="trophy" id="stageEmoji">🧰</div>
-    <h2 id="stageTitle" class="grad-text" style="font-size:26px;margin:6px 0">Zona Selesai!</h2>
+    <h2 id="stageTitle" class="grad-text" style="font-size:26px;margin:6px 0">Zone Complete!</h2>
     <p id="stageText" style="line-height:1.6"></p>
     <p id="stageScore" style="font-weight:800;font-size:18px;color:#92400e"></p>
     <p id="stageCoins" style="font-weight:800;font-size:18px;color:#b45309"></p>
-    <button class="btn" id="nextStageBtn">Lanjut ke Zona Berikutnya ➜</button>
+    <button class="btn" id="nextStageBtn">Continue to the Next Zone ➜</button>
   </section>
 
   <!-- ============ FINAL ============ -->
   <section id="screen-final" class="card center hidden">
     <div id="chestBig">👑💰💎</div>
-    <h2 class="grad-text" style="font-size:27px;margin:6px 0">HARTA KARUN DITEMUKAN!</h2>
-    <p style="line-height:1.6">Kamu berhasil menembus hutan rimba dan membuka peti harta karun di Kuil Harta Karun! Semua sudut yang hilang sudah kembali. Kamu penjelajah sejati! 🏛️🎉</p>
-    <p id="finalScore">0 poin</p>
+    <h2 id="finalTitle" class="grad-text" style="font-size:27px;margin:6px 0">TREASURE FOUND!</h2>
+    <p id="finalStory" style="line-height:1.6">You made it through the jungle and opened the treasure chest in the Treasure Temple! All the missing angles are back. You are a true explorer! 🏛️🎉</p>
+    <p id="finalScore">0 points  •  🪙 0 coins</p>
     <p id="finalStats" style="font-weight:700"></p>
     <div id="reviewBox"></div>
     <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn" id="printBtn">🖨️ Cetak Hasil</button>
-      <button class="btn ghost" id="againBtn" style="color:#92400e;border-color:#b45309">🔄 Main Lagi</button>
+      <button class="btn" id="printBtn">🖨️ Print Results</button>
+      <button class="btn ghost" id="againBtn" style="color:#92400e;border-color:#b45309">🔄 Play Again</button>
     </div>
   </section>
 
@@ -286,13 +288,13 @@
   <div id="conceptOverlay" class="hidden">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 class="grad-text" style="margin:0;font-size:22px">📖 Buku Petunjuk — Aturan Sudut</h2>
+        <h2 id="bookTitle" class="grad-text" style="margin:0;font-size:22px">📖 Guidebook — Angle Rules</h2>
         <button class="iconbtn" id="closeBookBtn" title="Tutup" style="border-color:#b45309;color:#92400e">✖️</button>
       </div>
-      <p style="margin:8px 0 0;line-height:1.55">Hafalkan 6 aturan ini — setiap soal di peta memakai salah satunya!</p>
+      <p id="bookIntro" style="margin:8px 0 0;line-height:1.55">Memorise these 6 rules — every question on the map uses one of them!</p>
       <div id="ruleGrid"></div>
       <div style="text-align:center;margin-top:14px">
-        <button class="btn" id="closeBookBtn2">Siap, Ayo Berburu! 🧭</button>
+        <button class="btn" id="closeBookBtn2">Ready, Let's Go Hunting! 🧭</button>
       </div>
     </div>
   </div>
@@ -471,87 +473,139 @@ function figStraight3(g1, g2) {
 
 /* ---------------- 5 zona hutan (menggantikan 5 dunia lama — QUESTIONS tetap memakai indeks w 0-4) ---------------- */
 const WORLDS = [
-  { name: "Pintu Rimba", emoji: "🌿", badge: "#166534" },
-  { name: "Sungai Berbatu", emoji: "🌊", badge: "#0e7490" },
-  { name: "Reruntuhan Kuno", emoji: "🗿", badge: "#92400e" },
-  { name: "Gua Gelap", emoji: "🕯️", badge: "#44403c" },
-  { name: "Kuil Harta Karun", emoji: "🏛️", badge: "#a16207" },
+  { name: "Pintu Rimba", name_en: "Jungle Gate", emoji: "🌿", badge: "#166534" },
+  { name: "Sungai Berbatu", name_en: "Rocky River", emoji: "🌊", badge: "#0e7490" },
+  { name: "Reruntuhan Kuno", name_en: "Ancient Ruins", emoji: "🗿", badge: "#92400e" },
+  { name: "Gua Gelap", name_en: "Dark Cave", emoji: "🕯️", badge: "#44403c" },
+  { name: "Kuil Harta Karun", name_en: "Treasure Temple", emoji: "🏛️", badge: "#a16207" },
 ];
 const QUESTIONS = [
   { w: 0, fig: () => figStraight(65),  opts: [115, 65, 25, 90],  correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − 65° = 115°." },
+    hint_en: "Angles on a straight line add up to 180°.",
+    work: "180° − 65° = 115°.",
+    work_en: "180° − 65° = 115°." },
   { w: 0, fig: () => figRight(28),    opts: [62, 28, 118, 90],  correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 28° = 62°." },
+    hint_en: "A right angle adds up to 90°.",
+    work: "90° − 28° = 62°.",
+    work_en: "90° − 28° = 62°." },
   { w: 0, fig: () => figStraight(132), opts: [48, 132, 42, 78], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − 132° = 48°." },
+    hint_en: "Angles on a straight line add up to 180°.",
+    work: "180° − 132° = 48°.",
+    work_en: "180° − 132° = 48°." },
   { w: 0, fig: () => figRight(35),    opts: [55, 35, 125, 145], correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 35° = 55°." },
+    hint_en: "A right angle adds up to 90°.",
+    work: "90° − 35° = 55°.",
+    work_en: "90° − 35° = 55°." },
   { w: 1, fig: () => figCross(78),    opts: [78, 102, 12, 90],  correct: 0,
     hint: "Sudut bertolak belakang besarnya sama.",
-    work: "Sudut ? bertolak belakang dengan 78°, jadi sama besar: 78°." },
+    hint_en: "Vertically opposite angles are equal.",
+    work: "Sudut ? bertolak belakang dengan 78°, jadi sama besar: 78°.",
+    work_en: "Angle ? is vertically opposite 78°, so it is the same size: 78°." },
   { w: 1, fig: () => figPoint([90, 120, 85], 3), opts: [65, 55, 75, 295], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (90° + 120° + 85°) = 360° − 295° = 65°." },
+    hint_en: "Angles around a point add up to 360°.",
+    work: "360° − (90° + 120° + 85°) = 360° − 295° = 65°.",
+    work_en: "360° − (90° + 120° + 85°) = 360° − 295° = 65°." },
   { w: 1, fig: () => figCross(110, true), opts: [70, 110, 20, 90], correct: 0,
     hint: "Sudut berpelurus berjumlah 180°.",
-    work: "Sudut ? berpelurus dengan 110°: 180° − 110° = 70°." },
+    hint_en: "Supplementary angles add up to 180°.",
+    work: "Sudut ? berpelurus dengan 110°: 180° − 110° = 70°.",
+    work_en: "Angle ? is supplementary to 110°: 180° − 110° = 70°." },
   { w: 1, fig: () => figPoint([150, 90], 2), opts: [120, 60, 30, 210], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (150° + 90°) = 360° − 240° = 120°." },
+    hint_en: "Angles around a point add up to 360°.",
+    work: "360° − (150° + 90°) = 360° − 240° = 120°.",
+    work_en: "360° − (150° + 90°) = 360° − 240° = 120°." },
   { w: 2, fig: () => figTriangle(50, 60), opts: [70, 60, 110, 50], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (50° + 60°) = 180° − 110° = 70°." },
+    hint_en: "The angles of a triangle add up to 180°.",
+    work: "180° − (50° + 60°) = 180° − 110° = 70°.",
+    work_en: "180° − (50° + 60°) = 180° − 110° = 70°." },
   { w: 2, fig: () => figTriangle(90, 35), opts: [55, 35, 90, 125], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (90° + 35°) = 180° − 125° = 55°." },
+    hint_en: "The angles of a triangle add up to 180°.",
+    work: "180° − (90° + 35°) = 180° − 125° = 55°.",
+    work_en: "180° − (90° + 35°) = 180° − 125° = 55°." },
   { w: 2, fig: () => figTriangle(75, 75), opts: [30, 75, 105, 150], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (75° + 75°) = 180° − 150° = 30°." },
+    hint_en: "The angles of a triangle add up to 180°.",
+    work: "180° − (75° + 75°) = 180° − 150° = 30°.",
+    work_en: "180° − (75° + 75°) = 180° − 150° = 30°." },
   { w: 2, fig: () => figTriangle(42, 98), opts: [40, 42, 98, 140], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (42° + 98°) = 180° − 140° = 40°." },
+    hint_en: "The angles of a triangle add up to 180°.",
+    work: "180° − (42° + 98°) = 180° − 140° = 40°.",
+    work_en: "180° − (42° + 98°) = 180° − 140° = 40°." },
   { w: 3, fig: () => figQuad(90, 85, 95), opts: [90, 85, 95, 270], correct: 0,
     hint: "Jumlah sudut segiempat 360°.",
-    work: "360° − (90° + 85° + 95°) = 360° − 270° = 90°." },
+    hint_en: "The angles of a quadrilateral add up to 360°.",
+    work: "360° − (90° + 85° + 95°) = 360° − 270° = 90°.",
+    work_en: "360° − (90° + 85° + 95°) = 360° − 270° = 90°." },
   { w: 3, fig: () => figRight(40),    opts: [50, 40, 130, 90],  correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 40° = 50°." },
+    hint_en: "A right angle adds up to 90°.",
+    work: "90° − 40° = 50°.",
+    work_en: "90° − 40° = 50°." },
   { w: 3, fig: () => figStraight3(45, 90), opts: [45, 90, 135, 55], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − (45° + 90°) = 180° − 135° = 45°." },
+    hint_en: "Angles on a straight line add up to 180°.",
+    work: "180° − (45° + 90°) = 180° − 135° = 45°.",
+    work_en: "180° − (45° + 90°) = 180° − 135° = 45°." },
   { w: 3, fig: () => figQuad(80, 110, 70), opts: [100, 80, 110, 260], correct: 0,
     hint: "Jumlah sudut segiempat 360°.",
-    work: "360° − (80° + 110° + 70°) = 360° − 260° = 100°." },
+    hint_en: "The angles of a quadrilateral add up to 360°.",
+    work: "360° − (80° + 110° + 70°) = 360° − 260° = 100°.",
+    work_en: "360° − (80° + 110° + 70°) = 360° − 260° = 100°." },
   { w: 4, fig: () => figPoint([100, 100, 80], 3), opts: [80, 100, 60, 280], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (100° + 100° + 80°) = 360° − 280° = 80°." },
+    hint_en: "Angles around a point add up to 360°.",
+    work: "360° − (100° + 100° + 80°) = 360° − 280° = 80°.",
+    work_en: "360° − (100° + 100° + 80°) = 360° − 280° = 80°." },
   { w: 4, fig: () => figTriangleExterior(63, 57), opts: [120, 60, 57, 63], correct: 0,
     hint: "Cari sudut dalam segitiga dulu, baru sudut luarnya.",
-    work: "Sudut dalam ketiga = 180° − (63° + 57°) = 60°. Sudut luar ? = 180° − 60° = 120°." },
+    hint_en: "Find the third angle inside the triangle first, then the exterior angle.",
+    work: "Sudut dalam ketiga = 180° − (63° + 57°) = 60°. Sudut luar ? = 180° − 60° = 120°.",
+    work_en: "The third interior angle = 180° − (63° + 57°) = 60°. The exterior angle ? = 180° − 60° = 120°." },
   { w: 4, fig: () => figStraight3(60, 60), opts: [60, 90, 45, 30], correct: 0,
     hint: "Tiga sudut sama besar pada garis lurus.",
-    work: "Ketiga sudut sama besar dan berjumlah 180°: 180° ÷ 3 = 60°." },
+    hint_en: "Three equal angles on a straight line.",
+    work: "Ketiga sudut sama besar dan berjumlah 180°: 180° ÷ 3 = 60°.",
+    work_en: "The three angles are equal and add up to 180°: 180° ÷ 3 = 60°." },
   { w: 4, fig: () => figStraight3(90, 45), opts: [45, 90, 135, 55], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − (90° + 45°) = 180° − 135° = 45°." },
+    hint_en: "Angles on a straight line add up to 180°.",
+    work: "180° − (90° + 45°) = 180° − 135° = 45°.",
+    work_en: "180° − (90° + 45°) = 180° − 135° = 45°." },
 ];
 
 /* ---------------- concept page (copied verbatim) ---------------- */
 const RULES = [
-  { t: "1. Sudut Berpenyiku", d: "Dua sudut yang jumlahnya 90° (membentuk sudut siku-siku). Contoh: 28° + 62° = 90°.", fig: () => figRight(28) },
-  { t: "2. Sudut Berpelurus", d: "Dua sudut pada satu garis lurus, jumlahnya 180°. Contoh: 65° + 115° = 180°.", fig: () => figStraight(65) },
-  { t: "3. Sudut Bertolak Belakang", d: "Sudut yang saling berhadapan besarnya sama.", fig: () => figCross(78) },
-  { t: "4. Sudut di Satu Titik", d: "Semua sudut yang mengelilingi satu titik berjumlah 360°.", fig: () => figPoint([90, 120, 85], 3) },
-  { t: "5. Sudut dalam Segitiga", d: "Jumlah ketiga sudut segitiga selalu 180°.", fig: () => figTriangle(50, 60) },
-  { t: "6. Sudut dalam Segiempat", d: "Jumlah keempat sudut segiempat selalu 360°.", fig: () => figQuad(90, 85, 95) },
+  { t: "1. Sudut Berpenyiku", t_en: "1. Complementary Angles",
+    d: "Dua sudut yang jumlahnya 90° (membentuk sudut siku-siku). Contoh: 28° + 62° = 90°.",
+    d_en: "Two angles that add up to 90° (they form a right angle). Example: 28° + 62° = 90°.", fig: () => figRight(28) },
+  { t: "2. Sudut Berpelurus", t_en: "2. Supplementary Angles",
+    d: "Dua sudut pada satu garis lurus, jumlahnya 180°. Contoh: 65° + 115° = 180°.",
+    d_en: "Two angles on a straight line, adding up to 180°. Example: 65° + 115° = 180°.", fig: () => figStraight(65) },
+  { t: "3. Sudut Bertolak Belakang", t_en: "3. Vertically Opposite Angles",
+    d: "Sudut yang saling berhadapan besarnya sama.",
+    d_en: "Angles opposite each other are equal.", fig: () => figCross(78) },
+  { t: "4. Sudut di Satu Titik", t_en: "4. Angles Around a Point",
+    d: "Semua sudut yang mengelilingi satu titik berjumlah 360°.",
+    d_en: "All the angles around one point add up to 360°.", fig: () => figPoint([90, 120, 85], 3) },
+  { t: "5. Sudut dalam Segitiga", t_en: "5. Angles in a Triangle",
+    d: "Jumlah ketiga sudut segitiga selalu 180°.",
+    d_en: "The three angles of a triangle always add up to 180°.", fig: () => figTriangle(50, 60) },
+  { t: "6. Sudut dalam Segiempat", t_en: "6. Angles in a Quadrilateral",
+    d: "Jumlah keempat sudut segiempat selalu 360°.",
+    d_en: "The four angles of a quadrilateral always add up to 360°.", fig: () => figQuad(90, 85, 95) },
 ];
 function renderRules() {
   $("ruleGrid").innerHTML = RULES.map(r =>
-    `<div class="rule"><h4>${r.t}</h4><p>${r.d}</p>${r.fig()}</div>`).join("");
+    `<div class="rule"><h4>${ruleTitle(r)}</h4><p>${ruleDesc(r)}</p>${r.fig()}</div>`).join("");
 }
 
 
@@ -688,8 +742,154 @@ const $ = id => document.getElementById(id);
 const state = {
   round: 0, score: 0, combo: 0, bestCombo: 0, coins: 0,
   attempts: 0, results: [], order: [0, 1, 2, 3],
-  roundDone: false, started: false
+  roundDone: false, started: false,
+  lang: 'en', /* default English — the lesson is taught in English */
+  lastWrongOpt: null, stageDone: -1, stageNext: -1
 };
+
+/* ---------------- i18n: EN (default) + ID ---------------- */
+const I18N = {
+  en: {
+    docTitle: "Angle Treasure Hunt — Grade 6 Mathematics",
+    title: "ANGLE TREASURE HUNT",
+    subtitle: "Angle Explorer • Grade 6 Mathematics",
+    score: "Score", coins: "Coins",
+    musicTitle: "Music", soundTitle: "Sound", bookTitleAttr: "Guidebook",
+    startStory: "Deep inside the <b>jungle</b>, a hidden <b>ancient temple</b> holds a treasure. Only an explorer who can read the secret angles can find it!<br>Follow the map trail, answer <b>20 angle questions</b>, cross <b>5 thrilling jungle zones</b>, and open the treasure chest in the Treasure Temple! 🗺️💰",
+    howto: "🧭 <b>How to play:</b> Look at the angle picture, then <b>tap the correct answer A / B / C / D</b>. Easy — just tap, no aiming and no time limit!<br>🪙 A correct answer = <b>gold coins</b> + the explorer moves one stop forward on the map.<br>💥 A wrong answer = try again, you only lose your combo.<br>🧰 Every zone you finish opens a <b>treasure chest</b> with a coin bonus!<br>📖 Don't know the rules yet? Open the <b>Guidebook</b> in the top-right corner.",
+    startBtn: "▶&nbsp;START THE ADVENTURE",
+    startNote: "20 stops • 5 jungle zones • No time limit — take it easy!",
+    qText: "What is the size of the angle marked “?”?",
+    qKey: "💡 Key: ",
+    mapLabel: "Treasure map",
+    stopOf: n => "Stop " + n + " / 20",
+    zoneBadge: (w, name, emoji) => "🧭 Zone " + w + " — " + name + " " + emoji,
+    zoneChip: (i, name, emoji) => emoji + " Zone " + i + " — " + name,
+    points: "points",
+    correctHead: "CORRECT!",
+    correctAnswer: "Correct answer:",
+    explorerMoves: "The explorer moves on to stop",
+    wrongHead: "Oops, that's",
+    wrongHead2: "not the right one!",
+    wrongBody: "Combo lost, but no worries — tap again! Remember:",
+    nextTrail: "Next Trail ➜",
+    zoneCompleteBtn: "Zone Complete! 🎉",
+    seeResults: "See Results 🏆",
+    stageTitle: name => name + " Zone Complete!",
+    stageText: (w, n, emoji) => "Great! You made it through " + w + " and opened the treasure chest at the end of this zone. The next trail is waiting for you in " + n + " " + emoji + ".",
+    scoreSoFar: "Score so far: ",
+    stageCoins: (bonus, total) => "🎉 Chest bonus: +" + bonus + " 🪙 • Total coins: " + total,
+    nextStageBtn: (name, emoji) => "Continue to " + name + " " + emoji + " ➜",
+    finalTitle: "TREASURE FOUND!",
+    finalStory: "You made it through the jungle and opened the treasure chest in the Treasure Temple! All the missing angles are back. You are a true explorer! 🏛️🎉",
+    firstTap: n => "Correct on the first tap: " + n + "/20",
+    bestCombo: n => "Best combo: ×" + n,
+    reviewHeading: "📋 Answer Review",
+    revStop: (n, name) => "Stop " + n + " — " + name + " Zone",
+    firstTapNote: "✅ first tap!",
+    correctAfter: n => "↩️ correct after " + n + " tries",
+    printBtn: "🖨️ Print Results",
+    againBtn: "🔄 Play Again",
+    bookTitle: "📖 Guidebook — Angle Rules",
+    bookIntro: "Memorise these 6 rules — every question on the map uses one of them!",
+    readyBtn: "Ready, Let's Go Hunting! 🧭"
+  },
+  id: {
+    docTitle: "Perburuan Harta Karun Sudut — Matematika Kelas 6",
+    title: "PERBURUAN HARTA KARUN SUDUT",
+    subtitle: "Penjelajah Sudut • Matematika Kelas 6",
+    score: "Skor", coins: "Koin",
+    musicTitle: "Musik", soundTitle: "Suara", bookTitleAttr: "Buku Petunjuk",
+    startStory: "Jauh di dalam <b>hutan rimba</b>, tersembunyi sebuah <b>kuil kuno</b> berisi harta karun. Hanya penjelajah yang bisa membaca sudut-sudut rahasia yang bisa menemukannya!<br>Ikuti jejak peta, jawab <b>20 soal sudut</b>, lewati <b>5 zona hutan</b> yang menegangkan, dan buka peti harta karun di Kuil Harta Karun! 🗺️💰",
+    howto: "🧭 <b>Cara main:</b> Lihat gambar sudutnya, lalu <b>ketuk jawaban A / B / C / D</b> yang benar. Gampang — tinggal ketuk, tanpa membidik dan tanpa hitungan waktu!<br>🪙 Jawaban benar = <b>koin emas</b> + penjelajah maju satu pemberhentian di peta.<br>💥 Jawaban salah = coba lagi, kombo saja yang hilang.<br>🧰 Setiap zona selesai, sebuah <b>peti harta</b> terbuka dengan bonus koin!<br>📖 Belum hafal aturannya? Buka <b>Buku Petunjuk</b> di pojok kanan atas.",
+    startBtn: "▶&nbsp;MULAI PETUALANGAN",
+    startNote: "20 pemberhentian • 5 zona hutan • Tanpa hitungan waktu — santai saja!",
+    qText: "Berapakah besar sudut yang ditandai “?”?",
+    qKey: "💡 Kunci: ",
+    mapLabel: "Peta harta karun",
+    stopOf: n => "Pemberhentian " + n + " / 20",
+    zoneBadge: (w, name, emoji) => "🧭 Zona " + w + " — " + name + " " + emoji,
+    zoneChip: (i, name, emoji) => emoji + " Zona " + i + " — " + name,
+    points: "poin",
+    correctHead: "BENAR!",
+    correctAnswer: "Jawaban benar:",
+    explorerMoves: "Penjelajah maju ke pemberhentian",
+    wrongHead: "Aduh, itu",
+    wrongHead2: "bukan yang benar!",
+    wrongBody: "Combo hilang, tapi tenang — ketuk lagi! Ingat:",
+    nextTrail: "Jejak Berikutnya ➜",
+    zoneCompleteBtn: "Zona Selesai! 🎉",
+    seeResults: "Lihat Hasil 🏆",
+    stageTitle: name => "Zona " + name + " Tuntas!",
+    stageText: (w, n, emoji) => "Hebat! Kamu sudah menembus " + w + " dan membuka peti harta di ujung zona ini. Jejak berikutnya menunggumu di Zona " + n + " " + emoji + ".",
+    scoreSoFar: "Skor sementara: ",
+    stageCoins: (bonus, total) => "🎉 Bonus peti: +" + bonus + " 🪙 • Total koin: " + total,
+    nextStageBtn: (name, emoji) => "Lanjut ke Zona " + name + " " + emoji + " ➜",
+    finalTitle: "HARTA KARUN DITEMUKAN!",
+    finalStory: "Kamu berhasil menembus hutan rimba dan membuka peti harta karun di Kuil Harta Karun! Semua sudut yang hilang sudah kembali. Kamu penjelajah sejati! 🏛️🎉",
+    firstTap: n => "Benar di jawaban pertama: " + n + "/20",
+    bestCombo: n => "Combo terbaik: ×" + n,
+    reviewHeading: "📋 Review Jawaban",
+    revStop: (n, name) => "Pemberhentian " + n + " — Zona " + name,
+    firstTapNote: "✅ jawaban pertama!",
+    correctAfter: n => "↩️ benar setelah " + n + "× mencoba",
+    printBtn: "🖨️ Cetak Hasil",
+    againBtn: "🔄 Main Lagi",
+    bookTitle: "📖 Buku Petunjuk — Aturan Sudut",
+    bookIntro: "Hafalkan 6 aturan ini — setiap soal di peta memakai salah satunya!",
+    readyBtn: "Siap, Ayo Berburu! 🧭"
+  }
+};
+function t(key, ...args) {
+  const v = I18N[state.lang][key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+function zoneName(w) { return state.lang === 'en' ? WORLDS[w].name_en : WORLDS[w].name; }
+function qHint(q) { return state.lang === 'en' ? q.hint_en : q.hint; }
+function qWork(q) { return state.lang === 'en' ? q.work_en : q.work; }
+function ruleTitle(r) { return state.lang === 'en' ? r.t_en : r.t; }
+function ruleDesc(r) { return state.lang === 'en' ? r.d_en : r.d; }
+function renderChips() {
+  $("worldChips").innerHTML = WORLDS.map((w, i) =>
+    `<span class="wchip" style="background:${w.badge}">${t('zoneChip', i + 1, zoneName(i), w.emoji)}</span>`).join("");
+}
+/* Re-render every visible text in the current language (called on toggle + on load). */
+function applyLang() {
+  document.documentElement.lang = state.lang;
+  document.title = t('docTitle');
+  $("appTitle").textContent = t('title');
+  $("appSubtitle").textContent = t('subtitle');
+  $("langBtn").textContent = state.lang === 'en' ? 'EN' : 'ID';
+  $("langBtn").title = state.lang === 'en' ? 'Bahasa Indonesia' : 'English';
+  $("musicBtn").title = t('musicTitle');
+  $("soundBtn").title = t('soundTitle');
+  $("bookBtn").title = t('bookTitleAttr');
+  $("startTitle").textContent = t('title');
+  $("startStory").innerHTML = t('startStory');
+  $("howtoBox").innerHTML = t('howto');
+  $("startBtn").innerHTML = t('startBtn');
+  $("startNote").textContent = t('startNote');
+  renderChips();
+  updateStats();
+  $("finalTitle").textContent = t('finalTitle');
+  $("finalStory").innerHTML = t('finalStory');
+  $("printBtn").textContent = t('printBtn');
+  $("againBtn").textContent = t('againBtn');
+  $("bookTitle").textContent = t('bookTitle');
+  $("bookIntro").textContent = t('bookIntro');
+  $("closeBookBtn2").textContent = t('readyBtn');
+  renderRules();
+  if (state.started) {
+    setStage(QUESTIONS[state.round].w);
+    $("roundText").textContent = t('stopOf', state.round + 1);
+    $("qText").textContent = t('qText');
+    $("qHint").textContent = t('qKey') + qHint(QUESTIONS[state.round]);
+    renderFeedback();
+    renderMap();
+  }
+  if (state.stageDone >= 0) renderStageComplete();
+  if (state.results.length === 20) renderFinal();
+}
 const LETTERS = ["A", "B", "C", "D"];
 const COIN_BONUS = 10; /* bonus koin setiap zona selesai */
 
@@ -705,12 +905,12 @@ function showScreen(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function updateStats() {
-  $("scorePill").textContent = "⭐ Skor: " + state.score;
+  $("scorePill").textContent = "⭐ " + t('score') + ": " + state.score;
   const cp = $("comboPill");
   cp.textContent = "🔥 Combo ×" + state.combo;
   cp.classList.toggle("hot", state.combo >= 3);
   const coin = $("coinPill");
-  coin.textContent = "🪙 Koin: " + state.coins;
+  coin.textContent = "🪙 " + t('coins') + ": " + state.coins;
   coin.classList.remove("bump"); void coin.offsetWidth; coin.classList.add("bump");
 }
 function popCoin(n) {
@@ -721,7 +921,7 @@ function popCoin(n) {
 function setStage(w) {
   const W = WORLDS[w];
   const badge = $("stageBadge");
-  badge.textContent = "🧭 Zona " + (w + 1) + " — " + W.name + " " + W.emoji;
+  badge.textContent = t('zoneBadge', w + 1, zoneName(w), W.emoji);
   badge.style.background = W.badge;
 }
 
@@ -740,7 +940,7 @@ function renderMap() {
   /* zone labels under each group of 4 stops */
   for (let z = 0; z < 5; z++) {
     const cx = 30 + (z * 4 + 1.5) * 38;
-    s += `<text x="${cx}" y="140" font-size="12" font-weight="800" fill="#78350f" text-anchor="middle">${WORLDS[z].emoji} ${WORLDS[z].name}</text>`;
+    s += `<text x="${cx}" y="140" font-size="12" font-weight="800" fill="#78350f" text-anchor="middle">${WORLDS[z].emoji} ${zoneName(z)}</text>`;
   }
   /* start + temple markers */
   s += `<text x="30" y="18" font-size="22" text-anchor="middle">🌿</text>`;
@@ -768,7 +968,7 @@ function renderMap() {
   /* explorer marker on the current stop */
   const [mx, my] = stopPos(cur);
   s += `<g class="mapMarker"><circle cx="${mx}" cy="${my - 34}" r="15" fill="#166534" stroke="#facc15" stroke-width="2.5"/><text x="${mx}" y="${my - 27}" font-size="17" text-anchor="middle">🧭</text></g>`;
-  $("mapBox").innerHTML = `<svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peta harta karun">${s}</svg>`;
+  $("mapBox").innerHTML = `<svg viewBox="0 0 760 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${t('mapLabel')}">${s}</svg>`;
 }
 
 /* ---------------- round flow ---------------- */
@@ -776,11 +976,12 @@ function loadRound(i) {
   showScreen("screen-game"); /* entering a round ALWAYS shows the game screen */
   const q = QUESTIONS[i];
   state.round = i; state.attempts = 0; state.roundDone = false;
+  state.lastWrongOpt = null; state.stageDone = -1; state.stageNext = -1;
   setStage(q.w);
-  $("roundText").textContent = "Pemberhentian " + (i + 1) + " / 20";
+  $("roundText").textContent = t('stopOf', i + 1);
   $("progressBar").style.width = (i / 20 * 100) + "%";
-  $("qText").textContent = "Berapakah besar sudut yang ditandai “?” ?";
-  $("qHint").textContent = "💡 Kunci: " + q.hint;
+  $("qText").textContent = t('qText');
+  $("qHint").textContent = t('qKey') + qHint(q);
   $("figBox").innerHTML = q.fig();
   $("feedback").innerHTML = "";
   renderAnswers();
@@ -792,6 +993,31 @@ function renderAnswers() {
   $("answers").innerHTML = state.order.map((optIdx, i) =>
     `<button class="ans c${i}" data-opt="${optIdx}"><span class="alet">${LETTERS[i]}</span><span class="aval">${q.opts[optIdx]}°</span></button>`
   ).join("");
+}
+/* Rebuild the feedback panel for the current round in the current language
+   (also used by applyLang() when the language is toggled mid-round). */
+function renderFeedback() {
+  const q = QUESTIONS[state.round];
+  if (state.roundDone) {
+    const r = state.results[state.results.length - 1];
+    const nextStop = Math.min(state.round + 2, 20);
+    const nextLabel = state.round === 19 ? t('seeResults')
+      : (state.round + 1) % 4 === 0 ? t('zoneCompleteBtn') : t('nextTrail');
+    $("feedback").innerHTML = `<div class="fb-ok">
+      <h3>🎉 ${t('correctHead')} +${r.pts} ${t('points')} +${r.coins} 🪙 ${state.combo >= 2 ? "— Combo ×" + state.combo + " 🔥" : ""}</h3>
+      <p><b>${t('correctAnswer')} ${q.opts[q.correct]}°.</b> ${qWork(q)}</p>
+      <p>🧭 ${t('explorerMoves')} ${nextStop}!</p>
+      <button class="btn" id="nextBtn" style="margin-top:8px">${nextLabel}</button>
+    </div>`;
+    $("nextBtn").addEventListener("click", advance);
+  } else if (state.attempts > 0 && state.lastWrongOpt !== null) {
+    $("feedback").innerHTML = `<div class="fb-bad">
+      <h3>💥 ${t('wrongHead')} ${q.opts[state.lastWrongOpt]}° — ${t('wrongHead2')}</h3>
+      <p>${t('wrongBody')} ${qHint(q)}</p>
+    </div>`;
+  } else {
+    $("feedback").innerHTML = "";
+  }
 }
 function tapAnswer(optIdx, btnEl) {
   if (state.roundDone) return;
@@ -807,6 +1033,7 @@ function tapAnswer(optIdx, btnEl) {
     state.score += pts;
     state.coins += coins;
     state.roundDone = true;
+    state.lastWrongOpt = null;
     state.results.push({ q: state.round, attempts: state.attempts, pts, coins });
     if (btnEl && btnEl.classList) btnEl.classList.add("correct");
     document.querySelectorAll("#answers .ans").forEach(b => { b.disabled = true; });
@@ -814,26 +1041,18 @@ function tapAnswer(optIdx, btnEl) {
     updateStats();
     popCoin(coins);
     renderMap();
-    $("feedback").innerHTML = `<div class="fb-ok">
-      <h3>🎉 BENAR! +${pts} poin +${coins} 🪙 ${state.combo >= 2 ? "— Combo ×" + state.combo + " 🔥" : ""}</h3>
-      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
-      <p>🧭 Penjelajah maju ke pemberhentian ${state.round + 2 > 20 ? 20 : state.round + 2}!</p>
-      <button class="btn" id="nextBtn" style="margin-top:8px">${state.round === 19 ? "Lihat Hasil 🏆" : (state.round + 1) % 4 === 0 ? "Zona Selesai! 🎉" : "Jejak Berikutnya ➜"}</button>
-    </div>`;
-    $("nextBtn").addEventListener("click", advance);
+    renderFeedback();
   } else {
     AudioSys.thud();
     state.attempts++;
     state.combo = 0;
+    state.lastWrongOpt = optIdx;
     updateStats();
     if (btnEl) {
       if (btnEl.classList) btnEl.classList.add("wrong");
       btnEl.disabled = true;
     }
-    $("feedback").innerHTML = `<div class="fb-bad">
-      <h3>💥 Aduh, itu ${q.opts[optIdx]}° — bukan yang benar!</h3>
-      <p>Combo hilang, tapi tenang — ketuk lagi! Ingat: ${q.hint}</p>
-    </div>`;
+    renderFeedback();
   }
 }
 function advance() {
@@ -843,39 +1062,45 @@ function advance() {
   if (next % 4 === 0) { showStageComplete(next / 4 - 1, next / 4); return; }
   loadRound(next);
 }
+function renderStageComplete() {
+  const W = WORLDS[state.stageDone], N = WORLDS[state.stageNext];
+  $("stageEmoji").textContent = "🧰💰";
+  $("stageTitle").textContent = t('stageTitle', zoneName(state.stageDone));
+  $("stageText").textContent = t('stageText', zoneName(state.stageDone), zoneName(state.stageNext), N.emoji);
+  $("stageScore").textContent = t('scoreSoFar') + state.score;
+  $("stageCoins").textContent = t('stageCoins', COIN_BONUS, state.coins);
+  $("nextStageBtn").textContent = t('nextStageBtn', zoneName(state.stageNext), N.emoji);
+}
 function showStageComplete(doneIdx, nextIdx) {
-  const W = WORLDS[doneIdx], N = WORLDS[nextIdx];
+  state.stageDone = doneIdx; state.stageNext = nextIdx;
   state.coins += COIN_BONUS;
   updateStats();
-  $("stageEmoji").textContent = "🧰💰";
-  $("stageTitle").textContent = "Zona " + W.name + " Tuntas!";
-  $("stageText").textContent = "Hebat! Kamu sudah menembus " + W.name +
-    " dan membuka peti harta di ujung zona ini. Jejak berikutnya menunggumu di Zona " + N.name + " " + N.emoji + ".";
-  $("stageScore").textContent = "Skor sementara: " + state.score;
-  $("stageCoins").textContent = "🎉 Bonus peti: +" + COIN_BONUS + " 🪙 • Total koin: " + state.coins;
-  $("nextStageBtn").textContent = "Lanjut ke Zona " + N.name + " " + N.emoji + " ➜";
+  renderStageComplete();
   AudioSys.chestFanfare();
   showScreen("screen-stage");
 }
 
 /* ---------------- final screen ---------------- */
-function showFinal() {
+function renderFinal() {
   const firstTry = state.results.filter(r => r.attempts === 0).length;
-  $("finalScore").textContent = state.score + " poin  •  🪙 " + state.coins + " koin";
-  $("finalStats").textContent = "Benar di jawaban pertama: " + firstTry + "/20  •  Combo terbaik: ×" + state.bestCombo;
-  let html = "<h3 style='text-align:center;margin-bottom:12px;color:#92400e'>📋 Review Jawaban</h3>";
+  $("finalScore").textContent = state.score + " " + t('points') + "  •  🪙 " + state.coins + " " + t('coins').toLowerCase();
+  $("finalStats").textContent = t('firstTap', firstTry) + "  •  " + t('bestCombo', state.bestCombo);
+  let html = "<h3 style='text-align:center;margin-bottom:12px;color:#92400e'>" + t('reviewHeading') + "</h3>";
   state.results.forEach(r => {
     const q = QUESTIONS[r.q], W = WORLDS[q.w];
     const cls = r.attempts === 0 ? "correct" : "wrong";
-    const note = r.attempts === 0 ? "✅ jawaban pertama!" : "↩️ benar setelah " + r.attempts + "× mencoba";
+    const note = r.attempts === 0 ? t('firstTapNote') : t('correctAfter', r.attempts);
     html += `<div class="revitem ${cls}">
-      <b>Pemberhentian ${r.q + 1} — Zona ${W.name} ${W.emoji}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} poin +${r.coins} 🪙
+      <b>${t('revStop', r.q + 1, zoneName(q.w))} ${W.emoji}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} ${t('points')} +${r.coins} 🪙
       ${q.fig()}
-      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
+      <p><b>${t('correctAnswer')} ${q.opts[q.correct]}°.</b> ${qWork(q)}</p>
     </div>`;
   });
   $("reviewBox").innerHTML = html;
   $("progressBar").style.width = "100%";
+}
+function showFinal() {
+  renderFinal();
   AudioSys.chestFanfare();
   showScreen("screen-final");
 }
@@ -884,6 +1109,7 @@ function showFinal() {
 function resetGame() {
   state.round = 0; state.score = 0; state.combo = 0; state.bestCombo = 0; state.coins = 0;
   state.attempts = 0; state.results = []; state.roundDone = false;
+  state.lastWrongOpt = null; state.stageDone = -1; state.stageNext = -1;
   updateStats();
 }
 $("startBtn").addEventListener("click", () => {
@@ -911,6 +1137,10 @@ $("musicBtn").addEventListener("click", () => {
   $("musicBtn").classList.toggle("off", !AudioSys.musicOn);
   if (AudioSys.musicOn) AudioSys.startMusic(); else AudioSys.stopMusic();
 });
+$("langBtn").addEventListener("click", () => {
+  state.lang = state.lang === 'en' ? 'id' : 'en';
+  applyLang();
+});
 $("answers").addEventListener("click", e => {
   const b = e.target && e.target.closest ? e.target.closest("button.ans") : null;
   if (!b || state.roundDone) return;
@@ -920,8 +1150,7 @@ $("nextStageBtn").addEventListener("click", () => { showScreen("screen-game"); l
 $("printBtn").addEventListener("click", () => window.print());
 $("againBtn").addEventListener("click", () => { resetGame(); showScreen("screen-start"); });
 
-$("worldChips").innerHTML = WORLDS.map((w, i) =>
-  `<span class="wchip" style="background:${w.badge}">${w.emoji} Zona ${i + 1} — ${w.name}</span>`).join("");
+applyLang(); /* default English on load */
 </script>
 </body>
 </html>

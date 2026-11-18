@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Dance Battle: Sudut — Matematika Kelas 6</title>
+<title>Dance Battle: Angles — Grade 6 Mathematics</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; }
@@ -54,6 +54,7 @@
     background: rgba(255, 255, 255, .1); color: #fff; font-size: 20px; cursor: pointer;
   }
   .iconbtn.off { opacity: .45; }
+  .iconbtn.lang { font-size: 15px; font-weight: 800; letter-spacing: .5px; }
 
   /* ---------- cards & buttons ---------- */
   .card {
@@ -233,36 +234,37 @@
   <header>
     <div class="logo">🎧</div>
     <div class="title">
-      <h1>DANCE BATTLE: SUDUT</h1>
-      <p>Penari Sudut • Matematika Kelas 6</p>
+      <h1 id="headerTitle">DANCE BATTLE: ANGLES</h1>
+      <p id="headerSub">Angle Dancer • Grade 6 Mathematics</p>
     </div>
     <div class="spacer"></div>
-    <span class="pill" id="scorePill">⭐ Skor: 0</span>
+    <span class="pill" id="scorePill">⭐ Score: 0</span>
     <span class="pill combo" id="comboPill">🔥 Combo ×0</span>
     <span class="pill fever hidden" id="feverPill">⚡ FEVER MODE</span>
-    <button class="iconbtn" id="musicBtn" title="Musik">🎵</button>
-    <button class="iconbtn" id="soundBtn" title="Suara">🔊</button>
-    <button class="iconbtn" id="bookBtn" title="Buku Petunjuk">📖</button>
+    <button class="iconbtn lang" id="langBtn" title="Language / Bahasa">EN</button>
+    <button class="iconbtn" id="musicBtn" title="Music">🎵</button>
+    <button class="iconbtn" id="soundBtn" title="Sound">🔊</button>
+    <button class="iconbtn" id="bookBtn" title="Guidebook">📖</button>
   </header>
 
   <!-- ============ START ============ -->
   <section id="screen-start" class="card center">
     <div class="trophy">🕺✨</div>
-    <h2 class="grad-text" style="font-size:28px;margin:8px 0">DANCE BATTLE: SUDUT</h2>
-    <p style="line-height:1.6;margin:6px 0">
-      Lantai dansa Kerajaan Sudut sedang sepi… Semua sudut bersembunyi!
-      Jawab soal sudut dengan benar, dan penari kita akan nge-dance mengikuti beat-nya. 💃🕺<br>
-      Kombo beruntun = <b>FEVER MODE</b> — musik makin nge-beat, lantai makin menyala! ⚡
+    <h2 id="startTitle" class="grad-text" style="font-size:28px;margin:8px 0">DANCE BATTLE: ANGLES</h2>
+    <p id="startIntro" style="line-height:1.6;margin:6px 0">
+      The Angle Kingdom dance floor is quiet… All the angles are hiding!
+      Answer the angle questions correctly, and our dancer will dance to the beat. 💃🕺<br>
+      Streak combos = <b>FEVER MODE</b> — the music gets hotter and the floor lights up! ⚡
     </p>
     <div class="worldchips" id="worldChips"></div>
-    <div class="howto">
-      🕺 <b>Cara main:</b> Lihat gambar sudutnya, lalu <b>ketuk jawaban A / B / C / D</b> yang benar. Gampang — tinggal ketuk, tanpa membidik!<br>
-      🎵 Jawaban benar = penari nge-dance + poin. Jawaban salah = coba lagi, kombo saja yang hilang.<br>
-      🔥 Jawaban benar beruntun = <b>combo</b> naik. Combo ×3 atau lebih = <b>FEVER MODE</b>!<br>
-      📖 Belum hafal aturannya? Buka <b>Buku Petunjuk</b> di pojok kanan atas.
+    <div class="howto" id="startHowto">
+      🕺 <b>How to play:</b> Look at the angle picture, then <b>tap the correct answer A / B / C / D</b>. Easy — just tap, no aiming!<br>
+      🎵 A correct answer = the dancer dances + points. A wrong answer = try again, only the combo is lost.<br>
+      🔥 Correct answers in a row = <b>combo</b> goes up. Combo ×3 or more = <b>FEVER MODE</b>!<br>
+      📖 Don't know the rules yet? Open the <b>Guidebook</b> at the top right.
     </div>
-    <button class="btn" id="startBtn">▶ &nbsp;MULAI BERDANSA</button>
-    <p class="muted" style="font-size:13px;margin-top:12px">20 lagu • 5 panggung • Tanpa hitungan waktu — santai saja!</p>
+    <button class="btn" id="startBtn">▶ &nbsp;START DANCING</button>
+    <p class="muted" id="startMeta" style="font-size:13px;margin-top:12px">20 songs • 5 stages • No time limit — take it easy!</p>
   </section>
 
   <!-- ============ GAME ============ -->
@@ -340,23 +342,23 @@
   <!-- ============ STAGE COMPLETE ============ -->
   <section id="screen-stage" class="card center hidden">
     <div class="trophy" id="stageEmoji">🎉</div>
-    <h2 id="stageTitle" class="grad-text" style="font-size:26px;margin:6px 0">Panggung Selesai!</h2>
+    <h2 id="stageTitle" class="grad-text" style="font-size:26px;margin:6px 0">Stage Complete!</h2>
     <p id="stageText" style="line-height:1.6"></p>
     <p id="stageScore" style="font-weight:800;font-size:18px;color:#f0abfc"></p>
-    <button class="btn" id="nextStageBtn">Lanjut ke Panggung Berikutnya ➜</button>
+    <button class="btn" id="nextStageBtn">Continue to the Next Stage ➜</button>
   </section>
 
   <!-- ============ FINAL ============ -->
   <section id="screen-final" class="card center hidden">
     <div class="trophy">🏆</div>
-    <h2 class="grad-text" style="font-size:26px;margin:6px 0">BINTANG PANGGUNG!</h2>
-    <p>Kamu berhasil menyelesaikan semua 20 lagu. Kerajaan Sudut kembali bergoyang! 🎉</p>
-    <p id="finalScore" class="grad-text">0 poin</p>
+    <h2 id="finalTitle" class="grad-text" style="font-size:26px;margin:6px 0">STAGE STAR!</h2>
+    <p id="finalIntro">You finished all 20 songs. The Angle Kingdom is grooving again! 🎉</p>
+    <p id="finalScore" class="grad-text">0 points</p>
     <p id="finalStats" style="font-weight:800"></p>
     <div id="reviewBox" style="margin-top:14px"></div>
     <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button class="btn" id="printBtn">🖨️ Cetak Hasil</button>
-      <button class="btn ghost" id="againBtn">🔁 Main Lagi</button>
+      <button class="btn" id="printBtn">🖨️ Print Results</button>
+      <button class="btn ghost" id="againBtn">🔁 Play Again</button>
     </div>
   </section>
 
@@ -364,13 +366,13 @@
   <div id="conceptOverlay" class="hidden">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 style="margin:0;color:#9d174d">📖 Buku Petunjuk — Aturan Sudut</h2>
+        <h2 id="bookTitle" style="margin:0;color:#9d174d">📖 Guidebook — Angle Rules</h2>
         <button class="iconbtn" id="closeBookBtn" title="Tutup" style="color:#1f2937;border-color:#d1d5db;background:#f3f4f6">✖️</button>
       </div>
-      <p style="margin:8px 0 0;color:#4b5563">Pelajari dulu 6 aturan ini — semuanya dipakai di 20 lagu!</p>
+      <p id="bookIntro" style="margin:8px 0 0;color:#4b5563">Learn these 6 rules first — all of them are used in the 20 songs!</p>
       <div id="ruleGrid"></div>
       <div style="text-align:center;margin-top:16px">
-        <button class="btn" id="closeBookBtn2">Siap, Ayo Berdansa! 🕺</button>
+        <button class="btn" id="closeBookBtn2">Ready, Let's Dance! 🕺</button>
       </div>
     </div>
   </div>
@@ -551,88 +553,219 @@ function figStraight3(g1, g2) {
 
 /* ---------------- 20 questions (copied verbatim — answers already verified) ---------------- */
 const WORLDS = [
-  { name: "Hutan", emoji: "🌳", sky1: "#7dd3fc", sky2: "#dcfce7", ground: "#65a30d", badge: "#166534" },
-  { name: "Gurun", emoji: "🏜️", sky1: "#fde68a", sky2: "#fef3c7", ground: "#d97706", badge: "#92400e" },
-  { name: "Kastil", emoji: "🏰", sky1: "#c4b5fd", sky2: "#ede9fe", ground: "#6d28d9", badge: "#4c1d95" },
-  { name: "Langit", emoji: "☁️", sky1: "#93c5fd", sky2: "#dbeafe", ground: "#0284c7", badge: "#0c4a6e" },
-  { name: "Gunung Berapi", emoji: "🌋", sky1: "#fca5a5", sky2: "#fee2e2", ground: "#7f1d1d", badge: "#7f1d1d" },
+  { name: "Hutan", name_en: "Forest", emoji: "🌳", sky1: "#7dd3fc", sky2: "#dcfce7", ground: "#65a30d", badge: "#166534" },
+  { name: "Gurun", name_en: "Desert", emoji: "🏜️", sky1: "#fde68a", sky2: "#fef3c7", ground: "#d97706", badge: "#92400e" },
+  { name: "Kastil", name_en: "Castle", emoji: "🏰", sky1: "#c4b5fd", sky2: "#ede9fe", ground: "#6d28d9", badge: "#4c1d95" },
+  { name: "Langit", name_en: "Sky", emoji: "☁️", sky1: "#93c5fd", sky2: "#dbeafe", ground: "#0284c7", badge: "#0c4a6e" },
+  { name: "Gunung Berapi", name_en: "Volcano", emoji: "🌋", sky1: "#fca5a5", sky2: "#fee2e2", ground: "#7f1d1d", badge: "#7f1d1d" },
 ];
 
 const QUESTIONS = [
   { w: 0, fig: () => figStraight(65),  opts: [115, 65, 25, 90],  correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − 65° = 115°." },
+    work: "180° − 65° = 115°.",
+    hint_en: "Angles on a straight line add up to 180°.",
+    work_en: "180° − 65° = 115°." },
   { w: 0, fig: () => figRight(28),    opts: [62, 28, 118, 90],  correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 28° = 62°." },
+    work: "90° − 28° = 62°.",
+    hint_en: "A right angle adds up to 90°.",
+    work_en: "90° − 28° = 62°." },
   { w: 0, fig: () => figStraight(132), opts: [48, 132, 42, 78], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − 132° = 48°." },
+    work: "180° − 132° = 48°.",
+    hint_en: "Angles on a straight line add up to 180°.",
+    work_en: "180° − 132° = 48°." },
   { w: 0, fig: () => figRight(35),    opts: [55, 35, 125, 145], correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 35° = 55°." },
+    work: "90° − 35° = 55°.",
+    hint_en: "A right angle adds up to 90°.",
+    work_en: "90° − 35° = 55°." },
   { w: 1, fig: () => figCross(78),    opts: [78, 102, 12, 90],  correct: 0,
     hint: "Sudut bertolak belakang besarnya sama.",
-    work: "Sudut ? bertolak belakang dengan 78°, jadi sama besar: 78°." },
+    work: "Sudut ? bertolak belakang dengan 78°, jadi sama besar: 78°.",
+    hint_en: "Vertically opposite angles are equal.",
+    work_en: "The ? angle is vertically opposite 78°, so it is equal: 78°." },
   { w: 1, fig: () => figPoint([90, 120, 85], 3), opts: [65, 55, 75, 295], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (90° + 120° + 85°) = 360° − 295° = 65°." },
+    work: "360° − (90° + 120° + 85°) = 360° − 295° = 65°.",
+    hint_en: "Angles around a point add up to 360°.",
+    work_en: "360° − (90° + 120° + 85°) = 360° − 295° = 65°." },
   { w: 1, fig: () => figCross(110, true), opts: [70, 110, 20, 90], correct: 0,
     hint: "Sudut berpelurus berjumlah 180°.",
-    work: "Sudut ? berpelurus dengan 110°: 180° − 110° = 70°." },
+    work: "Sudut ? berpelurus dengan 110°: 180° − 110° = 70°.",
+    hint_en: "Supplementary angles add up to 180°.",
+    work_en: "The ? angle is supplementary to 110°: 180° − 110° = 70°." },
   { w: 1, fig: () => figPoint([150, 90], 2), opts: [120, 60, 30, 210], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (150° + 90°) = 360° − 240° = 120°." },
+    work: "360° − (150° + 90°) = 360° − 240° = 120°.",
+    hint_en: "Angles around a point add up to 360°.",
+    work_en: "360° − (150° + 90°) = 360° − 240° = 120°." },
   { w: 2, fig: () => figTriangle(50, 60), opts: [70, 60, 110, 50], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (50° + 60°) = 180° − 110° = 70°." },
+    work: "180° − (50° + 60°) = 180° − 110° = 70°.",
+    hint_en: "The angles in a triangle add up to 180°.",
+    work_en: "180° − (50° + 60°) = 180° − 110° = 70°." },
   { w: 2, fig: () => figTriangle(90, 35), opts: [55, 35, 90, 125], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (90° + 35°) = 180° − 125° = 55°." },
+    work: "180° − (90° + 35°) = 180° − 125° = 55°.",
+    hint_en: "The angles in a triangle add up to 180°.",
+    work_en: "180° − (90° + 35°) = 180° − 125° = 55°." },
   { w: 2, fig: () => figTriangle(75, 75), opts: [30, 75, 105, 150], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (75° + 75°) = 180° − 150° = 30°." },
+    work: "180° − (75° + 75°) = 180° − 150° = 30°.",
+    hint_en: "The angles in a triangle add up to 180°.",
+    work_en: "180° − (75° + 75°) = 180° − 150° = 30°." },
   { w: 2, fig: () => figTriangle(42, 98), opts: [40, 42, 98, 140], correct: 0,
     hint: "Jumlah sudut segitiga 180°.",
-    work: "180° − (42° + 98°) = 180° − 140° = 40°." },
+    work: "180° − (42° + 98°) = 180° − 140° = 40°.",
+    hint_en: "The angles in a triangle add up to 180°.",
+    work_en: "180° − (42° + 98°) = 180° − 140° = 40°." },
   { w: 3, fig: () => figQuad(90, 85, 95), opts: [90, 85, 95, 270], correct: 0,
     hint: "Jumlah sudut segiempat 360°.",
-    work: "360° − (90° + 85° + 95°) = 360° − 270° = 90°." },
+    work: "360° − (90° + 85° + 95°) = 360° − 270° = 90°.",
+    hint_en: "The angles in a quadrilateral add up to 360°.",
+    work_en: "360° − (90° + 85° + 95°) = 360° − 270° = 90°." },
   { w: 3, fig: () => figRight(40),    opts: [50, 40, 130, 90],  correct: 0,
     hint: "Sudut siku-siku berjumlah 90°.",
-    work: "90° − 40° = 50°." },
+    work: "90° − 40° = 50°.",
+    hint_en: "A right angle adds up to 90°.",
+    work_en: "90° − 40° = 50°." },
   { w: 3, fig: () => figStraight3(45, 90), opts: [45, 90, 135, 55], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − (45° + 90°) = 180° − 135° = 45°." },
+    work: "180° − (45° + 90°) = 180° − 135° = 45°.",
+    hint_en: "Angles on a straight line add up to 180°.",
+    work_en: "180° − (45° + 90°) = 180° − 135° = 45°." },
   { w: 3, fig: () => figQuad(80, 110, 70), opts: [100, 80, 110, 260], correct: 0,
     hint: "Jumlah sudut segiempat 360°.",
-    work: "360° − (80° + 110° + 70°) = 360° − 260° = 100°." },
+    work: "360° − (80° + 110° + 70°) = 360° − 260° = 100°.",
+    hint_en: "The angles in a quadrilateral add up to 360°.",
+    work_en: "360° − (80° + 110° + 70°) = 360° − 260° = 100°." },
   { w: 4, fig: () => figPoint([100, 100, 80], 3), opts: [80, 100, 60, 280], correct: 0,
     hint: "Sudut di satu titik berjumlah 360°.",
-    work: "360° − (100° + 100° + 80°) = 360° − 280° = 80°." },
+    work: "360° − (100° + 100° + 80°) = 360° − 280° = 80°.",
+    hint_en: "Angles around a point add up to 360°.",
+    work_en: "360° − (100° + 100° + 80°) = 360° − 280° = 80°." },
   { w: 4, fig: () => figTriangleExterior(63, 57), opts: [120, 60, 57, 63], correct: 0,
     hint: "Cari sudut dalam segitiga dulu, baru sudut luarnya.",
-    work: "Sudut dalam ketiga = 180° − (63° + 57°) = 60°. Sudut luar ? = 180° − 60° = 120°." },
+    work: "Sudut dalam ketiga = 180° − (63° + 57°) = 60°. Sudut luar ? = 180° − 60° = 120°.",
+    hint_en: "Find the interior angle of the triangle first, then the exterior angle.",
+    work_en: "The third interior angle = 180° − (63° + 57°) = 60°. The exterior angle ? = 180° − 60° = 120°." },
   { w: 4, fig: () => figStraight3(60, 60), opts: [60, 90, 45, 30], correct: 0,
     hint: "Tiga sudut sama besar pada garis lurus.",
-    work: "Ketiga sudut sama besar dan berjumlah 180°: 180° ÷ 3 = 60°." },
+    work: "Ketiga sudut sama besar dan berjumlah 180°: 180° ÷ 3 = 60°.",
+    hint_en: "Three equal angles on a straight line.",
+    work_en: "The three angles are equal and add up to 180°: 180° ÷ 3 = 60°." },
   { w: 4, fig: () => figStraight3(90, 45), opts: [45, 90, 135, 55], correct: 0,
     hint: "Sudut pada garis lurus berjumlah 180°.",
-    work: "180° − (90° + 45°) = 180° − 135° = 45°." },
+    work: "180° − (90° + 45°) = 180° − 135° = 45°.",
+    hint_en: "Angles on a straight line add up to 180°.",
+    work_en: "180° − (90° + 45°) = 180° − 135° = 45°." },
 ];
+
+/* ---------------- bilingual (ID + EN) — default EN, the lesson is taught in English ---------------- */
+let lang = 'en';
+const I18N = {
+  en: {
+    pageTitle: "Dance Battle: Angles — Grade 6 Mathematics",
+    title: "DANCE BATTLE: ANGLES",
+    headerSub: "Angle Dancer • Grade 6 Mathematics",
+    score: "Score",
+    startIntro: "The Angle Kingdom dance floor is quiet… All the angles are hiding! Answer the angle questions correctly, and our dancer will dance to the beat. 💃🕺<br>Streak combos = <b>FEVER MODE</b> — the music gets hotter and the floor lights up! ⚡",
+    howto: "🕺 <b>How to play:</b> Look at the angle picture, then <b>tap the correct answer A / B / C / D</b>. Easy — just tap, no aiming!<br>🎵 A correct answer = the dancer dances + points. A wrong answer = try again, only the combo is lost.<br>🔥 Correct answers in a row = <b>combo</b> goes up. Combo ×3 or more = <b>FEVER MODE</b>!<br>📖 Don't know the rules yet? Open the <b>Guidebook</b> at the top right.",
+    startBtn: "▶ &nbsp;START DANCING",
+    startMeta: "20 songs • 5 stages • No time limit — take it easy!",
+    qText: "What is the size of the angle marked “?”?",
+    keyPrefix: "💡 Key: ",
+    roundLabel: "Song",
+    stageLabel: "Stage",
+    stageName: "{name} Stage",
+    correctWord: "CORRECT!",
+    correctAnswer: "Correct answer",
+    wrongTitle: "💥 Oops, that's {deg}° — not the right one!",
+    wrongHint: "Combo lost, but don't worry — tap again! Remember: ",
+    points: "points",
+    nextSong: "Next Song ➜",
+    stageDoneBtn: "Stage Complete! 🎉",
+    seeResults: "See Results 🏆",
+    stageCompleteTitle: "{name} Stage Complete!",
+    stageCompleteText: "Awesome! You finished 4 songs on the {name} Stage. The next beat is waiting for you on the {next} Stage {emoji}.",
+    nextStageBtn: "Continue to the {name} Stage {emoji} ➜",
+    stageScore: "Score so far: {score}",
+    finalTitle: "STAGE STAR!",
+    finalIntro: "You finished all 20 songs. The Angle Kingdom is grooving again! 🎉",
+    finalStats: "Correct on first try: {a}/20  •  Best combo: ×{b}",
+    reviewTitle: "📋 Answer Review",
+    firstTryNote: "✅ first try!",
+    retryNote: "↩️ correct after {n} tries",
+    bookTitle: "📖 Guidebook — Angle Rules",
+    bookIntro: "Learn these 6 rules first — all of them are used in the 20 songs!",
+    bookReady: "Ready, Let's Dance! 🕺",
+    printBtn: "🖨️ Print Results",
+    againBtn: "🔁 Play Again",
+    musicTip: "Music", soundTip: "Sound", bookTip: "Guidebook", langTip: "Language / Bahasa",
+    dancerLabel: "Dancer",
+  },
+  id: {
+    pageTitle: "Dance Battle: Sudut — Matematika Kelas 6",
+    title: "DANCE BATTLE: SUDUT",
+    headerSub: "Penari Sudut • Matematika Kelas 6",
+    score: "Skor",
+    startIntro: "Lantai dansa Kerajaan Sudut sedang sepi… Semua sudut bersembunyi! Jawab soal sudut dengan benar, dan penari kita akan nge-dance mengikuti beat-nya. 💃🕺<br>Kombo beruntun = <b>FEVER MODE</b> — musik makin nge-beat, lantai makin menyala! ⚡",
+    howto: "🕺 <b>Cara main:</b> Lihat gambar sudutnya, lalu <b>ketuk jawaban A / B / C / D</b> yang benar. Gampang — tinggal ketuk, tanpa membidik!<br>🎵 Jawaban benar = penari nge-dance + poin. Jawaban salah = coba lagi, kombo saja yang hilang.<br>🔥 Jawaban benar beruntun = <b>combo</b> naik. Combo ×3 atau lebih = <b>FEVER MODE</b>!<br>📖 Belum hafal aturannya? Buka <b>Buku Petunjuk</b> di pojok kanan atas.",
+    startBtn: "▶ &nbsp;MULAI BERDANSA",
+    startMeta: "20 lagu • 5 panggung • Tanpa hitungan waktu — santai saja!",
+    qText: "Berapakah besar sudut yang ditandai “?” ?",
+    keyPrefix: "💡 Kunci: ",
+    roundLabel: "Lagu",
+    stageLabel: "Panggung",
+    stageName: "Panggung {name}",
+    correctWord: "BENAR!",
+    correctAnswer: "Jawaban benar",
+    wrongTitle: "💥 Aduh, itu {deg}° — bukan yang benar!",
+    wrongHint: "Combo hilang, tapi tenang — ketuk lagi! Ingat: ",
+    points: "poin",
+    nextSong: "Lagu Berikutnya ➜",
+    stageDoneBtn: "Panggung Selesai! 🎉",
+    seeResults: "Lihat Hasil 🏆",
+    stageCompleteTitle: "Panggung {name} Tuntas!",
+    stageCompleteText: "Keren banget! Kamu sudah menyelesaikan 4 lagu di Panggung {name}. Beat berikutnya menunggumu di Panggung {next} {emoji}.",
+    nextStageBtn: "Lanjut ke Panggung {name} {emoji} ➜",
+    stageScore: "Skor sementara: {score}",
+    finalTitle: "BINTANG PANGGUNG!",
+    finalIntro: "Kamu berhasil menyelesaikan semua 20 lagu. Kerajaan Sudut kembali bergoyang! 🎉",
+    finalStats: "Benar di jawaban pertama: {a}/20  •  Combo terbaik: ×{b}",
+    reviewTitle: "📋 Review Jawaban",
+    firstTryNote: "✅ jawaban pertama!",
+    retryNote: "↩️ benar setelah {n}× mencoba",
+    bookTitle: "📖 Buku Petunjuk — Aturan Sudut",
+    bookIntro: "Pelajari dulu 6 aturan ini — semuanya dipakai di 20 lagu!",
+    bookReady: "Siap, Ayo Berdansa! 🕺",
+    printBtn: "🖨️ Cetak Hasil",
+    againBtn: "🔁 Main Lagi",
+    musicTip: "Musik", soundTip: "Suara", bookTip: "Buku Petunjuk", langTip: "Language / Bahasa",
+    dancerLabel: "Penari",
+  }
+};
+function tr(k) { return I18N[lang][k]; }
+function fmt(s, vars) { return s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? vars[k] : "{" + k + "}")); }
+const qh = q => lang === 'en' ? q.hint_en : q.hint;
+const qw = q => lang === 'en' ? q.work_en : q.work;
+const wName = w => lang === 'en' ? WORLDS[w].name_en : WORLDS[w].name;
+const isVis = id => { const el = $(id); return !!el && !el.classList.contains("hidden"); };
 
 /* ---------------- concept page (copied verbatim) ---------------- */
 const RULES = [
-  { t: "1. Sudut Berpenyiku", d: "Dua sudut yang jumlahnya 90° (membentuk sudut siku-siku). Contoh: 28° + 62° = 90°.", fig: () => figRight(28) },
-  { t: "2. Sudut Berpelurus", d: "Dua sudut pada satu garis lurus, jumlahnya 180°. Contoh: 65° + 115° = 180°.", fig: () => figStraight(65) },
-  { t: "3. Sudut Bertolak Belakang", d: "Sudut yang saling berhadapan besarnya sama.", fig: () => figCross(78) },
-  { t: "4. Sudut di Satu Titik", d: "Semua sudut yang mengelilingi satu titik berjumlah 360°.", fig: () => figPoint([90, 120, 85], 3) },
-  { t: "5. Sudut dalam Segitiga", d: "Jumlah ketiga sudut segitiga selalu 180°.", fig: () => figTriangle(50, 60) },
-  { t: "6. Sudut dalam Segiempat", d: "Jumlah keempat sudut segiempat selalu 360°.", fig: () => figQuad(90, 85, 95) },
+  { t: "1. Sudut Berpenyiku", t_en: "1. Complementary Angles", d: "Dua sudut yang jumlahnya 90° (membentuk sudut siku-siku). Contoh: 28° + 62° = 90°.", d_en: "Two angles that add up to 90° (they form a right angle). Example: 28° + 62° = 90°.", fig: () => figRight(28) },
+  { t: "2. Sudut Berpelurus", t_en: "2. Supplementary Angles", d: "Dua sudut pada satu garis lurus, jumlahnya 180°. Contoh: 65° + 115° = 180°.", d_en: "Two angles on a straight line, adding up to 180°. Example: 65° + 115° = 180°.", fig: () => figStraight(65) },
+  { t: "3. Sudut Bertolak Belakang", t_en: "3. Vertically Opposite Angles", d: "Sudut yang saling berhadapan besarnya sama.", d_en: "Angles opposite each other are equal.", fig: () => figCross(78) },
+  { t: "4. Sudut di Satu Titik", t_en: "4. Angles Around a Point", d: "Semua sudut yang mengelilingi satu titik berjumlah 360°.", d_en: "All angles around a point add up to 360°.", fig: () => figPoint([90, 120, 85], 3) },
+  { t: "5. Sudut dalam Segitiga", t_en: "5. Angles in a Triangle", d: "Jumlah ketiga sudut segitiga selalu 180°.", d_en: "The three angles of a triangle always add up to 180°.", fig: () => figTriangle(50, 60) },
+  { t: "6. Sudut dalam Segiempat", t_en: "6. Angles in a Quadrilateral", d: "Jumlah keempat sudut segiempat selalu 360°.", d_en: "The four angles of a quadrilateral always add up to 360°.", fig: () => figQuad(90, 85, 95) },
 ];
 function renderRules() {
   $("ruleGrid").innerHTML = RULES.map(r =>
-    `<div class="rule"><h4>${r.t}</h4><p>${r.d}</p>${r.fig()}</div>`).join("");
+    `<div class="rule"><h4>${lang === 'en' ? r.t_en : r.t}</h4><p>${lang === 'en' ? r.d_en : r.d}</p>${r.fig()}</div>`).join("");
 }
 
 /* ---------------- Audio (Web Audio API, all synthesised — modern pop/hip-hop beat) ---------------- */
@@ -770,7 +903,8 @@ const $ = id => document.getElementById(id);
 const state = {
   round: 0, score: 0, combo: 0, bestCombo: 0,
   attempts: 0, results: [], order: [0, 1, 2, 3],
-  roundDone: false, started: false, dancing: false, sad: false
+  roundDone: false, started: false, dancing: false, sad: false,
+  lastFb: null, stageDone: 0, stageNext: 1
 };
 const LETTERS = ["A", "B", "C", "D"];
 
@@ -786,7 +920,7 @@ function showScreen(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function updateStats() {
-  $("scorePill").textContent = "⭐ Skor: " + state.score;
+  $("scorePill").textContent = "⭐ " + tr('score') + ": " + state.score;
   const cp = $("comboPill");
   cp.textContent = "🔥 Combo ×" + state.combo;
   cp.classList.toggle("hot", state.combo >= 3);
@@ -804,23 +938,27 @@ function applyDancer() {
 function setStage(w) {
   const W = WORLDS[w];
   const badge = $("stageBadge");
-  badge.textContent = "🕺 Panggung " + (w + 1) + " — " + W.name + " " + W.emoji;
+  badge.textContent = "🕺 " + tr('stageLabel') + " " + (w + 1) + " — " + wName(w) + " " + W.emoji;
   badge.style.background = W.badge;
   $("stageWrap").style.borderColor = W.sky1;
 }
 
 /* ---------------- round flow ---------------- */
+function renderRoundTexts() {
+  const q = QUESTIONS[state.round];
+  setStage(q.w);
+  $("roundText").textContent = tr('roundLabel') + " " + (state.round + 1) + " / 20";
+  $("progressBar").style.width = (state.round / 20 * 100) + "%";
+  $("qText").textContent = tr('qText');
+  $("qHint").textContent = tr('keyPrefix') + qh(q);
+  $("figBox").innerHTML = q.fig();
+}
 function loadRound(i) {
   showScreen("screen-game"); /* entering a round ALWAYS shows the game screen */
   const q = QUESTIONS[i];
   state.round = i; state.attempts = 0; state.roundDone = false;
-  state.dancing = false; state.sad = false;
-  setStage(q.w);
-  $("roundText").textContent = "Lagu " + (i + 1) + " / 20";
-  $("progressBar").style.width = (i / 20 * 100) + "%";
-  $("qText").textContent = "Berapakah besar sudut yang ditandai “?” ?";
-  $("qHint").textContent = "💡 Kunci: " + q.hint;
-  $("figBox").innerHTML = q.fig();
+  state.dancing = false; state.sad = false; state.lastFb = null;
+  renderRoundTexts();
   $("feedback").innerHTML = "";
   renderAnswers();
   applyDancer();
@@ -831,6 +969,25 @@ function renderAnswers() {
   $("answers").innerHTML = state.order.map((optIdx, i) =>
     `<button class="ans c${i}" data-opt="${optIdx}"><span class="alet">${LETTERS[i]}</span><span class="aval">${q.opts[optIdx]}°</span></button>`
   ).join("");
+}
+/* Rebuilds the feedback box from state.lastFb (used by tapAnswer and by applyLang). */
+function renderFeedback() {
+  const fb = state.lastFb;
+  if (!fb) { $("feedback").innerHTML = ""; return; }
+  const q = QUESTIONS[state.round];
+  if (fb.type === 'correct') {
+    $("feedback").innerHTML = `<div class="fb-ok">
+      <h3>🎉 ${tr('correctWord')} +${fb.pts} ${tr('points')} ${state.combo >= 2 ? "— Combo ×" + state.combo + " 🔥" : ""}</h3>
+      <p><b>${tr('correctAnswer')}: ${q.opts[q.correct]}°.</b> ${qw(q)}</p>
+      <button class="btn" id="nextBtn" style="margin-top:8px">${state.round === 19 ? tr('seeResults') : (state.round + 1) % 4 === 0 ? tr('stageDoneBtn') : tr('nextSong')}</button>
+    </div>`;
+    $("nextBtn").addEventListener("click", advance);
+  } else {
+    $("feedback").innerHTML = `<div class="fb-bad">
+      <h3>${fmt(tr('wrongTitle'), { deg: q.opts[fb.opt] })}</h3>
+      <p>${tr('wrongHint')}${qh(q)}</p>
+    </div>`;
+  }
 }
 function tapAnswer(optIdx, btnEl) {
   if (state.roundDone) return;
@@ -853,12 +1010,8 @@ function tapAnswer(optIdx, btnEl) {
     AudioSys.riff();
     if (state.combo >= 3 && !wasFever) AudioSys.riser();
     updateStats();
-    $("feedback").innerHTML = `<div class="fb-ok">
-      <h3>🎉 BENAR! +${pts} poin ${state.combo >= 2 ? "— Combo ×" + state.combo + " 🔥" : ""}</h3>
-      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
-      <button class="btn" id="nextBtn" style="margin-top:8px">${state.round === 19 ? "Lihat Hasil 🏆" : (state.round + 1) % 4 === 0 ? "Panggung Selesai! 🎉" : "Lagu Berikutnya ➜"}</button>
-    </div>`;
-    $("nextBtn").addEventListener("click", advance);
+    state.lastFb = { type: 'correct', pts };
+    renderFeedback();
   } else {
     AudioSys.thud();
     state.attempts++;
@@ -869,10 +1022,8 @@ function tapAnswer(optIdx, btnEl) {
       if (btnEl.classList) btnEl.classList.add("wrong");
       btnEl.disabled = true;
     }
-    $("feedback").innerHTML = `<div class="fb-bad">
-      <h3>💥 Aduh, itu ${q.opts[optIdx]}° — bukan yang benar!</h3>
-      <p>Combo hilang, tapi tenang — ketuk lagi! Ingat: ${q.hint}</p>
-    </div>`;
+    state.lastFb = { type: 'wrong', opt: optIdx };
+    renderFeedback();
     setTimeout(() => { state.sad = false; applyDancer(); }, 900);
   }
 }
@@ -883,36 +1034,43 @@ function advance() {
   if (next % 4 === 0) { showStageComplete(next / 4 - 1, next / 4); return; }
   loadRound(next);
 }
-function showStageComplete(doneIdx, nextIdx) {
-  const W = WORLDS[doneIdx], N = WORLDS[nextIdx];
+/* Rebuilds the stage-complete screen from state.stageDone/stageNext (used by showStageComplete and applyLang). */
+function renderStageComplete() {
+  const W = WORLDS[state.stageDone], N = WORLDS[state.stageNext];
   $("stageEmoji").textContent = W.emoji + " 🎉";
-  $("stageTitle").textContent = "Panggung " + W.name + " Tuntas!";
-  $("stageText").textContent = "Keren banget! Kamu sudah menyelesaikan 4 lagu di Panggung " + W.name +
-    ". Beat berikutnya menunggumu di Panggung " + N.name + " " + N.emoji + ".";
-  $("stageScore").textContent = "Skor sementara: " + state.score;
-  $("nextStageBtn").textContent = "Lanjut ke Panggung " + N.name + " " + N.emoji + " ➜";
+  $("stageTitle").textContent = fmt(tr('stageCompleteTitle'), { name: wName(state.stageDone) });
+  $("stageText").textContent = fmt(tr('stageCompleteText'), { name: wName(state.stageDone), next: wName(state.stageNext), emoji: N.emoji });
+  $("stageScore").textContent = fmt(tr('stageScore'), { score: state.score });
+  $("nextStageBtn").textContent = fmt(tr('nextStageBtn'), { name: wName(state.stageNext), emoji: N.emoji });
+}
+function showStageComplete(doneIdx, nextIdx) {
+  state.stageDone = doneIdx; state.stageNext = nextIdx;
+  renderStageComplete();
   AudioSys.fanfare();
   showScreen("screen-stage");
 }
 
 /* ---------------- final screen ---------------- */
-function showFinal() {
+function renderFinal() {
   const firstTry = state.results.filter(r => r.attempts === 0).length;
-  $("finalScore").textContent = state.score + " poin";
-  $("finalStats").textContent = "Benar di jawaban pertama: " + firstTry + "/20  •  Combo terbaik: ×" + state.bestCombo;
-  let html = "<h3 style='text-align:center;margin-bottom:12px;color:#1f2937'>📋 Review Jawaban</h3>";
+  $("finalScore").textContent = state.score + " " + tr('points');
+  $("finalStats").textContent = fmt(tr('finalStats'), { a: firstTry, b: state.bestCombo });
+  let html = "<h3 style='text-align:center;margin-bottom:12px;color:#1f2937'>" + tr('reviewTitle') + "</h3>";
   state.results.forEach(r => {
     const q = QUESTIONS[r.q], W = WORLDS[q.w];
     const cls = r.attempts === 0 ? "correct" : "wrong";
-    const note = r.attempts === 0 ? "✅ jawaban pertama!" : "↩️ benar setelah " + r.attempts + "× mencoba";
+    const note = r.attempts === 0 ? tr('firstTryNote') : fmt(tr('retryNote'), { n: r.attempts });
     html += `<div class="revitem ${cls}">
-      <b>Lagu ${r.q + 1} — Panggung ${W.name} ${W.emoji}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} poin
+      <b>${tr('roundLabel')} ${r.q + 1} — ${fmt(tr('stageName'), { name: wName(q.w) })} ${W.emoji}</b> &nbsp;${note} &nbsp;•&nbsp; +${r.pts} ${tr('points')}
       ${q.fig()}
-      <p><b>Jawaban benar: ${q.opts[q.correct]}°.</b> ${q.work}</p>
+      <p><b>${tr('correctAnswer')}: ${q.opts[q.correct]}°.</b> ${qw(q)}</p>
     </div>`;
   });
   $("reviewBox").innerHTML = html;
   $("progressBar").style.width = "100%";
+}
+function showFinal() {
+  renderFinal();
   AudioSys.fanfare();
   showScreen("screen-final");
 }
@@ -954,12 +1112,49 @@ $("answers").addEventListener("click", e => {
   if (!b || state.roundDone) return;
   tapAnswer(parseInt(b.dataset.opt, 10), b);
 });
+/* ---------------- language: one apply function re-renders every visible text ---------------- */
+function applyLang() {
+  if (document.documentElement) document.documentElement.lang = lang;
+  document.title = tr('pageTitle');
+  $("langBtn").textContent = lang.toUpperCase();
+  $("langBtn").title = tr('langTip');
+  $("headerTitle").textContent = tr('title');
+  $("headerSub").textContent = tr('headerSub');
+  $("musicBtn").title = tr('musicTip');
+  $("soundBtn").title = tr('soundTip');
+  $("bookBtn").title = tr('bookTip');
+  $("startTitle").textContent = tr('title');
+  $("startIntro").innerHTML = tr('startIntro');
+  $("startHowto").innerHTML = tr('howto');
+  $("startBtn").innerHTML = tr('startBtn');
+  $("startMeta").textContent = tr('startMeta');
+  $("worldChips").innerHTML = WORLDS.map((w, i) =>
+    `<span class="wchip" style="background:${w.badge}">${w.emoji} ${tr('stageLabel')} ${i + 1} — ${wName(i)}</span>`).join("");
+  $("bookTitle").textContent = tr('bookTitle');
+  $("bookIntro").textContent = tr('bookIntro');
+  $("closeBookBtn2").textContent = tr('bookReady');
+  $("printBtn").textContent = tr('printBtn');
+  $("againBtn").textContent = tr('againBtn');
+  $("finalTitle").textContent = tr('finalTitle');
+  $("finalIntro").textContent = tr('finalIntro');
+  const dv = $("dancerSvg");
+  if (dv && dv.setAttribute) dv.setAttribute("aria-label", tr('dancerLabel'));
+  updateStats();
+  /* re-render whichever screen is currently visible, in the new language */
+  if (isVis("screen-game")) { renderRoundTexts(); renderFeedback(); }
+  if (isVis("screen-stage")) renderStageComplete();
+  if (isVis("screen-final") && state.results.length) renderFinal();
+  if (isVis("conceptOverlay")) renderRules();
+}
+$("langBtn").addEventListener("click", () => {
+  lang = (lang === 'en') ? 'id' : 'en';
+  applyLang();
+});
 $("nextStageBtn").addEventListener("click", () => { showScreen("screen-game"); loadRound(state.round + 1); });
 $("printBtn").addEventListener("click", () => window.print());
 $("againBtn").addEventListener("click", () => { resetGame(); showScreen("screen-start"); });
 
-$("worldChips").innerHTML = WORLDS.map((w, i) =>
-  `<span class="wchip" style="background:${w.badge}">${w.emoji} Panggung ${i + 1} — ${w.name}</span>`).join("");
+applyLang(); /* default EN: syncs all static text on load */
 </script>
 </body>
 </html>
