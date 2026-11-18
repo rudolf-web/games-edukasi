@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="docTitle">Circle Lab — Virtual Lab</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; background: linear-gradient(180deg, #e0f2fe 0%, #fef9c3 55%, #dcfce7 100%); color: #1e293b; min-height: 100vh; }
+  header { background: linear-gradient(90deg, #0e7490, #0369a1 55%, #7c3aed); color: #fff; padding: 14px 18px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,.25); }
+  .headrow { max-width: 980px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .logo { font-size: 30px; }
+  h1 { font-size: 22px; margin: 0; line-height: 1.15; }
+  .subtitle { font-size: 13px; opacity: .9; margin: 2px 0 0; }
+  .spacer { flex: 1; }
+  .iconbtn { background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.5); color: #fff; border-radius: 999px; padding: 7px 13px; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .iconbtn.off { opacity: .55; }
+  .langbtn { background: #facc15; border: 2px solid #a16207; color: #422006; }
+  nav { max-width: 980px; margin: 14px auto 0; padding: 0 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .navbtn { background: #fff; border: 2px solid #bae6fd; color: #075985; border-radius: 999px; padding: 9px 15px; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .navbtn.active { background: #0369a1; color: #fff; border-color: #0369a1; }
+  .navbtn.formula { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  main { max-width: 980px; margin: 0 auto; padding: 14px; }
+  .card { background: #fff; border-radius: 20px; padding: 20px; box-shadow: 0 4px 18px rgba(2,132,199,.14); margin-bottom: 16px; }
+  h2 { margin: 0 0 4px; color: #0c4a6e; font-size: 24px; }
+  h3 { color: #0c4a6e; margin: 18px 0 8px; font-size: 18px; }
+  h4 { margin: 0 0 6px; color: #14532d; }
+  p { line-height: 1.6; margin: 8px 0; }
+  .muted { color: #64748b; font-size: 14px; }
+  .formula { background: #eff6ff; border: 2px dashed #38bdf8; border-radius: 14px; padding: 12px 16px; font-size: 19px; font-weight: 800; color: #0c4a6e; text-align: center; margin: 12px 0; }
+  .formula small { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-top: 4px; }
+  .labrow { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+  .labviz { flex: 1 1 340px; }
+  .labctl { flex: 1 1 260px; }
+  .readout { background: #f0fdf4; border: 2px solid #86efac; border-radius: 14px; padding: 10px 14px; margin: 8px 0; font-size: 17px; line-height: 1.7; }
+  .readout b { color: #166534; }
+  .bignum { font-size: 26px; font-weight: 900; color: #b45309; }
+  label { font-weight: 800; color: #334155; display: block; margin: 12px 0 4px; }
+  input[type=range] { width: 100%; accent-color: #0284c7; height: 28px; }
+  .fracbtns, .optgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .fracbtn { background: #fff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 12px; font-size: 18px; font-weight: 800; cursor: pointer; color: #334155; }
+  .fracbtn.active { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .optbtn { background: #fff; border: 2px solid #cbd5e1; border-radius: 12px; padding: 13px 10px; font-size: 18px; font-weight: 800; cursor: pointer; color: #1e293b; text-align: center; }
+  .optbtn:hover:not(:disabled) { border-color: #0284c7; }
+  .optbtn:disabled { cursor: default; opacity: .85; }
+  .optbtn.right { background: #dcfce7; border-color: #22c55e; color: #166534; }
+  .optbtn.wrongpick { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+  .optbtn.dim { opacity: .45; }
+  .btn { display: inline-block; border: none; cursor: pointer; font-weight: 800; font-size: 16px; color: #fff; border-radius: 999px; padding: 12px 24px; background: linear-gradient(90deg, #0284c7, #7c3aed); box-shadow: 0 3px 8px rgba(0,0,0,.2); }
+  .btn.green { background: linear-gradient(90deg, #16a34a, #059669); }
+  .btn.orange { background: linear-gradient(90deg, #ea580c, #f59e0b); }
+  .btn.ghost { background: #fff; color: #0369a1; border: 2px solid #7dd3fc; box-shadow: none; }
+  .fb { border-radius: 14px; padding: 12px 16px; margin: 10px 0; font-size: 15px; line-height: 1.6; display: none; }
+  .fb.ok { display: block; background: #dcfce7; border: 2px solid #22c55e; color: #14532d; }
+  .fb.no { display: block; background: #fee2e2; border: 2px solid #ef4444; color: #7f1d1d; }
+  .qbox { border: 2px solid #e2e8f0; border-radius: 16px; padding: 14px; margin: 12px 0; }
+  .qbox h4 { font-size: 16px; }
+  .scorepill { display: inline-block; background: #fef3c7; border: 2px solid #f59e0b; color: #92400e; border-radius: 999px; padding: 5px 14px; font-weight: 800; font-size: 14px; }
+  .steps { background: #fffbeb; border: 2px solid #fde68a; border-radius: 14px; padding: 12px 16px; margin: 10px 0; line-height: 1.8; display: none; }
+  .steps.open { display: block; }
+  .steps li { margin: 4px 0; }
+  .figcard { border: 2px solid #e2e8f0; border-radius: 16px; padding: 14px; margin: 14px 0; }
+  .figcard svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  .overlay { position: fixed; inset: 0; background: rgba(15,23,42,.75); z-index: 50; display: flex; align-items: flex-start; justify-content: center; padding: 24px 12px; overflow-y: auto; }
+  .overlay.hidden, .hidden { display: none !important; }
+  .sheet { background: #fffdf7; border-radius: 20px; padding: 22px; max-width: 760px; width: 100%; }
+  .sheet table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  .sheet td, .sheet th { border: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; font-size: 15px; }
+  .sheet th { background: #eff6ff; color: #0c4a6e; }
+  .tag { display: inline-block; background: #e0e7ff; color: #3730a3; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 800; margin-right: 6px; }
+  @media print { header, nav, .btn, .iconbtn { display: none !important; } body { background: #fff; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="headrow">
+    <div class="logo">🔬</div>
+    <div>
+      <h1 id="appTitle">Circle Lab — Virtual Lab</h1>
+      <p class="subtitle" id="appSub">Grade 6 • Radius, Diameter, Circumference, Area &amp; Composite Figures</p>
+    </div>
+    <div class="spacer"></div>
+    <button class="iconbtn langbtn" id="langBtn" title="Language / Bahasa">EN</button>
+    <button class="iconbtn" id="soundBtn" title="Sound / Suara">🔊</button>
+    <button class="iconbtn" id="formulaBtn" title="Formula Sheet / Rumus">📖</button>
+  </div>
+</header>
+<nav id="stationNav"></nav>
+<main>
+  <div id="station"></div>
+</main>
+<div id="formulaOverlay" class="overlay hidden">
+  <div class="sheet" id="formulaSheet"></div>
+</div>
+<script>
+/* ================= helpers ================= */
+const $ = id => document.getElementById(id);
+function fmt(n) {
+  const r = Math.round(n * 100) / 100;
+  return Number.isInteger(r) ? String(r) : String(r).replace('.', ',');
+}
+function fmtEN(n) {
+  const r = Math.round(n * 100) / 100;
+  return Number.isInteger(r) ? String(r) : String(r);
+}
+function num(n, lang) { return lang === 'id' ? fmt(n) : fmtEN(n); }
+function piFor(r) { return (Math.abs(r % 7) < 1e-9) ? 22 / 7 : 3.14; }
+function piLabel(r, lang) {
+  const is227 = Math.abs(r % 7) < 1e-9;
+  if (lang === 'id') return is227 ? 'π = 22/7 (r kelipatan 7)' : 'π = 3,14 (r bukan kelipatan 7)';
+  return is227 ? 'π = 22/7 (r is a multiple of 7)' : 'π = 3.14 (r is not a multiple of 7)';
+}
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+/* ================= audio (subtle, capped at 90%) ================= */
+const AudioSys = {
+  ctx: null, master: null, on: true,
+  init() {
+    try {
+      if (this.ctx) return;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      this.ctx = new AC();
+      this.master = this.ctx.createGain();
+      this.master.gain.value = 0.9;
+      this.master.connect(this.ctx.destination);
+    } catch (e) { /* audio unavailable — game works without it */ }
+  },
+  tone(freq, dur, gain) {
+    try {
+      if (!this.ctx || !this.on) return;
+      const t = this.ctx.currentTime;
+      const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+      o.type = 'sine'; o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain || 0.15, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(this.master); o.start(t); o.stop(t + dur + 0.05);
+    } catch (e) {}
+  },
+  chime() { this.tone(660, 0.18, 0.16); setTimeout(() => this.tone(880, 0.25, 0.16), 90); },
+  click() { this.tone(520, 0.07, 0.07); }
+};
+
+/* ================= i18n ================= */
+const I18N = {
+  en: {
+    appTitle: 'Circle Lab — Virtual Lab',
+    appSub: 'Grade 6 • Radius, Diameter, Circumference, Area & Composite Figures',
+    stationNames: ['Radius & Diameter', 'Circumference', 'Area', 'Fraction Circles', 'Composite Figures'],
+    formulaSheet: '📖 Formula Sheet',
+    close: 'Close ✖️',
+    sheetTitle: '📖 Formula Sheet — Circle Lab',
+    sheetSub: 'All the formulas you need for circles. π = 22/7 when the radius is a multiple of 7, otherwise π = 3.14.',
+    radius: 'Radius', diameter: 'Diameter', circumference: 'Circumference', area: 'Area',
+    tryIt: 'Try it yourself', workedExample: 'Worked example', practice: 'Practice — try these!',
+    yourScore: 'Your score', correct: '✅ Correct!', wrong: '✗ Not yet — try again!',
+    showSteps: 'Show step-by-step solution', hideSteps: 'Hide solution',
+    nextStation: 'Next station ➜', playAgain: '↺ Start again',
+    cm: 'cm', cm2: 'cm²',
+    qPrompt: 'What is the size of the angle marked "?"?',
+  },
+  id: {
+    appTitle: 'Lab Lingkaran — Lab Virtual',
+    appSub: 'Kelas 6 • Jari-jari, Diameter, Keliling, Luas & Bangun Gabungan',
+    stationNames: ['Jari-jari & Diameter', 'Keliling Lingkaran', 'Luas Lingkaran', 'Lingkaran Pecahan', 'Bangun Gabungan'],
+    formulaSheet: '📖 Lembar Rumus',
+    close: 'Tutup ✖️',
+    sheetTitle: '📖 Lembar Rumus — Lab Lingkaran',
+    sheetSub: 'Semua rumus lingkaran yang kamu butuhkan. π = 22/7 jika jari-jari kelipatan 7, jika tidak π = 3,14.',
+    radius: 'Jari-jari', diameter: 'Diameter', circumference: 'Keliling', area: 'Luas',
+    tryIt: 'Coba sendiri', workedExample: 'Contoh pengerjaan', practice: 'Latihan — coba soal ini!',
+    yourScore: 'Skormu', correct: '✅ Benar!', wrong: '✗ Belum tepat — coba lagi!',
+    showSteps: 'Tampilkan langkah pengerjaan', hideSteps: 'Sembunyikan pengerjaan',
+    nextStation: 'Stasiun berikutnya ➜', playAgain: '↺ Mulai lagi',
+    cm: 'cm', cm2: 'cm²',
+    qPrompt: 'Berapakah besar sudut yang ditandai "?"?',
+  }
+};
+const T = k => I18N[state.lang][k];
+
+/* ================= state ================= */
+const state = {
+  lang: 'en', station: 1, sound: true,
+  s1r: 7, s2r: 7, s3r: 7, s3mix: 0, s3anim: false,
+  s4frac: 0.5, s4r: 14,
+  answers: {}, /* qid -> {tries, done} */
+  scores: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+  totalQ: { 1: 4, 2: 6, 3: 6, 4: 6, 5: 6 },
+};
+
+/* ================= practice data =================
+   Each question carries machine-readable params (kind + values) so the
+   verification harness can recompute the answer independently.
+   kinds: r_from_d, d_from_r, circ_r, circ_d, area_r, area_d,
+          frac_arc, frac_area, frac_perim, comp_a_area, comp_a_perim,
+          comp_b_area, comp_b_perim, comp_c_area, comp_c_perim */
+const PRACTICE = {
+  1: [
+    { id: 's1q1', kind: 'r_from_d', d: 18,
+      q_en: 'The diameter of a circle is 18 cm. What is its radius?',
+      q_id: 'Diameter sebuah lingkaran adalah 18 cm. Berapakah jari-jarinya?',
+      opts: [9, 36, 6, 12], correct: 0,
+      work_en: 'r = d ÷ 2 = 18 ÷ 2 = 9 cm.',
+      work_id: 'r = d ÷ 2 = 18 ÷ 2 = 9 cm.' },
+    { id: 's1q2', kind: 'd_from_r', r: 12,
+      q_en: 'The radius of a circle is 12 cm. What is its diameter?',
+      q_id: 'Jari-jari sebuah lingkaran adalah 12 cm. Berapakah diameternya?',
+      opts: [24, 6, 12, 36], correct: 0,
+      work_en: 'd = 2 × r = 2 × 12 = 24 cm.',
+      work_id: 'd = 2 × r = 2 × 12 = 24 cm.' },
+    { id: 's1q3', kind: 'r_from_d', d: 30,
+      q_en: 'The diameter of a circle is 30 cm. What is its radius?',
+      q_id: 'Diameter sebuah lingkaran adalah 30 cm. Berapakah jari-jarinya?',
+      opts: [15, 60, 10, 45], correct: 0,
+      work_en: 'r = d ÷ 2 = 30 ÷ 2 = 15 cm.',
+      work_id: 'r = d ÷ 2 = 30 ÷ 2 = 15 cm.' },
+    { id: 's1q4', kind: 'd_from_r', r: 25,
+      q_en: 'The radius of a circle is 25 cm. What is its diameter?',
+      q_id: 'Jari-jari sebuah lingkaran adalah 25 cm. Berapakah diameternya?',
+      opts: [50, 12.5, 25, 75], correct: 0,
+      work_en: 'd = 2 × r = 2 × 25 = 50 cm.',
+      work_id: 'd = 2 × r = 2 × 25 = 50 cm.' },
+  ],
+  2: [
+    { id: 's2q1', kind: 'circ_r', r: 7,
+      q_en: 'Find the circumference of a circle with radius 7 cm. (Use π = 22/7.)',
+      q_id: 'Hitung keliling lingkaran dengan jari-jari 7 cm. (Gunakan π = 22/7.)',
+      opts: [44, 22, 154, 88], correct: 0,
+      work_en: 'C = 2 × π × r = 2 × 22/7 × 7 = 44 cm.',
+      work_id: 'K = 2 × π × r = 2 × 22/7 × 7 = 44 cm.' },
+    { id: 's2q2', kind: 'circ_r', r: 14,
+      q_en: 'Find the circumference of a circle with radius 14 cm. (Use π = 22/7.)',
+      q_id: 'Hitung keliling lingkaran dengan jari-jari 14 cm. (Gunakan π = 22/7.)',
+      opts: [88, 44, 176, 616], correct: 0,
+      work_en: 'C = 2 × π × r = 2 × 22/7 × 14 = 88 cm.',
+      work_id: 'K = 2 × π × r = 2 × 22/7 × 14 = 88 cm.' },
+    { id: 's2q3', kind: 'circ_r', r: 10,
+      q_en: 'Find the circumference of a circle with radius 10 cm. (Use π = 3.14.)',
+      q_id: 'Hitung keliling lingkaran dengan jari-jari 10 cm. (Gunakan π = 3,14.)',
+      opts: [62.8, 31.4, 314, 125.6], correct: 0,
+      work_en: 'C = 2 × π × r = 2 × 3.14 × 10 = 62.8 cm.',
+      work_id: 'K = 2 × π × r = 2 × 3,14 × 10 = 62,8 cm.' },
+    { id: 's2q4', kind: 'circ_r', r: 5,
+      q_en: 'Find the circumference of a circle with radius 5 cm. (Use π = 3.14.)',
+      q_id: 'Hitung keliling lingkaran dengan jari-jari 5 cm. (Gunakan π = 3,14.)',
+      opts: [31.4, 15.7, 78.5, 62.8], correct: 0,
+      work_en: 'C = 2 × π × r = 2 × 3.14 × 5 = 31.4 cm.',
+      work_id: 'K = 2 × π × r = 2 × 3,14 × 5 = 31,4 cm.' },
+    { id: 's2q5', kind: 'circ_d', d: 21,
+      q_en: 'Find the circumference of a circle with diameter 21 cm. (Use π = 22/7.)',
+      q_id: 'Hitung keliling lingkaran dengan diameter 21 cm. (Gunakan π = 22/7.)',
+      opts: [66, 33, 132, 44], correct: 0,
+      work_en: 'C = π × d = 22/7 × 21 = 66 cm.',
+      work_id: 'K = π × d = 22/7 × 21 = 66 cm.' },
+    { id: 's2q6', kind: 'circ_d', d: 20,
+      q_en: 'Find the circumference of a circle with diameter 20 cm. (Use π = 3.14.)',
+      q_id: 'Hitung keliling lingkaran dengan diameter 20 cm. (Gunakan π = 3,14.)',
+      opts: [62.8, 31.4, 125.6, 314], correct: 0,
+      work_en: 'C = π × d = 3.14 × 20 = 62.8 cm.',
+      work_id: 'K = π × d = 3,14 × 20 = 62,8 cm.' },
+  ],
+  3: [
+    { id: 's3q1', kind: 'area_r', r: 7,
+      q_en: 'Find the area of a circle with radius 7 cm. (Use π = 22/7.)',
+      q_id: 'Hitung luas lingkaran dengan jari-jari 7 cm. (Gunakan π = 22/7.)',
+      opts: [154, 44, 77, 308], correct: 0,
+      work_en: 'A = π × r² = 22/7 × 7² = 22/7 × 49 = 154 cm².',
+      work_id: 'L = π × r² = 22/7 × 7² = 22/7 × 49 = 154 cm².' },
+    { id: 's3q2', kind: 'area_r', r: 14,
+      q_en: 'Find the area of a circle with radius 14 cm. (Use π = 22/7.)',
+      q_id: 'Hitung luas lingkaran dengan jari-jari 14 cm. (Gunakan π = 22/7.)',
+      opts: [616, 88, 308, 154], correct: 0,
+      work_en: 'A = π × r² = 22/7 × 14² = 22/7 × 196 = 616 cm².',
+      work_id: 'L = π × r² = 22/7 × 14² = 22/7 × 196 = 616 cm².' },
+    { id: 's3q3', kind: 'area_r', r: 10,
+      q_en: 'Find the area of a circle with radius 10 cm. (Use π = 3.14.)',
+      q_id: 'Hitung luas lingkaran dengan jari-jari 10 cm. (Gunakan π = 3,14.)',
+      opts: [314, 62.8, 157, 628], correct: 0,
+      work_en: 'A = π × r² = 3.14 × 10² = 3.14 × 100 = 314 cm².',
+      work_id: 'L = π × r² = 3,14 × 10² = 3,14 × 100 = 314 cm².' },
+    { id: 's3q4', kind: 'area_r', r: 5,
+      q_en: 'Find the area of a circle with radius 5 cm. (Use π = 3.14.)',
+      q_id: 'Hitung luas lingkaran dengan jari-jari 5 cm. (Gunakan π = 3,14.)',
+      opts: [78.5, 31.4, 157, 39.25], correct: 0,
+      work_en: 'A = π × r² = 3.14 × 5² = 3.14 × 25 = 78.5 cm².',
+      work_id: 'L = π × r² = 3,14 × 5² = 3,14 × 25 = 78,5 cm².' },
+    { id: 's3q5', kind: 'area_d', d: 14,
+      q_en: 'Find the area of a circle with diameter 14 cm. (Use π = 22/7.)',
+      q_id: 'Hitung luas lingkaran dengan diameter 14 cm. (Gunakan π = 22/7.)',
+      opts: [154, 616, 44, 77], correct: 0,
+      work_en: 'First r = d ÷ 2 = 14 ÷ 2 = 7 cm. Then A = π × r² = 22/7 × 49 = 154 cm².',
+      work_id: 'Dulu r = d ÷ 2 = 14 ÷ 2 = 7 cm. Lalu L = π × r² = 22/7 × 49 = 154 cm².' },
+    { id: 's3q6', kind: 'area_r', r: 21,
+      q_en: 'Find the area of a circle with radius 21 cm. (Use π = 22/7.)',
+      q_id: 'Hitung luas lingkaran dengan jari-jari 21 cm. (Gunakan π = 22/7.)',
+      opts: [1386, 693, 462, 2772], correct: 0,
+      work_en: 'A = π × r² = 22/7 × 21² = 22/7 × 441 = 1386 cm².',
+      work_id: 'L = π × r² = 22/7 × 21² = 22/7 × 441 = 1386 cm².' },
+  ],
+  4: [
+    { id: 's4q1', kind: 'frac_arc', frac: 0.5, r: 14,
+      q_en: 'What is the arc length of a 1/2 circle with radius 14 cm? (Use π = 22/7.)',
+      q_id: 'Berapakah panjang busur 1/2 lingkaran dengan jari-jari 14 cm? (Gunakan π = 22/7.)',
+      opts: [44, 22, 88, 33], correct: 0,
+      work_en: 'Arc = 1/2 × 2 × π × r = 1/2 × 2 × 22/7 × 14 = 44 cm.',
+      work_id: 'Busur = 1/2 × 2 × π × r = 1/2 × 2 × 22/7 × 14 = 44 cm.' },
+    { id: 's4q2', kind: 'frac_area', frac: 0.25, r: 14,
+      q_en: 'What is the area of a 1/4 circle with radius 14 cm? (Use π = 22/7.)',
+      q_id: 'Berapakah luas 1/4 lingkaran dengan jari-jari 14 cm? (Gunakan π = 22/7.)',
+      opts: [154, 77, 308, 616], correct: 0,
+      work_en: 'Area = 1/4 × π × r² = 1/4 × 22/7 × 196 = 154 cm².',
+      work_id: 'Luas = 1/4 × π × r² = 1/4 × 22/7 × 196 = 154 cm².' },
+    { id: 's4q3', kind: 'frac_arc', frac: 0.75, r: 7,
+      q_en: 'What is the arc length of a 3/4 circle with radius 7 cm? (Use π = 22/7.)',
+      q_id: 'Berapakah panjang busur 3/4 lingkaran dengan jari-jari 7 cm? (Gunakan π = 22/7.)',
+      opts: [33, 11, 44, 22], correct: 0,
+      work_en: 'Arc = 3/4 × 2 × π × r = 3/4 × 2 × 22/7 × 7 = 33 cm.',
+      work_id: 'Busur = 3/4 × 2 × π × r = 3/4 × 2 × 22/7 × 7 = 33 cm.' },
+    { id: 's4q4', kind: 'frac_area', frac: 0.5, r: 10,
+      q_en: 'What is the area of a 1/2 circle with radius 10 cm? (Use π = 3.14.)',
+      q_id: 'Berapakah luas 1/2 lingkaran dengan jari-jari 10 cm? (Gunakan π = 3,14.)',
+      opts: [157, 314, 78.5, 31.4], correct: 0,
+      work_en: 'Area = 1/2 × π × r² = 1/2 × 3.14 × 100 = 157 cm².',
+      work_id: 'Luas = 1/2 × π × r² = 1/2 × 3,14 × 100 = 157 cm².' },
+    { id: 's4q5', kind: 'frac_perim', frac: 0.75, r: 14,
+      q_en: 'What is the perimeter of a 3/4 circle with radius 14 cm? (Use π = 22/7.)',
+      q_id: 'Berapakah keliling 3/4 lingkaran dengan jari-jari 14 cm? (Gunakan π = 22/7.)',
+      opts: [94, 66, 122, 80], correct: 0,
+      work_en: 'Arc = 3/4 × 88 = 66 cm. Perimeter = arc + 2 × r = 66 + 28 = 94 cm.',
+      work_id: 'Busur = 3/4 × 88 = 66 cm. Keliling = busur + 2 × r = 66 + 28 = 94 cm.' },
+    { id: 's4q6', kind: 'frac_perim', frac: 0.25, r: 7,
+      q_en: 'What is the perimeter of a 1/4 circle with radius 7 cm? (Use π = 22/7.)',
+      q_id: 'Berapakah keliling 1/4 lingkaran dengan jari-jari 7 cm? (Gunakan π = 22/7.)',
+      opts: [25, 11, 39, 18], correct: 0,
+      work_en: 'Arc = 1/4 × 44 = 11 cm. Perimeter = arc + 2 × r = 11 + 14 = 25 cm.',
+      work_id: 'Busur = 1/4 × 44 = 11 cm. Keliling = busur + 2 × r = 11 + 14 = 25 cm.' },
+  ],
+  5: [
+    { id: 's5q1', kind: 'comp_a_area',
+      q_en: 'Figure A: a rectangle 14 cm × 10 cm with a semicircle (r = 7 cm) on top. What is its area?',
+      q_id: 'Gambar A: persegi panjang 14 cm × 10 cm dengan setengah lingkaran (r = 7 cm) di atasnya. Berapakah luasnya?',
+      opts: [217, 294, 140, 357], correct: 0,
+      work_en: 'Rectangle: 14 × 10 = 140 cm². Semicircle: 1/2 × 22/7 × 49 = 77 cm². Total = 140 + 77 = 217 cm².',
+      work_id: 'Persegi panjang: 14 × 10 = 140 cm². Setengah lingkaran: 1/2 × 22/7 × 49 = 77 cm². Jumlah = 140 + 77 = 217 cm².' },
+    { id: 's5q2', kind: 'comp_a_perim',
+      q_en: 'Figure A: a rectangle 14 cm × 10 cm with a semicircle (r = 7 cm) on top. What is its perimeter?',
+      q_id: 'Gambar A: persegi panjang 14 cm × 10 cm dengan setengah lingkaran (r = 7 cm) di atasnya. Berapakah kelilingnya?',
+      opts: [56, 70, 66, 80], correct: 0,
+      work_en: 'Outer edges only: bottom 14 + left 10 + right 10 + semicircle arc 22 = 56 cm. (The top side of the rectangle is inside — do not count it.)',
+      work_id: 'Hanya sisi luar: bawah 14 + kiri 10 + kanan 10 + busur setengah lingkaran 22 = 56 cm. (Sisi atas persegi panjang ada di dalam — jangan dihitung.)' },
+    { id: 's5q3', kind: 'comp_b_area',
+      q_en: 'Figure B: a square 14 cm × 14 cm with a circle (d = 14 cm) cut out. What is the shaded area?',
+      q_id: 'Gambar B: persegi 14 cm × 14 cm dengan lingkaran (d = 14 cm) dipotong dari tengahnya. Berapakah luas daerah yang diarsir?',
+      opts: [42, 154, 196, 112], correct: 0,
+      work_en: 'Square: 14 × 14 = 196 cm². Circle: 22/7 × 49 = 154 cm². Shaded = 196 − 154 = 42 cm².',
+      work_id: 'Persegi: 14 × 14 = 196 cm². Lingkaran: 22/7 × 49 = 154 cm². Arsir = 196 − 154 = 42 cm².' },
+    { id: 's5q4', kind: 'comp_b_perim',
+      q_en: 'Figure B: a square 14 cm × 14 cm with a circle (d = 14 cm) cut out. What is the perimeter of the shaded part?',
+      q_id: 'Gambar B: persegi 14 cm × 14 cm dengan lingkaran (d = 14 cm) dipotong dari tengahnya. Berapakah keliling daerah yang diarsir?',
+      opts: [100, 56, 44, 144], correct: 0,
+      work_en: 'The shaded part has TWO boundaries: the outer square (4 × 14 = 56 cm) and the inner circle (22/7 × 14 = 44 cm). Total = 56 + 44 = 100 cm.',
+      work_id: 'Daerah yang diarsir punya DUA batas: persegi luar (4 × 14 = 56 cm) dan lingkaran dalam (22/7 × 14 = 44 cm). Jumlah = 56 + 44 = 100 cm.' },
+    { id: 's5q5', kind: 'comp_c_area',
+      q_en: 'Figure C: a 3/4 circle (r = 14 cm) with a square 14 cm × 14 cm filling the missing quarter. What is its area?',
+      q_id: 'Gambar C: 3/4 lingkaran (r = 14 cm) dengan persegi 14 cm × 14 cm mengisi seperempat yang hilang. Berapakah luasnya?',
+      opts: [658, 462, 854, 560], correct: 0,
+      work_en: '3/4 circle: 3/4 × 22/7 × 196 = 462 cm². Square: 14 × 14 = 196 cm². Total = 462 + 196 = 658 cm².',
+      work_id: '3/4 lingkaran: 3/4 × 22/7 × 196 = 462 cm². Persegi: 14 × 14 = 196 cm². Jumlah = 462 + 196 = 658 cm².' },
+    { id: 's5q6', kind: 'comp_c_perim',
+      q_en: 'Figure C: a 3/4 circle (r = 14 cm) with a square 14 cm × 14 cm filling the missing quarter. What is its perimeter?',
+      q_id: 'Gambar C: 3/4 lingkaran (r = 14 cm) dengan persegi 14 cm × 14 cm mengisi seperempat yang hilang. Berapakah kelilingnya?',
+      opts: [94, 122, 66, 150], correct: 0,
+      work_en: 'Outer edges only: 3/4 arc = 66 cm + two outer sides of the square (14 + 14). Total = 66 + 28 = 94 cm. (The two radii are inside — do not count them.)',
+      work_id: 'Hanya sisi luar: busur 3/4 = 66 cm + dua sisi luar persegi (14 + 14). Jumlah = 66 + 28 = 94 cm. (Kedua jari-jari ada di dalam — jangan dihitung.)' },
+  ],
+};
+
+/* Composite figure definitions (for the step-by-step cards in Station 5) */
+const COMPOSITES = [
+  { key: 'A',
+    title_en: 'Figure A — Rectangle + Semicircle', title_id: 'Gambar A — Persegi Panjang + Setengah Lingkaran',
+    dims_en: 'Rectangle 14 cm × 10 cm, semicircle on top with diameter 14 cm (r = 7 cm).',
+    dims_id: 'Persegi panjang 14 cm × 10 cm, setengah lingkaran di atas dengan diameter 14 cm (r = 7 cm).',
+    steps_en: [
+      'Area of rectangle = 14 × 10 = 140 cm².',
+      'Area of semicircle = 1/2 × π × r² = 1/2 × 22/7 × 7² = 77 cm².',
+      'Total area = 140 + 77 = 217 cm².',
+      'Perimeter: outer edges only = bottom 14 + left 10 + right 10 + semicircle arc (1/2 × 44 = 22) = 56 cm.',
+      'Remember: the top side of the rectangle is INSIDE the figure — never count it in the perimeter.',
+    ],
+    steps_id: [
+      'Luas persegi panjang = 14 × 10 = 140 cm².',
+      'Luas setengah lingkaran = 1/2 × π × r² = 1/2 × 22/7 × 7² = 77 cm².',
+      'Luas seluruhnya = 140 + 77 = 217 cm².',
+      'Keliling: hanya sisi luar = bawah 14 + kiri 10 + kanan 10 + busur setengah lingkaran (1/2 × 44 = 22) = 56 cm.',
+      'Ingat: sisi atas persegi panjang ada di DALAM bangun — jangan dihitung dalam keliling.',
+    ] },
+  { key: 'B',
+    title_en: 'Figure B — Square with a Circle Cut Out', title_id: 'Gambar B — Persegi dengan Lingkaran Dipotong',
+    dims_en: 'Square 14 cm × 14 cm, circle inside with diameter 14 cm (r = 7 cm). The shaded part is the square MINUS the circle.',
+    dims_id: 'Persegi 14 cm × 14 cm, lingkaran di dalam dengan diameter 14 cm (r = 7 cm). Daerah yang diarsir adalah persegi DIKURANGI lingkaran.',
+    steps_en: [
+      'Area of square = 14 × 14 = 196 cm².',
+      'Area of circle = π × r² = 22/7 × 7² = 154 cm².',
+      'Shaded area = 196 − 154 = 42 cm².',
+      'Perimeter of the shaded part: it has TWO boundaries — outer square 4 × 14 = 56 cm, and inner circle 22/7 × 14 = 44 cm.',
+      'Total perimeter = 56 + 44 = 100 cm.',
+    ],
+    steps_id: [
+      'Luas persegi = 14 × 14 = 196 cm².',
+      'Luas lingkaran = π × r² = 22/7 × 7² = 154 cm².',
+      'Luas arsir = 196 − 154 = 42 cm².',
+      'Keliling daerah arsir: ada DUA batas — persegi luar 4 × 14 = 56 cm, dan lingkaran dalam 22/7 × 14 = 44 cm.',
+      'Keliling seluruhnya = 56 + 44 = 100 cm.',
+    ] },
+  { key: 'C',
+    title_en: 'Figure C — 3/4 Circle + Square', title_id: 'Gambar C — 3/4 Lingkaran + Persegi',
+    dims_en: 'A 3/4 circle with radius 14 cm, and a square 14 cm × 14 cm filling the missing quarter.',
+    dims_id: '3/4 lingkaran dengan jari-jari 14 cm, dan persegi 14 cm × 14 cm mengisi seperempat yang hilang.',
+    steps_en: [
+      'Area of 3/4 circle = 3/4 × π × r² = 3/4 × 22/7 × 196 = 462 cm².',
+      'Area of square = 14 × 14 = 196 cm².',
+      'Total area = 462 + 196 = 658 cm².',
+      'Perimeter: outer edges only = 3/4 arc (3/4 × 88 = 66 cm) + two outer sides of the square (14 + 14 = 28 cm) = 94 cm.',
+      'Remember: the two radii are INSIDE the figure — never count them in the perimeter.',
+    ],
+    steps_id: [
+      'Luas 3/4 lingkaran = 3/4 × π × r² = 3/4 × 22/7 × 196 = 462 cm².',
+      'Luas persegi = 14 × 14 = 196 cm².',
+      'Luas seluruhnya = 462 + 196 = 658 cm².',
+      'Keliling: hanya sisi luar = busur 3/4 (3/4 × 88 = 66 cm) + dua sisi luar persegi (14 + 14 = 28 cm) = 94 cm.',
+      'Ingat: kedua jari-jari ada di DALAM bangun — jangan dihitung dalam keliling.',
+    ] },
+];
+/* ================= navigation & station shell ================= */
+function renderNav() {
+  const names = I18N[state.lang].stationNames;
+  let html = '';
+  for (let i = 1; i <= 5; i++) {
+    html += '<button class="navbtn' + (state.station === i ? ' active' : '') + '" data-st="' + i + '">' + (state.lang === 'en' ? 'Station ' : 'Stasiun ') + i + ' — ' + names[i - 1] + '</button>';
+  }
+  html += '<button class="navbtn formula" id="navFormulaBtn">' + T('formulaSheet') + '</button>';
+  $('stationNav').innerHTML = html;
+  $('stationNav').querySelectorAll('.navbtn[data-st]').forEach(b => {
+    b.addEventListener('click', () => { AudioSys.init(); AudioSys.click(); showStation(parseInt(b.getAttribute('data-st'), 10)); });
+  });
+  const fb = $('navFormulaBtn');
+  if (fb) fb.addEventListener('click', () => { AudioSys.init(); openFormula(); });
+}
+function showStation(n) {
+  state.station = n;
+  renderNav();
+  renderStation();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function renderStation() {
+  const s = state.station;
+  let html = '';
+  if (s === 1) html = renderS1();
+  else if (s === 2) html = renderS2();
+  else if (s === 3) html = renderS3();
+  else if (s === 4) html = renderS4();
+  else html = renderS5();
+  $('station').innerHTML = html;
+  afterRenderStation();
+}
+function stationHead(num, titleEn, titleId, introEn, introId) {
+  const L = state.lang;
+  return '<div class="card"><h2>' + (L === 'en' ? 'Station ' : 'Stasiun ') + num + ' — ' + (L === 'en' ? titleEn : titleId) + '</h2>' +
+    '<p>' + (L === 'en' ? introEn : introId) + '</p>';
+}
+function scorePill(st) {
+  return '<span class="scorepill" id="score-s' + st + '">' + T('yourScore') + ': ' + state.scores[st] + ' / ' + state.totalQ[st] + '</span>';
+}
+function unitFor(q) {
+  return (q.kind.indexOf('area') !== -1) ? 'cm²' : 'cm';
+}
+function renderPractice(st) {
+  const L = state.lang;
+  const qs = PRACTICE[st];
+  let html = '<h3>✏️ ' + T('practice') + ' &nbsp;' + scorePill(st) + '</h3>';
+  qs.forEach((q, qi) => {
+    const a = state.answers[q.id];
+    const letters = ['A', 'B', 'C', 'D'];
+    html += '<div class="qbox" id="box-' + q.id + '"><h4>Q' + (qi + 1) + '. ' + (L === 'en' ? q.q_en : q.q_id) + '</h4><div class="optgrid">';
+    q.opts.forEach((o, oi) => {
+      let cls = 'optbtn';
+      let dis = '';
+      if (a && a.done) {
+        dis = ' disabled';
+        if (oi === q.correct) cls += ' right';
+        else if (a.picked === oi) cls += ' wrongpick';
+        else cls += ' dim';
+      } else if (a && a.tried && a.tried.indexOf(oi) !== -1) {
+        cls += ' wrongpick'; dis = ' disabled';
+      }
+      html += '<button class="' + cls + '"' + dis + ' data-q="' + q.id + '" data-opt="' + oi + '">' + letters[oi] + '. ' + num(o, L) + ' ' + unitFor(q) + '</button>';
+    });
+    html += '</div>';
+    const fbCls = (a && a.done) ? 'fb ok' : '';
+    const fbTxt = (a && a.done) ? (T('correct') + ' <b>' + (L === 'en' ? q.work_en : q.work_id) + '</b>') : '';
+    html += '<div class="fb ' + fbCls + '" id="fb-' + q.id + '">' + fbTxt + '</div></div>';
+  });
+  return html;
+}
+function findQ(qid) {
+  for (let st = 1; st <= 5; st++) {
+    const q = PRACTICE[st].find(x => x.id === qid);
+    if (q) return { q, st };
+  }
+  return null;
+}
+function handleAnswer(btn) {
+  const qid = btn.getAttribute('data-q');
+  const opt = parseInt(btn.getAttribute('data-opt'), 10);
+  const found = findQ(qid);
+  if (!found) return;
+  const q = found.q, st = found.st;
+  const a = state.answers[qid] || (state.answers[qid] = { tries: 0, done: false, tried: [] });
+  if (a.done) return;
+  const L = state.lang;
+  const box = $('box-' + qid);
+  const fb = $('fb-' + qid);
+  if (opt === q.correct) {
+    a.done = true;
+    state.scores[st]++;
+    AudioSys.chime();
+    const btns = box.querySelectorAll('.optbtn');
+    btns.forEach((b, i) => {
+      b.disabled = true;
+      if (i === q.correct) b.classList.add('right');
+      else if (a.tried.indexOf(i) !== -1) b.classList.add('wrongpick');
+      else b.classList.add('dim');
+    });
+    fb.className = 'fb ok';
+    fb.innerHTML = T('correct') + ' <b>' + (L === 'en' ? q.work_en : q.work_id) + '</b>';
+    const pill = $('score-s' + st);
+    if (pill) pill.textContent = T('yourScore') + ': ' + state.scores[st] + ' / ' + state.totalQ[st];
+  } else {
+    a.tries++;
+    a.tried.push(opt);
+    AudioSys.click();
+    btn.disabled = true;
+    btn.classList.add('wrongpick');
+    fb.className = 'fb no';
+    fb.innerHTML = T('wrong');
+  }
+}
+
+/* ================= Station 1 — Radius & Diameter ================= */
+function drawS1() {
+  const r = state.s1r;
+  const px = r * 6; /* 1 cm = 6 px, r up to 15 -> 90 px */
+  const cx = 130, cy = 110;
+  const L = state.lang;
+  const svg = '<svg viewBox="0 0 260 220" width="260" height="220">' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + px + '" fill="#dbeafe" stroke="#0369a1" stroke-width="3"/>' +
+    '<line x1="' + (cx - px) + '" y1="' + cy + '" x2="' + (cx + px) + '" y2="' + cy + '" stroke="#dc2626" stroke-width="3"/>' +
+    '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + px) + '" y2="' + cy + '" stroke="#16a34a" stroke-width="4"/>' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#0c4a6e"/>' +
+    '<text x="' + (cx + px / 2) + '" y="' + (cy - 10) + '" font-size="16" font-weight="800" fill="#16a34a" text-anchor="middle">r = ' + num(r, L) + ' cm</text>' +
+    '<text x="' + cx + '" y="' + (cy + px + 22) + '" font-size="16" font-weight="800" fill="#dc2626" text-anchor="middle">d = ' + num(2 * r, L) + ' cm</text>' +
+    '<text x="' + (cx - px / 2) + '" y="' + (cy - 26) + '" font-size="12" fill="#64748b" text-anchor="middle">' + (L === 'en' ? 'diameter' : 'diameter') + '</text>' +
+    '<text x="' + (cx + px + 8) + '" y="' + (cy + 5) + '" font-size="12" fill="#64748b">' + (L === 'en' ? 'centre' : 'pusat') + '</text>' +
+    '</svg>';
+  $('s1fig').innerHTML = svg;
+  $('s1read').innerHTML = '<b>r = ' + num(r, L) + ' cm</b> &nbsp;•&nbsp; <b>d = 2 × r = 2 × ' + num(r, L) + ' = ' + num(2 * r, L) + ' cm</b><br>' +
+    (L === 'en' ? 'And the other way: r = d ÷ 2. If d = ' + num(2 * r, L) + ' cm, then r = ' + num(2 * r, L) + ' ÷ 2 = ' + num(r, L) + ' cm.'
+                : 'Sebaliknya: r = d ÷ 2. Jika d = ' + num(2 * r, L) + ' cm, maka r = ' + num(2 * r, L) + ' ÷ 2 = ' + num(r, L) + ' cm.');
+}
+function renderS1() {
+  const L = state.lang;
+  let h = stationHead(1, 'Radius & Diameter', 'Jari-jari & Diameter',
+    'The <b>radius (r)</b> is the line from the centre of the circle to its edge. The <b>diameter (d)</b> goes all the way across through the centre. The diameter is always TWICE the radius!',
+    '<b>Jari-jari (r)</b> adalah garis dari pusat lingkaran ke tepinya. <b>Diameter (d)</b> adalah garis yang melewati pusat dari satu tepi ke tepi lainnya. Diameter selalu DUA KALI jari-jari!');
+  h += '<div class="formula">d = 2 × r &nbsp;&nbsp;•&nbsp;&nbsp; r = d ÷ 2<small>' + (L === 'en' ? 'Diameter = 2 × radius • Radius = diameter ÷ 2' : 'Diameter = 2 × jari-jari • Jari-jari = diameter ÷ 2') + '</small></div>';
+  h += '<div class="labrow"><div class="labviz"><div id="s1fig"></div></div><div class="labctl">' +
+    '<label for="s1r">' + (L === 'en' ? 'Drag to change the radius:' : 'Geser untuk mengubah jari-jari:') + ' <span class="bignum" id="s1rVal"></span></label>' +
+    '<input type="range" id="s1r" min="1" max="15" step="1" value="' + state.s1r + '">' +
+    '<div class="readout" id="s1read"></div></div></div>';
+  h += '<h3>📘 ' + T('workedExample') + '</h3><p>' + (L === 'en'
+    ? 'A circle has radius 7 cm. Its diameter is d = 2 × 7 = <b>14 cm</b>. A circle has diameter 20 cm. Its radius is r = 20 ÷ 2 = <b>10 cm</b>.'
+    : 'Sebuah lingkaran berjari-jari 7 cm. Diameternya d = 2 × 7 = <b>14 cm</b>. Sebuah lingkaran berdiameter 20 cm. Jari-jarinya r = 20 ÷ 2 = <b>10 cm</b>.') + '</p>';
+  h += renderPractice(1);
+  h += '</div>';
+  return h;
+}
+
+/* ================= Station 2 — Circumference ================= */
+function drawS2() {
+  const r = state.s2r;
+  const pi = piFor(r);
+  const C = 2 * pi * r;
+  const L = state.lang;
+  $('s2rVal').textContent = num(r, L) + ' cm';
+  $('s2read').innerHTML = piLabel(r, L) + '<br><b>C = 2 × π × r = 2 × ' + (Math.abs(pi - 22 / 7) < 1e-9 ? '22/7' : (L === 'en' ? '3.14' : '3,14')) + ' × ' + num(r, L) + ' = <span class="bignum">' + num(C, L) + ' cm</span></b>';
+  /* roll visual: circle radius px = r*4 (max 84 for r=21) */
+  const px = r * 4;
+  const startX = px + 16, groundY = 170, cy = groundY - px;
+  const dist = 2 * Math.PI * px;
+  const svg = '<svg viewBox="0 0 660 200" width="100%" height="200">' +
+    '<line x1="10" y1="' + groundY + '" x2="650" y2="' + groundY + '" stroke="#78350f" stroke-width="3"/>' +
+    '<line id="s2trace" x1="' + startX + '" y1="' + (groundY + 12) + '" x2="' + startX + '" y2="' + (groundY + 12) + '" stroke="#dc2626" stroke-width="5" stroke-linecap="round"/>' +
+    '<g id="s2wheel" transform="translate(' + startX + ',' + cy + ')">' +
+    '<circle r="' + px + '" fill="#dbeafe" stroke="#0369a1" stroke-width="3"/>' +
+    '<line x1="0" y1="0" x2="' + px + '" y2="0" stroke="#dc2626" stroke-width="3"/>' +
+    '<circle r="4" fill="#0c4a6e"/></g>' +
+    '<text id="s2rollLabel" x="' + startX + '" y="24" font-size="15" font-weight="800" fill="#92400e" text-anchor="middle">' + (L === 'en' ? 'One full roll = one circumference' : 'Satu putaran penuh = satu keliling') + '</text>' +
+    '</svg>';
+  $('s2roll').innerHTML = svg;
+  state.s2px = px; state.s2startX = startX; state.s2dist = dist; state.s2cy = cy;
+}
+function rollS2() {
+  const wheel = $('s2wheel'), trace = $('s2trace'), label = $('s2rollLabel');
+  if (!wheel) return;
+  const r = state.s2r, pi = piFor(r), C = 2 * pi * r;
+  const L = state.lang;
+  const t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  const dur = 1600;
+  function frame(now) {
+    const p = Math.min(1, (now - t0) / dur);
+    const x = state.s2startX + p * state.s2dist;
+    const rot = p * 360;
+    wheel.setAttribute('transform', 'translate(' + x + ',' + state.s2cy + ') rotate(' + rot + ')');
+    trace.setAttribute('x2', String(x));
+    if (p < 1) {
+      if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(frame);
+    } else {
+      label.textContent = (L === 'en' ? 'Distance rolled = C = ' : 'Jarak menggelinding = K = ') + num(C, L) + ' cm';
+      AudioSys.chime();
+    }
+  }
+  if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(frame);
+  else frame(t0 + dur);
+}
+function renderS2() {
+  const L = state.lang;
+  let h = stationHead(2, 'Circumference', 'Keliling Lingkaran',
+    'The <b>circumference (C)</b> is the distance all the way around a circle. Imagine rolling the circle once — the distance it rolls IS the circumference!',
+    '<b>Keliling (K)</b> adalah jarak mengelilingi lingkaran. Bayangkan lingkaran menggelinding satu putaran — jarak yang ditempuh ITULAH kelilingnya!');
+  h += '<div class="formula">C = π × d = 2 × π × r<small>' + (L === 'en' ? 'Use π = 22/7 when the radius is a multiple of 7, otherwise use π = 3.14.' : 'Gunakan π = 22/7 jika jari-jari kelipatan 7, jika tidak gunakan π = 3,14.') + '</small></div>';
+  h += '<div class="labrow"><div class="labviz"><div id="s2roll"></div>' +
+    '<button class="btn orange" id="s2rollBtn">▶ ' + (L === 'en' ? 'Roll the circle once!' : 'Gelindingkan lingkaran satu putaran!') + '</button></div>' +
+    '<div class="labctl">' +
+    '<label for="s2r">' + (L === 'en' ? 'Change the radius:' : 'Ubah jari-jarinya:') + ' <span class="bignum" id="s2rVal"></span></label>' +
+    '<input type="range" id="s2r" min="1" max="21" step="1" value="' + state.s2r + '">' +
+    '<div class="readout" id="s2read"></div></div></div>';
+  h += '<h3>📘 ' + T('workedExample') + '</h3><p>' + (L === 'en'
+    ? 'r = 7 cm (multiple of 7, so π = 22/7): C = 2 × 22/7 × 7 = <b>44 cm</b>. r = 10 cm (not a multiple of 7, so π = 3.14): C = 2 × 3.14 × 10 = <b>62.8 cm</b>.'
+    : 'r = 7 cm (kelipatan 7, jadi π = 22/7): K = 2 × 22/7 × 7 = <b>44 cm</b>. r = 10 cm (bukan kelipatan 7, jadi π = 3,14): K = 2 × 3,14 × 10 = <b>62,8 cm</b>.') + '</p>';
+  h += renderPractice(2);
+  h += '</div>';
+  return h;
+}
+
+/* ================= Station 3 — Area (sector dissection) ================= */
+function drawS3() {
+  const r = state.s3r, t = state.s3mix / 100;
+  const pi = piFor(r);
+  const A = pi * r * r;
+  const L = state.lang;
+  $('s3rVal').textContent = num(r, L) + ' cm';
+  $('s3mixVal').textContent = Math.round(t * 100) + '%';
+  $('s3read').innerHTML =
+    (L === 'en' ? 'Length of the strip ≈ π × r = ' : 'Panjang strip ≈ π × r = ') + '<b>' + num(pi * r, L) + ' cm</b><br>' +
+    (L === 'en' ? 'Width of the strip = r = ' : 'Lebar strip = r = ') + '<b>' + num(r, L) + ' cm</b><br>' +
+    '<b>A = π × r² = ' + (Math.abs(pi - 22 / 7) < 1e-9 ? '22/7' : (L === 'en' ? '3.14' : '3,14')) + ' × ' + num(r, L) + '² = <span class="bignum">' + num(A, L) + ' cm²</span></b><br>' +
+    '<span class="muted">' + piLabel(r, L) + '</span>';
+  /* sector dissection: 16 wedges, R px = r*4 */
+  const R = Math.max(24, r * 4), cx = 170, cy = 120;
+  const half = 11.25 * Math.PI / 180;
+  const px1 = (R * Math.cos(-half)).toFixed(1), py1 = (R * Math.sin(-half)).toFixed(1);
+  const px2 = (R * Math.cos(half)).toFixed(1), py2 = (R * Math.sin(half)).toFixed(1);
+  const wedge = 'M 0 0 L ' + px1 + ' ' + py1 + ' A ' + R + ' ' + R + ' 0 0 1 ' + px2 + ' ' + py2 + ' Z';
+  const slotW = 2 * R * Math.sin(half);
+  const x0 = cx - (8 * slotW) / 2;
+  let sectors = '';
+  const cols = ['#60a5fa', '#93c5fd'];
+  for (let i = 0; i < 16; i++) {
+    const start = i * 22.5 + 11.25;
+    const p = Math.floor(i / 2);
+    const tx = x0 + p * slotW + slotW / 2;
+    const ty = (i % 2 === 0) ? cy + R / 2 : cy - R / 2;
+    const target = (i % 2 === 0) ? -90 : 90;
+    let delta = ((target - start + 540) % 360) - 180;
+    const rot = start + delta * t;
+    const x = cx + (tx - cx) * t;
+    const y = cy + (ty - cy) * t;
+    sectors += '<g transform="translate(' + x.toFixed(1) + ',' + y.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')">' +
+      '<path d="' + wedge + '" fill="' + cols[i % 2] + '" stroke="#fff" stroke-width="1.5"/></g>';
+  }
+  const svg = '<svg viewBox="0 0 340 240" width="100%" height="240">' + sectors +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#0c4a6e"/>' +
+    '<text x="' + cx + '" y="' + (cy + R + 18) + '" font-size="14" font-weight="800" fill="#0c4a6e" text-anchor="middle">r = ' + num(r, L) + ' cm</text></svg>';
+  $('s3fig').innerHTML = svg;
+}
+function animateS3() {
+  const t0 = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+  const dur = 1400;
+  function frame(now) {
+    const p = Math.min(1, (now - t0) / dur);
+    state.s3mix = Math.round(p * 100);
+    const sl = $('s3mix');
+    if (sl) sl.value = String(state.s3mix);
+    drawS3();
+    if (p < 1 && typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(frame);
+  }
+  if (typeof requestAnimationFrame !== 'undefined') requestAnimationFrame(frame);
+  else { state.s3mix = 100; drawS3(); }
+}
+function renderS3() {
+  const L = state.lang;
+  let h = stationHead(3, 'Area of a Circle', 'Luas Lingkaran',
+    'Cut a circle into sectors and rearrange them — they make a shape almost like a <b>rectangle</b>! Its length is about half the circumference (π × r) and its width is the radius (r). So Area = π × r × r = π × r².',
+    'Potong lingkaran menjadi juring-juring lalu susun ulang — jadilah bangun yang hampir seperti <b>persegi panjang</b>! Panjangnya sekitar setengah keliling (π × r) dan lebarnya jari-jari (r). Jadi Luas = π × r × r = π × r².');
+  h += '<div class="formula">A = π × r²<small>' + (L === 'en' ? 'Area = π × radius × radius' : 'Luas = π × jari-jari × jari-jari') + '</small></div>';
+  h += '<div class="labrow"><div class="labviz"><div id="s3fig"></div>' +
+    '<button class="btn" id="s3animBtn">▶ ' + (L === 'en' ? 'Rearrange the sectors!' : 'Susun ulang juringnya!') + '</button></div>' +
+    '<div class="labctl">' +
+    '<label for="s3r">' + (L === 'en' ? 'Radius:' : 'Jari-jari:') + ' <span class="bignum" id="s3rVal"></span></label>' +
+    '<input type="range" id="s3r" min="5" max="21" step="1" value="' + state.s3r + '">' +
+    '<label for="s3mix">' + (L === 'en' ? 'Rearrange:' : 'Susun ulang:') + ' <span class="bignum" id="s3mixVal"></span></label>' +
+    '<input type="range" id="s3mix" min="0" max="100" step="1" value="' + state.s3mix + '">' +
+    '<div class="readout" id="s3read"></div></div></div>';
+  h += '<h3>📘 ' + T('workedExample') + '</h3><p>' + (L === 'en'
+    ? 'r = 7 cm (multiple of 7, so π = 22/7): A = 22/7 × 7² = 22/7 × 49 = <b>154 cm²</b>. r = 10 cm (π = 3.14): A = 3.14 × 10² = 3.14 × 100 = <b>314 cm²</b>.'
+    : 'r = 7 cm (kelipatan 7, jadi π = 22/7): L = 22/7 × 7² = 22/7 × 49 = <b>154 cm²</b>. r = 10 cm (π = 3,14): L = 3,14 × 10² = 3,14 × 100 = <b>314 cm²</b>.') + '</p>';
+  h += renderPractice(3);
+  h += '</div>';
+  return h;
+}
+
+/* ================= Station 4 — Fraction Circles ================= */
+function drawS4() {
+  const frac = state.s4frac, r = state.s4r;
+  const pi = piFor(r);
+  const arc = frac * 2 * pi * r;
+  const area = frac * pi * r * r;
+  const perim = frac >= 1 ? arc : arc + 2 * r;
+  const L = state.lang;
+  const fracName = frac === 0.25 ? '1/4' : frac === 0.5 ? '1/2' : frac === 0.75 ? '3/4' : (L === 'en' ? 'Full' : 'Penuh');
+  $('s4read').innerHTML = '<b>' + fracName + ' ' + (L === 'en' ? 'circle' : 'lingkaran') + ', r = ' + num(r, L) + ' cm</b><br>' +
+    (L === 'en' ? 'Arc length = ' : 'Panjang busur = ') + '<b>' + num(arc, L) + ' cm</b><br>' +
+    (L === 'en' ? 'Area of the part = ' : 'Luas bagiannya = ') + '<b>' + num(area, L) + ' cm²</b><br>' +
+    (L === 'en' ? 'Perimeter of the part = ' : 'Keliling bagiannya = ') + '<b>' + num(perim, L) + ' cm</b>' + (frac < 1 ? ' <span class="muted">(' + (L === 'en' ? 'arc + 2 × r' : 'busur + 2 × r') + ')</span>' : '') + '<br>' +
+    '<span class="muted">' + piLabel(r, L) + '</span>';
+  /* sector drawing */
+  const cx = 150, cy = 150, R = 105;
+  const rad = a => a * Math.PI / 180;
+  const a0 = -90, a1 = -90 + frac * 360;
+  const p0 = [cx + R * Math.cos(rad(a0)), cy + R * Math.sin(rad(a0))];
+  const p1 = [cx + R * Math.cos(rad(a1)), cy + R * Math.sin(rad(a1))];
+  const large = frac > 0.5 ? 1 : 0;
+  let inner;
+  if (frac >= 1) {
+    inner = '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="#fde68a" stroke="#b45309" stroke-width="3"/>';
+  } else {
+    inner = '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>' +
+      '<path d="M ' + cx + ' ' + cy + ' L ' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + ' A ' + R + ' ' + R + ' 0 ' + large + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + ' Z" fill="#fde68a" stroke="#b45309" stroke-width="3"/>' +
+      '<line x1="' + cx + '" y1="' + cy + '" x2="' + p0[0].toFixed(1) + '" y2="' + p0[1].toFixed(1) + '" stroke="#92400e" stroke-width="2.5"/>' +
+      '<line x1="' + cx + '" y1="' + cy + '" x2="' + p1[0].toFixed(1) + '" y2="' + p1[1].toFixed(1) + '" stroke="#92400e" stroke-width="2.5"/>';
+  }
+  const midA = a0 + frac * 180;
+  const lx = cx + R * 0.55 * Math.cos(rad(midA)), ly = cy + R * 0.55 * Math.sin(rad(midA));
+  const svg = '<svg viewBox="0 0 300 300" width="300" height="300">' + inner +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="4" fill="#0c4a6e"/>' +
+    '<text x="' + lx.toFixed(1) + '" y="' + (ly + 8).toFixed(1) + '" font-size="26" font-weight="900" fill="#92400e" text-anchor="middle">' + fracName + '</text>' +
+    '<text x="' + cx + '" y="292" font-size="14" font-weight="800" fill="#0c4a6e" text-anchor="middle">r = ' + num(r, L) + ' cm</text></svg>';
+  $('s4fig').innerHTML = svg;
+  /* fraction button active state */
+  ['0.25', '0.5', '0.75', '1'].forEach(f => {
+    const b = $('frac-' + f);
+    if (b) b.classList.toggle('active', Math.abs(state.s4frac - parseFloat(f)) < 1e-9);
+  });
+}
+function renderS4() {
+  const L = state.lang;
+  let h = stationHead(4, 'Fraction Circles — 1/4, 1/2, 3/4 & Full', 'Lingkaran Pecahan — 1/4, 1/2, 3/4 & Penuh',
+    'A circle can be cut into parts. For a fraction of a circle: <b>arc length = fraction × 2 × π × r</b> and <b>area = fraction × π × r²</b>. The perimeter of the part also includes the two straight radii (except for a full circle).',
+    'Lingkaran bisa dipotong menjadi beberapa bagian. Untuk pecahan lingkaran: <b>panjang busur = pecahan × 2 × π × r</b> dan <b>luas = pecahan × π × r²</b>. Keliling bagiannya juga mencakup dua jari-jari yang lurus (kecuali lingkaran penuh).');
+  h += '<div class="formula">' + (L === 'en' ? 'Arc = fraction × 2 × π × r &nbsp;•&nbsp; Area = fraction × π × r² &nbsp;•&nbsp; Perimeter = arc + 2 × r' : 'Busur = pecahan × 2 × π × r &nbsp;•&nbsp; Luas = pecahan × π × r² &nbsp;•&nbsp; Keliling = busur + 2 × r') + '</div>';
+  h += '<div class="labrow"><div class="labviz"><div id="s4fig"></div></div><div class="labctl">' +
+    '<label>' + (L === 'en' ? 'Choose the fraction:' : 'Pilih pecahannya:') + '</label>' +
+    '<div class="fracbtns">' +
+    '<button class="fracbtn" id="frac-0.25" data-frac="0.25">1/4</button>' +
+    '<button class="fracbtn" id="frac-0.5" data-frac="0.5">1/2</button>' +
+    '<button class="fracbtn" id="frac-0.75" data-frac="0.75">3/4</button>' +
+    '<button class="fracbtn" id="frac-1" data-frac="1">' + (L === 'en' ? 'Full' : 'Penuh') + '</button></div>' +
+    '<label for="s4r">' + (L === 'en' ? 'Radius:' : 'Jari-jari:') + ' <span class="bignum" id="s4rVal"></span></label>' +
+    '<input type="range" id="s4r" min="1" max="21" step="1" value="' + state.s4r + '">' +
+    '<div class="readout" id="s4read"></div></div></div>';
+  h += '<h3>📘 ' + T('workedExample') + '</h3><p>' + (L === 'en'
+    ? '1/2 circle, r = 14 cm: arc = 1/2 × 88 = <b>44 cm</b>, area = 1/2 × 616 = <b>308 cm²</b>. 1/4 circle, r = 14 cm: arc = 1/4 × 88 = <b>22 cm</b>, area = 1/4 × 616 = <b>154 cm²</b>. 3/4 circle, r = 7 cm: arc = 3/4 × 44 = <b>33 cm</b>, area = 3/4 × 154 = <b>115.5 cm²</b>.'
+    : '1/2 lingkaran, r = 14 cm: busur = 1/2 × 88 = <b>44 cm</b>, luas = 1/2 × 616 = <b>308 cm²</b>. 1/4 lingkaran, r = 14 cm: busur = 1/4 × 88 = <b>22 cm</b>, luas = 1/4 × 616 = <b>154 cm²</b>. 3/4 lingkaran, r = 7 cm: busur = 3/4 × 44 = <b>33 cm</b>, luas = 3/4 × 154 = <b>115,5 cm²</b>.') + '</p>';
+  h += renderPractice(4);
+  h += '</div>';
+  return h;
+}
+/* ================= Station 5 — Composite Figures ================= */
+function svgFigA() {
+  const L = state.lang;
+  return '<svg viewBox="0 0 300 240" width="300" height="240">' +
+    '<rect x="80" y="120" width="140" height="100" fill="#dbeafe" stroke="#0369a1" stroke-width="3"/>' +
+    '<path d="M 80 120 A 70 70 0 0 1 220 120 Z" fill="#fde68a" stroke="#b45309" stroke-width="3"/>' +
+    '<line x1="80" y1="120" x2="220" y2="120" stroke="#b45309" stroke-width="2" stroke-dasharray="5 4"/>' +
+    '<text x="150" y="238" font-size="15" font-weight="800" fill="#0c4a6e" text-anchor="middle">14 cm</text>' +
+    '<text x="70" y="175" font-size="15" font-weight="800" fill="#0c4a6e" text-anchor="end">10 cm</text>' +
+    '<text x="150" y="105" font-size="14" font-weight="800" fill="#92400e" text-anchor="middle">r = 7 cm</text>' +
+    '<text x="150" y="160" font-size="13" fill="#475569" text-anchor="middle">' + (L === 'en' ? 'rectangle' : 'persegi panjang') + '</text>' +
+    '<text x="150" y="80" font-size="13" fill="#475569" text-anchor="middle">' + (L === 'en' ? 'semicircle' : 'setengah lingkaran') + '</text></svg>';
+}
+function svgFigB() {
+  const L = state.lang;
+  return '<svg viewBox="0 0 300 300" width="300" height="300">' +
+    '<path d="M 75 75 H 225 V 225 H 75 Z M 150 75 A 75 75 0 1 0 150 225 A 75 75 0 1 0 150 75 Z" fill="#fbbf24" fill-rule="evenodd" stroke="#92400e" stroke-width="3"/>' +
+    '<text x="150" y="65" font-size="15" font-weight="800" fill="#0c4a6e" text-anchor="middle">14 cm</text>' +
+    '<text x="150" y="155" font-size="14" font-weight="800" fill="#7c2d12" text-anchor="middle">d = 14 cm</text>' +
+    '<text x="150" y="245" font-size="13" fill="#475569" text-anchor="middle">' + (L === 'en' ? 'shaded = square − circle' : 'arsir = persegi − lingkaran') + '</text></svg>';
+}
+function svgFigC() {
+  const L = state.lang;
+  return '<svg viewBox="0 0 300 300" width="300" height="300">' +
+    '<rect x="150" y="60" width="110" height="110" fill="#fde68a" stroke="#b45309" stroke-width="3"/>' +
+    '<path d="M 150 170 L 260 170 A 110 110 0 1 1 150 60 Z" fill="#dbeafe" stroke="#0369a1" stroke-width="3"/>' +
+    '<circle cx="150" cy="170" r="4" fill="#0c4a6e"/>' +
+    '<text x="205" y="50" font-size="15" font-weight="800" fill="#0c4a6e" text-anchor="middle">14 cm</text>' +
+    '<text x="270" y="120" font-size="15" font-weight="800" fill="#0c4a6e" text-anchor="middle">14 cm</text>' +
+    '<text x="95" y="240" font-size="14" font-weight="800" fill="#92400e" text-anchor="middle">r = 14 cm</text>' +
+    '<text x="120" y="120" font-size="13" fill="#475569" text-anchor="middle">3/4</text></svg>';
+}
+function renderS5() {
+  const L = state.lang;
+  let h = stationHead(5, 'Composite Figures', 'Bangun Gabungan',
+    'Real shapes are often made of <b>several parts joined together</b>. For the <b>area</b>, add the areas of the parts (or subtract a cut-out part). For the <b>perimeter</b>, count ONLY the outer edges — never count a line that is inside the shape!',
+    'Bangun nyata sering terdiri dari <b>beberapa bagian yang digabung</b>. Untuk <b>luas</b>, jumlahkan luas bagian-bagiannya (atau kurangi bagian yang dipotong). Untuk <b>keliling</b>, hitung HANYA sisi luarnya — jangan pernah menghitung garis yang ada di dalam bangun!');
+  const svgs = { A: svgFigA(), B: svgFigB(), C: svgFigC() };
+  COMPOSITES.forEach(c => {
+    const steps = (L === 'en' ? c.steps_en : c.steps_id).map(s => '<li>' + s + '</li>').join('');
+    h += '<div class="figcard"><h4>' + (L === 'en' ? c.title_en : c.title_id) + '</h4>' +
+      '<p class="muted">' + (L === 'en' ? c.dims_en : c.dims_id) + '</p>' + svgs[c.key] +
+      '<button class="btn ghost" data-steps="' + c.key + '">' + T('showSteps') + '</button>' +
+      '<ol class="steps" id="steps-' + c.key + '">' + steps + '</ol></div>';
+  });
+  h += renderPractice(5);
+  h += '</div>';
+  return h;
+}
+
+/* ================= after render: attach station controls ================= */
+function afterRenderStation() {
+  const s = state.station;
+  if (s === 1) {
+    $('s1rVal').textContent = num(state.s1r, state.lang) + ' cm';
+    drawS1();
+    $('s1r').addEventListener('input', e => { state.s1r = parseInt(e.target.value, 10); $('s1rVal').textContent = num(state.s1r, state.lang) + ' cm'; drawS1(); });
+  } else if (s === 2) {
+    drawS2();
+    $('s2r').addEventListener('input', e => { state.s2r = parseInt(e.target.value, 10); drawS2(); });
+    $('s2rollBtn').addEventListener('click', () => { AudioSys.init(); rollS2(); });
+  } else if (s === 3) {
+    drawS3();
+    $('s3r').addEventListener('input', e => { state.s3r = parseInt(e.target.value, 10); drawS3(); });
+    $('s3mix').addEventListener('input', e => { state.s3mix = parseInt(e.target.value, 10); drawS3(); });
+    $('s3animBtn').addEventListener('click', () => { AudioSys.init(); state.s3mix = 0; animateS3(); });
+  } else if (s === 4) {
+    $('s4rVal').textContent = num(state.s4r, state.lang) + ' cm';
+    drawS4();
+    $('s4r').addEventListener('input', e => { state.s4r = parseInt(e.target.value, 10); $('s4rVal').textContent = num(state.s4r, state.lang) + ' cm'; drawS4(); });
+    ['0.25', '0.5', '0.75', '1'].forEach(f => {
+      const b = $('frac-' + f);
+      if (b) b.addEventListener('click', () => { AudioSys.init(); AudioSys.click(); state.s4frac = parseFloat(f); drawS4(); });
+    });
+  } else if (s === 5) {
+    document.querySelectorAll('[data-steps]').forEach(b => {
+      b.addEventListener('click', () => {
+        AudioSys.init(); AudioSys.click();
+        const el = $('steps-' + b.getAttribute('data-steps'));
+        const open = el.classList.toggle('open');
+        b.textContent = open ? T('hideSteps') : T('showSteps');
+      });
+    });
+  }
+}
+
+/* ================= formula sheet ================= */
+function renderFormula() {
+  const L = state.lang;
+  const rows = L === 'en' ? [
+    ['Diameter', 'd = 2 × r'],
+    ['Radius', 'r = d ÷ 2'],
+    ['Circumference', 'C = π × d = 2 × π × r'],
+    ['Area of a circle', 'A = π × r²'],
+    ['Choosing π', 'π = 22/7 if r is a multiple of 7, otherwise π = 3.14'],
+    ['1/2 circle', 'Arc = 1/2 × 2πr  •  Area = 1/2 × πr²  •  Perimeter = arc + 2r'],
+    ['1/4 circle', 'Arc = 1/4 × 2πr  •  Area = 1/4 × πr²  •  Perimeter = arc + 2r'],
+    ['3/4 circle', 'Arc = 3/4 × 2πr  •  Area = 3/4 × πr²  •  Perimeter = arc + 2r'],
+    ['Composite figures', 'Perimeter = outer edges only  •  Area = add the parts (or subtract the cut-out)'],
+  ] : [
+    ['Diameter', 'd = 2 × r'],
+    ['Jari-jari', 'r = d ÷ 2'],
+    ['Keliling lingkaran', 'K = π × d = 2 × π × r'],
+    ['Luas lingkaran', 'L = π × r²'],
+    ['Memilih π', 'π = 22/7 jika r kelipatan 7, jika tidak π = 3,14'],
+    ['1/2 lingkaran', 'Busur = 1/2 × 2πr  •  Luas = 1/2 × πr²  •  Keliling = busur + 2r'],
+    ['1/4 lingkaran', 'Busur = 1/4 × 2πr  •  Luas = 1/4 × πr²  •  Keliling = busur + 2r'],
+    ['3/4 lingkaran', 'Busur = 3/4 × 2πr  •  Luas = 3/4 × πr²  •  Keliling = busur + 2r'],
+    ['Bangun gabungan', 'Keliling = hanya sisi luar  •  Luas = jumlahkan bagian-bagiannya (atau kurangi yang dipotong)'],
+  ];
+  let html = '<h2>' + T('sheetTitle') + '</h2><p>' + T('sheetSub') + '</p><table><tr><th>' + (L === 'en' ? 'What' : 'Apa') + '</th><th>' + (L === 'en' ? 'Formula' : 'Rumus') + '</th></tr>';
+  rows.forEach(r => { html += '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td></tr>'; });
+  html += '</table><div style="text-align:center;margin-top:14px"><button class="btn" id="closeSheetBtn">' + T('close') + '</button></div>';
+  $('formulaSheet').innerHTML = html;
+  $('closeSheetBtn').addEventListener('click', closeFormula);
+}
+function openFormula() { renderFormula(); $('formulaOverlay').classList.remove('hidden'); }
+function closeFormula() { $('formulaOverlay').classList.add('hidden'); }
+
+/* ================= language ================= */
+function applyLang() {
+  const L = state.lang;
+  document.documentElement.lang = L;
+  $('appTitle').textContent = T('appTitle');
+  $('appSub').textContent = T('appSub');
+  document.title = T('appTitle');
+  $('langBtn').textContent = L === 'en' ? 'EN' : 'ID';
+  renderNav();
+  renderStation();
+}
+
+/* ================= init wiring ================= */
+$('langBtn').addEventListener('click', () => {
+  AudioSys.init();
+  state.lang = state.lang === 'en' ? 'id' : 'en';
+  applyLang();
+});
+$('soundBtn').addEventListener('click', () => {
+  AudioSys.init();
+  state.sound = !state.sound;
+  AudioSys.on = state.sound;
+  $('soundBtn').textContent = state.sound ? '🔊' : '🔇';
+  $('soundBtn').classList.toggle('off', !state.sound);
+  if (state.sound) AudioSys.chime();
+});
+$('formulaBtn').addEventListener('click', () => { AudioSys.init(); openFormula(); });
+$('formulaOverlay').addEventListener('click', e => { if (e.target === $('formulaOverlay')) closeFormula(); });
+$('station').addEventListener('click', e => {
+  const t = e.target;
+  if (t && t.getAttribute && t.getAttribute('data-q')) handleAnswer(t);
+});
+applyLang();
+</script>
+</body>
+</html>
