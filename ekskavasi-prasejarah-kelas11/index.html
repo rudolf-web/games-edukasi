@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ekskavasi Virtual: Lab Arkeologi Prasejarah — Antropologi Kelas XI</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif; background: #f5efe0; color: #3e2723; }
+  #app { max-width: 860px; margin: 0 auto; padding: 12px 12px 40px; }
+  header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: #fff8e1; border: 2px solid #d7ccc8; border-radius: 16px; padding: 10px 14px; position: sticky; top: 8px; z-index: 20; box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+  header h1 { font-size: 20px; margin: 0; color: #4e342e; line-height: 1.15; }
+  header h1 small { display: block; font-size: 12px; color: #8d6e63; font-weight: 600; }
+  .spacer { flex: 1; }
+  .pill { background: #fff3e0; border: 2px solid #ffb74d; color: #e65100; border-radius: 999px; padding: 5px 12px; font-weight: 800; font-size: 14px; white-space: nowrap; }
+  .pill.finds { background: #e8f5e9; border-color: #81c784; color: #2e7d32; }
+  .iconbtn { background: #fff; border: 2px solid #d7ccc8; border-radius: 12px; font-size: 19px; padding: 5px 10px; cursor: pointer; }
+  .iconbtn.off { opacity: .45; }
+  .card { background: #fffdf7; border-radius: 20px; padding: 20px; box-shadow: 0 3px 14px rgba(0,0,0,.10); margin-top: 14px; }
+  .center { text-align: center; }
+  .btn { display: inline-block; border: none; cursor: pointer; font-weight: 800; font-size: 17px; color: #fff; background: #6d4c41; border-radius: 999px; padding: 13px 28px; box-shadow: 0 4px 0 #4e342e; }
+  .btn:active { transform: translateY(3px); box-shadow: none; }
+  .btn.green { background: #2e7d32; box-shadow: 0 4px 0 #1b5e20; }
+  .btn.amber { background: #ef6c00; box-shadow: 0 4px 0 #bf360c; }
+  .btn.ghost { background: #fff; color: #4e342e; border: 2px solid #bcaaa4; box-shadow: none; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .hidden { display: none !important; }
+  .howto { background: #efebe9; border: 2px dashed #a1887f; border-radius: 16px; padding: 12px 16px; font-size: 15px; line-height: 1.65; text-align: left; margin: 14px 0; }
+  .lchips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 10px 0; }
+  .lchip { border-radius: 999px; padding: 6px 14px; font-weight: 800; font-size: 13px; color: #fff; }
+  .muted { color: #8d6e63; font-size: 13px; }
+  /* dig site */
+  .dig-hint { font-size: 14px; color: #6d4c41; background: #fff3e0; border-radius: 10px; padding: 8px 12px; display: inline-block; margin: 6px 0 10px; }
+  .layer { border-radius: 14px; padding: 10px; margin-bottom: 10px; border: 2px solid rgba(0,0,0,.15); }
+  .layer-head { display: flex; align-items: baseline; gap: 8px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.45); margin-bottom: 8px; flex-wrap: wrap; }
+  .layer-head b { font-size: 17px; }
+  .layer-head span { font-size: 13px; opacity: .95; }
+  .layer-head .done { margin-left: auto; font-weight: 800; font-size: 13px; background: rgba(255,255,255,.9); color: #2e7d32; border-radius: 999px; padding: 2px 10px; text-shadow: none; }
+  .cells { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .cell { aspect-ratio: 1; border-radius: 12px; border: 2px solid rgba(0,0,0,.25); background: rgba(255,255,255,.28); font-size: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: transform .08s; }
+  .cell:active { transform: scale(.94); }
+  .cell.dug { background: rgba(0,0,0,.28); cursor: default; font-size: 20px; }
+  .cell.half { background: #ffe0b2; border-color: #ff9800; }
+  .cell.found { background: #c8e6c9; border-color: #2e7d32; cursor: default; }
+  .cell svg { width: 78%; height: 78%; }
+  .dig-msg { min-height: 24px; font-size: 14px; color: #5d4037; margin-top: 4px; }
+  /* modal + overlays */
+  .overlay { position: fixed; inset: 0; background: rgba(62,39,35,.72); display: flex; align-items: flex-start; justify-content: center; z-index: 50; overflow-y: auto; padding: 20px 12px; }
+  .overlay .card { max-width: 680px; width: 100%; }
+  .find-svg { background: #efebe9; border-radius: 16px; padding: 10px; position: relative; }
+  .find-svg svg { width: 100%; max-height: 190px; display: block; }
+  .dirt { position: absolute; inset: 10px; background: repeating-linear-gradient(45deg, #8d6e63 0 14px, #795548 14px 28px); border-radius: 12px; opacity: .92; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: 18px; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+  .opts { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+  .opt { text-align: left; background: #fff; border: 2px solid #bcaaa4; border-radius: 14px; padding: 12px 14px; font-size: 16px; cursor: pointer; font-weight: 600; color: #3e2723; }
+  .opt:active { transform: scale(.98); }
+  .opt:disabled { opacity: .45; cursor: default; }
+  .opt.wrong { background: #ffebee; border-color: #e57373; color: #b71c1c; opacity: 1; }
+  .opt.right { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; opacity: 1; }
+  .fb { border-radius: 12px; padding: 12px 14px; margin-top: 12px; font-size: 15px; line-height: 1.55; text-align: left; }
+  .fb-ok { background: #e8f5e9; border: 2px solid #81c784; }
+  .fb-bad { background: #ffebee; border: 2px solid #ef9a9a; }
+  .fb-info { background: #fff3e0; border: 2px solid #ffcc80; }
+  .journal-item, .revitem { border: 2px solid #d7ccc8; border-radius: 14px; padding: 12px; margin-bottom: 10px; text-align: left; background: #fff; }
+  .journal-item b, .revitem b { color: #4e342e; }
+  .journal-item .meta, .revitem .meta { font-size: 13px; color: #8d6e63; }
+  .journal-item svg, .revitem svg { width: 100%; max-height: 130px; display: block; background: #efebe9; border-radius: 10px; }
+  .guide-sec { text-align: left; margin-bottom: 16px; }
+  .guide-sec h3 { margin: 0 0 6px; color: #4e342e; }
+  .guide-sec p, .guide-sec li { font-size: 15px; line-height: 1.6; }
+  .guide-sec ul { margin: 4px 0; padding-left: 20px; }
+  /* timeline */
+  .tl-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 16px 0; }
+  .tl-chip { border: 2px solid #8d6e63; background: #fff; border-radius: 14px; padding: 14px 18px; font-size: 17px; font-weight: 800; cursor: pointer; color: #4e342e; min-width: 150px; }
+  .tl-chip.locked { background: #c8e6c9; border-color: #2e7d32; color: #1b5e20; cursor: default; }
+  .tl-chip.shake { animation: shake .35s; }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 75% { transform: translateX(7px); } }
+  .tl-slots { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 10px 0; }
+  .tl-slot { min-width: 110px; border: 2px dashed #a1887f; border-radius: 12px; padding: 10px 8px; font-weight: 800; font-size: 14px; color: #8d6e63; }
+  .tl-slot.filled { border-style: solid; border-color: #2e7d32; background: #e8f5e9; color: #1b5e20; }
+  .trophy { font-size: 56px; }
+  @media print {
+    header, .btn, .overlay { display: none !important; }
+    body { background: #fff; }
+    .card { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>⛏️ Ekskavasi Virtual<small>Lab Arkeologi Prasejarah • Antropologi Kelas XI</small></h1>
+    <span class="spacer"></span>
+    <span class="pill" id="scorePill">⭐ Skor: 0</span>
+    <span class="pill finds" id="findsPill">🏺 Temuan: 0/15</span>
+    <button class="iconbtn" id="journalBtn" title="Jurnal Lapangan">📓</button>
+    <button class="iconbtn" id="guideBtn" title="Buku Lapangan">📖</button>
+    <button class="iconbtn" id="musicBtn" title="Musik">🎵</button>
+    <button class="iconbtn" id="soundBtn" title="Suara">🔊</button>
+  </header>
+
+  <!-- ============ START ============ -->
+  <section id="screen-start" class="card center">
+    <div class="trophy">🏺</div>
+    <h2 style="color:#4e342e;margin:6px 0">Ekskavasi Virtual: Lab Arkeologi Prasejarah</h2>
+    <p style="line-height:1.65">Kamu adalah seorang arkeolog muda. Sebuah situs prasejarah baru saja dibuka — di bawah tanah ini tersembunyi <b>15 artefak</b> dari 5 zaman. Gali kotaknya, bersihkan temuannya dengan kuas, lalu identifikasi setiap artefak dengan benar. Semua temuan dicatat di <b>Jurnal Lapangan</b> kamu. Kalau semua 15 artefak sudah terkatalog, susun garis waktu 5 zaman itu dengan benar!</p>
+    <div class="lchips" id="startChips"></div>
+    <div class="howto">
+      ⛏️ <b>Cara main:</b> Ketuk kotak tanah untuk menggali.<br>
+      🖌️ Kalau menemukan artefak, bersihkan dulu dengan kuas, lalu jawab pertanyaannya.<br>
+      🏺 Jawaban benar di percobaan pertama = 100 poin. Salah? Artefak tetap terkubur — coba lagi!<br>
+      📓 Semua temuan tercatat di Jurnal Lapangan.<br>
+      ⏳ Terakhir: susun 5 zaman dari yang paling tua sampai yang paling muda.<br>
+      💡 <b>Ingat:</b> semakin dalam lapisan tanah, semakin tua zamannya. Dan setiap temuan, sekecil apa pun, harus dicatat posisinya dengan tepat!
+    </div>
+    <button class="btn amber" id="startBtn">▶ &nbsp;MULAI PENGGALIAN</button>
+    <p><button class="btn ghost" id="guideBtn2">📖 Buka Buku Lapangan</button></p>
+    <p class="muted">15 artefak • 5 lapisan tanah • Tanpa hitungan waktu — santai saja!</p>
+  </section>
+
+  <!-- ============ DIG ============ -->
+  <section id="screen-dig" class="hidden">
+    <div class="card" style="padding:14px 16px">
+      <h2 style="margin:0 0 4px;color:#4e342e">🗺️ Situs Penggalian</h2>
+      <span class="dig-hint">💡 Semakin dalam lapisan tanah, semakin tua zamannya. Paleolitikum ada di lapisan paling bawah!</span>
+      <div id="digSite"></div>
+      <div class="dig-msg" id="digMsg">Ketuk kotak tanah untuk menggali!</div>
+      <div class="center" style="margin-top:10px">
+        <button class="btn green hidden" id="timelineBtn">⏳ Semua Temuan Terkatalog — Lanjut ke Tantangan Garis Waktu ➜</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TIMELINE ============ -->
+  <section id="screen-timeline" class="card center hidden">
+    <div class="trophy">⏳</div>
+    <h2 style="color:#4e342e;margin:6px 0">Tantangan Garis Waktu</h2>
+    <p style="line-height:1.6">Semua 15 artefak sudah terkatalog! Sekarang susun <b>5 zaman prasejarah</b> dari yang <b>paling tua</b> sampai yang <b>paling muda</b>. Ketuk zaman-zaman di bawah ini sesuai urutannya.</p>
+    <div class="tl-slots" id="tlSlots"></div>
+    <div class="tl-chips" id="tlChips"></div>
+    <div class="fb fb-info" id="tlMsg" style="text-align:center">Zaman paling tua dulu: zaman apa?</div>
+    <div style="margin-top:12px"><button class="btn green hidden" id="tlNextBtn">Lihat Laporan Penggalian 🏆</button></div>
+  </section>
+
+  <!-- ============ FINAL ============ -->
+  <section id="screen-final" class="card center hidden">
+    <div class="trophy">🏆</div>
+    <h2 style="color:#4e342e;margin:6px 0">LAPORAN PENGGALIAN SELESAI!</h2>
+    <p>Kamu berhasil mengatalogkan semua artefak dan menyusun garis waktu prasejarah. Situs ini resmi tercatat!</p>
+    <p id="finalScore" style="font-weight:800;font-size:22px;color:#e65100"></p>
+    <p id="finalStats" style="font-weight:700"></p>
+    <div id="reviewBox" style="text-align:left"></div>
+    <div style="margin-top:14px">
+      <button class="btn" id="printBtn">🖨️ Cetak Laporan</button>
+      <button class="btn green" id="againBtn" style="margin-left:8px">🔄 Gali Lagi</button>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FIND MODAL ============ -->
+<div id="findModal" class="overlay hidden">
+  <div class="card center">
+    <h2 id="findTitle" style="color:#4e342e;margin:0 0 10px">🏺 Artefak Ditemukan!</h2>
+    <div class="find-svg" id="findSvgWrap"></div>
+    <div id="brushArea" style="margin-top:12px">
+      <p style="line-height:1.55">Artefak ini masih tertutup tanah. Bersihkan dulu dengan kuas sebelum diidentifikasi!</p>
+      <button class="btn amber" id="brushBtn">🖌️ Bersihkan dengan Kuas</button>
+    </div>
+    <div id="qArea" class="hidden">
+      <p id="qText" style="font-weight:700;font-size:17px;line-height:1.55;text-align:left"></p>
+      <div class="opts" id="qOpts"></div>
+      <div id="qFeedback"></div>
+      <div style="margin-top:12px"><button class="btn green hidden" id="findCloseBtn">Lanjut Menggali ➜</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ JOURNAL ============ -->
+<div id="journalOverlay" class="overlay hidden">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px">
+      <h2 style="color:#4e342e;margin:0;flex:1">📓 Jurnal Lapangan</h2>
+      <button class="iconbtn" id="closeJournalBtn" title="Tutup">✖️</button>
+    </div>
+    <p class="muted" id="journalCount"></p>
+    <div id="journalList"></div>
+    <div class="center" style="margin-top:10px"><button class="btn green" id="closeJournalBtn2">Tutup Jurnal</button></div>
+  </div>
+</div>
+
+<!-- ============ FIELD GUIDE ============ -->
+<div id="guideOverlay" class="overlay hidden">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:8px">
+      <h2 style="color:#4e342e;margin:0;flex:1">📖 Buku Lapangan — Zaman Prasejarah</h2>
+      <button class="iconbtn" id="closeGuideBtn" title="Tutup">✖️</button>
+    </div>
+    <div id="guideBody" style="margin-top:10px"></div>
+    <div class="center" style="margin-top:10px"><button class="btn green" id="closeGuideBtn2">Siap, Ayo Menggali! ⛏️</button></div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ================= DATA — semua fakta dari Antropologi SMA Kelas XI, Bab 3 ================= */
+const $ = id => document.getElementById(id);
+const LAYERS = [
+  { name: "Paleolitikum", sub: "Zaman Batu Tua", color: "#5d4037", emoji: "🪨", depth: "Lapisan 5 — paling dalam" },
+  { name: "Mesolitikum", sub: "Zaman Batu Tengah", color: "#795548", emoji: "🐚", depth: "Lapisan 4" },
+  { name: "Neolitikum", sub: "Zaman Batu Muda", color: "#8d6e63", emoji: "🏺", depth: "Lapisan 3" },
+  { name: "Megalitikum", sub: "Zaman Batu Besar", color: "#a1887f", emoji: "🗿", depth: "Lapisan 2" },
+  { name: "Logam", sub: "Zaman Tembaga • Perunggu • Besi", color: "#bcaaa4", emoji: "⚒️", depth: "Lapisan 1 — paling atas" },
+];
+/* Urutan kronologis (sesuai urutan bab dalam buku): Paleolitikum -> Mesolitikum -> Neolitikum -> Megalitikum -> Logam */
+const CHRONO = [0, 1, 2, 3, 4];
+
+/* ---- Gambar artefak (SVG sederhana, bukan foto) ---- */
+function svgWrap(inner, vb) {
+  return `<svg viewBox="${vb || "0 0 200 130"}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+}
+const SVG = {
+  chopper: () => svgWrap(`<polygon points="60,105 55,55 85,20 140,28 155,70 130,105" fill="#9e9e9e" stroke="#616161" stroke-width="3" stroke-linejoin="round"/><polygon points="85,20 140,28 132,52 92,48" fill="#bdbdbd" stroke="#616161" stroke-width="2"/><line x1="70" y1="80" x2="120" y2="80" stroke="#616161" stroke-width="2" stroke-dasharray="5 4"/>`),
+  handaxe: () => svgWrap(`<path d="M100,15 C130,35 145,70 130,105 C115,122 85,122 70,105 C55,70 70,35 100,15 Z" fill="#8d6e63" stroke="#4e342e" stroke-width="3"/><path d="M100,15 C112,45 118,75 108,108" fill="none" stroke="#4e342e" stroke-width="2"/><path d="M100,15 C88,45 82,75 92,108" fill="none" stroke="#4e342e" stroke-width="2"/>`),
+  flake: () => svgWrap(`<polygon points="45,100 100,18 150,100 118,112 82,112" fill="#cfd8dc" stroke="#546e7a" stroke-width="3" stroke-linejoin="round"/><line x1="100" y1="18" x2="100" y2="104" stroke="#546e7a" stroke-width="2"/><line x1="70" y1="60" x2="130" y2="60" stroke="#90a4ae" stroke-width="2"/>`),
+  midden: () => svgWrap(`<path d="M30,105 Q100,25 170,105 Z" fill="#a1887f" stroke="#5d4037" stroke-width="3"/><g fill="#eceff1" stroke="#78909c" stroke-width="2"><path d="M70,80 a14,10 0 0 1 28,0 Z"/><path d="M105,65 a14,10 0 0 1 28,0 Z"/><path d="M88,92 a14,10 0 0 1 28,0 Z"/></g>`),
+  pot: () => svgWrap(`<path d="M82,25 L118,25 L118,45 C140,60 145,95 118,112 L82,112 C55,95 60,60 82,45 Z" fill="#b5651d" stroke="#5d4037" stroke-width="3"/><ellipse cx="100" cy="25" rx="18" ry="6" fill="#8d4e1f" stroke="#5d4037" stroke-width="2"/><path d="M70,70 Q100,82 130,70" fill="none" stroke="#5d4037" stroke-width="2"/>`),
+  cave: () => svgWrap(`<path d="M20,110 L20,55 Q100,5 180,55 L180,110 Z" fill="#8d6e63" stroke="#4e342e" stroke-width="3"/><path d="M65,110 L65,70 Q100,42 135,70 L135,110 Z" fill="#3e2723"/><circle cx="150" cy="45" r="8" fill="#ffe082"/><path d="M40,35 q12,-8 24,0" fill="none" stroke="#4e342e" stroke-width="2"/>`),
+  squareAxe: () => svgWrap(`<polygon points="70,20 130,20 140,110 60,110" fill="#9e9e9e" stroke="#616161" stroke-width="3" stroke-linejoin="round"/><line x1="70" y1="45" x2="130" y2="45" stroke="#616161" stroke-width="2"/><line x1="65" y1="80" x2="135" y2="80" stroke="#616161" stroke-width="2"/>`),
+  tarah: () => svgWrap(`<polygon points="95,25 125,25 132,85 88,85" fill="#b0bec5" stroke="#546e7a" stroke-width="3" stroke-linejoin="round"/><rect x="100" y="82" width="14" height="30" rx="4" fill="#8d6e63" stroke="#4e342e" stroke-width="2" transform="rotate(18 107 97)"/>`),
+  ovalAxe: () => svgWrap(`<ellipse cx="100" cy="65" rx="38" ry="52" fill="#455a64" stroke="#263238" stroke-width="3"/><ellipse cx="100" cy="65" rx="20" ry="34" fill="#607d8b" stroke="#263238" stroke-width="2"/><line x1="100" y1="18" x2="100" y2="112" stroke="#263238" stroke-width="2" stroke-dasharray="4 4"/>`),
+  menhir: () => svgWrap(`<path d="M82,112 L82,35 Q82,12 100,12 Q118,12 118,35 L118,112 Z" fill="#9e9e9e" stroke="#616161" stroke-width="3"/><rect x="60" y="108" width="80" height="10" rx="3" fill="#795548"/><circle cx="100" cy="48" r="10" fill="#e0e0e0" stroke="#616161" stroke-width="2"/>`),
+  dolmen: () => svgWrap(`<rect x="45" y="38" width="110" height="18" rx="6" fill="#a1887f" stroke="#5d4037" stroke-width="3"/><rect x="58" y="56" width="16" height="54" fill="#8d6e63" stroke="#4e342e" stroke-width="2"/><rect x="126" y="56" width="16" height="54" fill="#8d6e63" stroke="#4e342e" stroke-width="2"/><path d="M80,72 q20,10 40,0" fill="none" stroke="#d7ccc8" stroke-width="2"/>`),
+  sarcophagus: () => svgWrap(`<rect x="45" y="55" width="110" height="50" rx="6" fill="#8d6e63" stroke="#4e342e" stroke-width="3"/><path d="M40,55 L100,28 L160,55 Z" fill="#a1887f" stroke="#4e342e" stroke-width="3"/><line x1="45" y1="80" x2="155" y2="80" stroke="#4e342e" stroke-width="2"/>`),
+  bronze: () => svgWrap(`<polygon points="70,25 135,25 135,55 95,55 95,110 78,110 78,55" fill="#cd7f32" stroke="#7b4b1d" stroke-width="3" stroke-linejoin="round"/><rect x="70" y="25" width="65" height="12" rx="4" fill="#e0a050" stroke="#7b4b1d" stroke-width="2"/>`),
+  copper: () => svgWrap(`<path d="M55,95 Q60,45 100,40 Q140,45 145,95 Q120,110 100,110 Q80,110 55,95 Z" fill="#b87333" stroke="#6d3b10" stroke-width="3"/><ellipse cx="100" cy="52" rx="26" ry="10" fill="#d98c4a" stroke="#6d3b10" stroke-width="2"/>`),
+  iron: () => svgWrap(`<polygon points="100,12 122,60 100,118 78,60" fill="#607d8b" stroke="#263238" stroke-width="3" stroke-linejoin="round"/><line x1="100" y1="12" x2="100" y2="118" stroke="#263238" stroke-width="2"/><polygon points="78,60 100,74 122,60 100,50" fill="#455a64" stroke="#263238" stroke-width="2"/>`),
+};
+
+/* ---- 15 temuan: 3 per lapisan ---- */
+const FINDS = [
+  { layer: 0, name: "Kapak Perimbas", site: "Sungai Baksoko, Punung, Pacitan", period: "Paleolitikum Tua", func: "Alat batu kasar untuk memotong dan menetak", svg: SVG.chopper,
+    q: "Artefak batu kasar ini ditemukan di Sungai Baksoko, Punung, Pacitan, pada tahun 1935 oleh von Koenigswald. Apakah nama artefak ini?",
+    opts: ["Kapak perimbas", "Kapak persegi", "Kapak lonjong", "Dolmen", "Sarkofagus"], correct: 0,
+    exp: "Kapak perimbas (chopper) adalah salah satu kapak kebudayaan Pacitan, ditemukan von Koenigswald pada tahun 1935 di Sungai Baksoko, Punung, Pacitan." },
+  { layer: 0, name: "Kapak Genggam", site: "Pacitan, Jawa Timur", period: "Paleolitikum Tua", func: "Alat batu serbaguna untuk memotong dan menetak", svg: SVG.handaxe,
+    q: "Kapak genggam termasuk peninggalan kebudayaan...",
+    opts: ["Pacitan", "Ngandong", "Mousterian", "Kjokkenmoddinger", "Zaman Logam"], correct: 0,
+    exp: "Kebudayaan Pacitan ditandai dengan kapak genggam, kapak perimbas, kapak penetak, dan serpih." },
+  { layer: 0, name: "Serpih Pilah", site: "Dekat Sangiran (Ngandong)", period: "Paleolitikum Tua", func: "Pisau, belati, dan alat penusuk", svg: SVG.flake,
+    q: "Alat kecil dari batu yang sangat indah ini berfungsi sebagai pisau, belati, dan alat penusuk. Apakah namanya?",
+    opts: ["Serpih Pilah", "Kapak penetak", "Menhir", "Waruga", "Gerabah"], correct: 0,
+    exp: "Serpih Pilah dari kebudayaan Ngandong, ditemukan di dekat Sangiran, berfungsi sebagai pisau, belati, dan alat penusuk." },
+  { layer: 1, name: "Kjokkenmoddinger", site: "Pantai timur Sumatra (Langsa, Aceh – Medan)", period: "Mesolitikum", func: "Tumpukan sampah dapur dari sisa makanan", svg: SVG.midden,
+    q: "Tumpukan sampah dapur dari cangkang kerang dan siput ini tingginya mencapai 7 meter dan terdapat di sepanjang pantai timur Sumatra. Apakah namanya?",
+    opts: ["Kjokkenmoddinger", "Abris sous roche", "Punden berundak", "Sarkofagus", "Dolmen"], correct: 0,
+    exp: "Kjokkenmoddinger berasal dari bahasa Denmark: kjokken (dapur) dan modding (sampah) — tumpukan sampah dapur setinggi 7 meter." },
+  { layer: 1, name: "Gerabah", site: "Sumatra, Jawa, Kalimantan, Sulawesi, Flores", period: "Mesolitikum", func: "Wadah dari tanah liat", svg: SVG.pot,
+    q: "Kerajinan dari tanah liat ini mulai dibuat manusia pada zaman Mesolitikum. Apakah namanya?",
+    opts: ["Gerabah", "Tenunan", "Kapak lonjong", "Menhir", "Perunggu"], correct: 0,
+    exp: "Manusia Mesolitikum sudah mampu membuat kerajinan gerabah dari tanah liat." },
+  { layer: 1, name: "Abris Sous Roche", site: "Gua-gua di Sumatra, Jawa, Kalimantan, Sulawesi, Flores", period: "Mesolitikum", func: "Tempat tinggal di dalam gua atau ceruk batu padas", svg: SVG.cave,
+    q: "Tempat tinggal manusia Mesolitikum di dalam gua atau ceruk batu padas disebut...",
+    opts: ["Abris sous roche", "Dolmen", "Waruga", "Sarkofagus", "Kapak perimbas"], correct: 0,
+    exp: "Bekas tempat tinggal Mesolitikum ditemukan di pinggir pantai (kjokkenmoddinger) dan di dalam gua-gua (abris sous roche)." },
+  { layer: 2, name: "Kapak Persegi", site: "Indonesia Barat (Sumatra, Jawa, Bali, Kalimantan, Nusa Tenggara, Sulawesi, Maluku)", period: "Neolitikum", func: "Beliung/pacul (besar) dan tarah (kecil)", svg: SVG.squareAxe,
+    q: "Kapak berbentuk persegi panjang atau trapesium ini namanya diberikan oleh Robert von Heine Geldern. Apakah namanya?",
+    opts: ["Kapak persegi", "Kapak lonjong", "Kapak genggam", "Kapak penetak", "Menhir"], correct: 0,
+    exp: "Kapak persegi dinamai oleh Robert von Heine Geldern; yang besar disebut beliung atau pacul, yang kecil disebut tarah." },
+  { layer: 2, name: "Tarah", site: "Indonesia Barat", period: "Neolitikum", func: "Mengerjakan kayu", svg: SVG.tarah,
+    q: "Kapak persegi berukuran kecil ini berfungsi untuk mengerjakan kayu. Apakah namanya?",
+    opts: ["Tarah", "Beliung", "Pacul", "Kapak lonjong", "Kapak genggam"], correct: 0,
+    exp: "Tarah adalah kapak persegi kecil untuk mengerjakan kayu; yang besar disebut beliung atau pacul." },
+  { layer: 2, name: "Kapak Lonjong", site: "Maluku, Papua, Sulawesi Utara", period: "Neolitikum", func: "Kapak dari batu kali kehitam-hitaman", svg: SVG.ovalAxe,
+    q: "Kapak berpenampang lonjong dari batu kali yang berwarna kehitam-hitaman ini banyak ditemukan di Maluku dan Papua. Apakah namanya?",
+    opts: ["Kapak lonjong", "Kapak persegi", "Kapak genggam", "Kapak perimbas", "Sarkofagus"], correct: 0,
+    exp: "Kapak lonjong terbuat dari batu kali kehitam-hitaman, ditemukan di Maluku, Papua, dan sebagian Sulawesi Utara." },
+  { layer: 3, name: "Menhir", site: "Rante Kalimbuang, Tana Toraja", period: "Megalitikum", func: "Menghormati roh nenek moyang", svg: SVG.menhir,
+    q: "Tugu batu ini dibuat untuk menghormati roh nenek moyang. Di Rante Kalimbuang, Tana Toraja, terdapat 102 buah. Apakah namanya?",
+    opts: ["Menhir", "Dolmen", "Waruga", "Punden berundak", "Sarkofagus"], correct: 0,
+    exp: "Menhir di Rante Kalimbuang berjumlah 102 buah: 54 kecil, 24 sedang, dan 24 besar." },
+  { layer: 3, name: "Dolmen", site: "Situs megalitik di Indonesia", period: "Megalitikum", func: "Meja sesaji; kadang di bawahnya ada kuburan", svg: SVG.dolmen,
+    q: "Meja batu ini digunakan untuk meletakkan sesaji; kadang-kadang di bawahnya terdapat kuburan. Apakah namanya?",
+    opts: ["Dolmen", "Menhir", "Peti kubur", "Waruga", "Punden berundak"], correct: 0,
+    exp: "Dolmen adalah meja batu yang kakinya berupa tugu batu (menhir), dipakai untuk meletakkan sesaji." },
+  { layer: 3, name: "Sarkofagus", site: "Situs megalitik di Indonesia", period: "Megalitikum", func: "Keranda batu; dianggap memiliki kekuatan magis", svg: SVG.sarcophagus,
+    q: "Keranda dari batu utuh (monolit) ini dianggap memiliki kekuatan magis. Apakah namanya?",
+    opts: ["Sarkofagus", "Peti kubur", "Waruga", "Dolmen", "Menhir"], correct: 0,
+    exp: "Sarkofagus adalah keranda dari batu utuh (monolit) yang dianggap memiliki kekuatan magis." },
+  { layer: 4, name: "Alat Perunggu", site: "Indonesia (Zaman Logam)", period: "Zaman Logam", func: "Alat dari campuran tembaga dan timah", svg: SVG.bronze,
+    q: "Logam campuran tembaga dan timah yang lebih keras daripada tembaga ini disebut...",
+    opts: ["Perunggu", "Besi", "Tembaga", "Timah", "Kapak persegi"], correct: 0,
+    exp: "Perunggu adalah hasil pencampuran tembaga dan timah, lebih keras daripada tembaga." },
+  { layer: 4, name: "Tembaga", site: "Asia Tenggara — zaman ini tidak ditemukan di sini", period: "Zaman Logam", func: "Bahan logam (zamannya tidak ada di Indonesia)", svg: SVG.copper,
+    q: "Zaman logam yang TIDAK ditemukan di Asia Tenggara, termasuk Indonesia, adalah...",
+    opts: ["Zaman Tembaga", "Zaman Perunggu", "Zaman Besi", "Zaman Neolitikum", "Zaman Megalitikum"], correct: 0,
+    exp: "Tembaga hanya dikenal di beberapa bagian dunia saja; di Asia Tenggara, termasuk Indonesia, tidak didapatkan zaman tembaga." },
+  { layer: 4, name: "Alat Besi", site: "Indonesia (Zaman Logam)", period: "Zaman Logam", func: "Alat yang dilebur dari bijih besi", svg: SVG.iron,
+    q: "Logam ini dilebur dari bijihnya dan membutuhkan panas yang jauh lebih tinggi daripada peleburan tembaga atau perunggu. Apakah namanya?",
+    opts: ["Besi", "Perunggu", "Tembaga", "Timah", "Batu api"], correct: 0,
+    exp: "Besi dilebur dari bijihnya; peleburannya membutuhkan panas yang jauh lebih tinggi, sehingga alat besi lebih sempurna." },
+];
+
+const GUIDE_HTML = `
+<div class="guide-sec"><h3>🕰️ Apa itu Zaman Prasejarah?</h3>
+<p>Menurut Soekmono, zaman prasejarah dimulai ketika manusia mulai berkebudayaan dan berakhir saat manusia mengenal tulisan. Zaman ini juga disebut <b>praaksara</b> (sebelum tulisan) atau <b>nirleka</b> (bahasa Sanskerta: nir = tidak, leka = aksara). Peninggalannya ada dua macam: <b>fosil</b> (sisa tulang-belulang manusia purba) dan <b>artefak</b> (benda yang dibuat atau dipakai manusia).</p>
+<p>Indonesia memasuki zaman sejarah sejak <b>abad ke-5 Masehi</b> — prasasti di Kutai pada masa Raja Mulawarman dan di Jawa Barat pada masa Raja Purnawarman. Bangsa Sumeria dan Mesir mengakhiri prasejarahnya sekitar <b>4000 tahun SM</b>.</p></div>
+<div class="guide-sec"><h3>🪨 1. Paleolitikum — Zaman Batu Tua</h3>
+<p>Tradisi <b>Oldowan</b>: alat dibuat dengan membenturkan batu pada batu yang lebih keras, tanpa diasah. Berlangsung pada zaman Pleistosen, kira-kira <b>600.000 tahun</b>. Kebudayaan <b>Pacitan</b> (1935, von Koenigswald, Sungai Baksoko) dan <b>Ngandong</b> (1934, von Koenigswald, dekat Ngawi).</p></div>
+<div class="guide-sec"><h3>🐚 2. Mesolitikum — Zaman Batu Tengah</h3>
+<p>Zaman peralihan: manusia mulai <b>semi menetap</b> (rumah panggung di pantai, gua = <b>abris sous roche</b>), berburu dan meramu, mulai bercocok tanam kecil-kecilan, dan membuat <b>gerabah</b> dari tanah liat. <b>Kjokkenmoddinger</b> — tumpukan sampah dapur dari cangkang kerang hingga 7 meter di pantai timur Sumatra.</p></div>
+<div class="guide-sec"><h3>🏺 3. Neolitikum — Zaman Batu Muda</h3>
+<p><b>Revolusi food producing</b>: bercocok tanam dan beternak sapi serta kuda, hidup <b>menetap (sedenter)</b>, alat diasah halus, mengenal gerabah dan tenunan. Artefaknya: <b>kapak persegi</b> (dinamai Robert von Heine Geldern) dan <b>kapak lonjong</b>.</p></div>
+<div class="guide-sec"><h3>🗿 4. Megalitikum — Zaman Batu Besar</h3>
+<p>Berkaitan dengan <b>kehidupan religius</b>, sejalan dengan Neolitikum: <b>menhir</b> (tugu untuk roh nenek moyang — di Rante Kalimbuang, Tana Toraja, terdapat 102 buah: 54 kecil, 24 sedang, dan 24 besar), <b>dolmen</b> (meja sesaji), <b>peti kubur</b>, <b>sarkofagus</b> (keranda monolit berkekuatan magis), <b>waruga</b>, dan <b>punden berundak</b> (dasar bentuk candi).</p></div>
+<div class="guide-sec"><h3>⚒️ 5. Zaman Logam</h3>
+<p><b>Tembaga</b> — tidak ditemukan di Asia Tenggara, termasuk Indonesia. <b>Perunggu</b> — campuran tembaga dan timah. <b>Besi</b> — dilebur dari bijihnya dengan panas yang jauh lebih tinggi. Prasejarah berakhir dengan Zaman Besi — tetapi alat batu masih kita pakai sampai sekarang!</p></div>
+<div class="guide-sec"><h3>🔍 Bagaimana Meneliti Sebuah Situs?</h3>
+<p>Ahli arkeologi menemukan situs lewat <b>survei</b> di atas tanah dan <b>penginderaan jarak jauh</b> (foto udara dan satelit), lalu menelitinya dengan <b>penggalian</b>. Karena penggalian merusak situs, posisi setiap benda yang ditemukan — sekecil apa pun — harus dicatat dengan tepat, kalau tidak datanya hilang selama-lamanya. Contoh: penggalian Tanjungsari, Karawang (2016) menemukan fragmen gerabah hias dan cangkang kerang yang melimpah.</p></div>`;
+
+/* ================= AUDIO (Web Audio API, master capped at 90%) ================= */
+const AudioSys = {
+  ctx: null, master: null, sfxOn: true, musicOn: true, musicTimer: null, noiseBuf: null,
+  init() {
+    if (this.ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    this.ctx = new AC();
+    this.master = this.ctx.createGain();
+    this.master.gain.value = 0.9;
+    this.master.connect(this.ctx.destination);
+    const len = this.ctx.sampleRate;
+    this.noiseBuf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const d = this.noiseBuf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  },
+  tone(freq, dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+    osc.type = o.type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    if (o.slide) osc.frequency.exponentialRampToValueAtTime(Math.max(20, o.slide), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(this.master);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  },
+  noise(dur, o) {
+    if (!this.ctx || !this.sfxOn) return;
+    o = o || {};
+    const t = this.ctx.currentTime + (o.at || 0);
+    const src = this.ctx.createBufferSource();
+    src.buffer = this.noiseBuf; src.loop = true;
+    const f = this.ctx.createBiquadFilter();
+    f.type = o.type || "bandpass";
+    f.frequency.setValueAtTime(o.freq || 1200, t);
+    if (o.slideTo) f.frequency.exponentialRampToValueAtTime(o.slideTo, t + dur);
+    f.Q.value = o.q || 1;
+    const g = this.ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.gain || 0.2, t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(this.master);
+    src.start(t); src.stop(t + dur + 0.05);
+  },
+  dig() { this.noise(0.18, { gain: 0.3, freq: 300, type: "lowpass" }); this.tone(90, 0.15, { gain: 0.25, slide: 55 }); },
+  brush() { this.noise(0.4, { gain: 0.12, freq: 2500, slideTo: 900, q: 2 }); },
+  chime() { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => this.tone(f, 0.25, { at: i * 0.09, gain: 0.18 })); },
+  thud() { this.tone(140, 0.2, { gain: 0.2, slide: 80 }); this.noise(0.12, { gain: 0.12, freq: 400, type: "lowpass" }); },
+  fanfare() { [[523.25, 0], [523.25, 0.14], [659.25, 0.28], [783.99, 0.42], [1046.5, 0.58], [783.99, 0.78], [1046.5, 0.94]].forEach(([f, at]) => this.tone(f, 0.3, { at, gain: 0.2 })); },
+  startMusic() {
+    if (!this.ctx || !this.musicOn || this.musicTimer) return;
+    const notes = [220, 261.63, 329.63, 392, 329.63, 261.63];
+    let i = 0;
+    this.musicTimer = setInterval(() => {
+      if (!this.musicOn) return;
+      this.tone(notes[i % notes.length], 0.5, { type: "triangle", gain: 0.045 });
+      if (i % 2 === 0) this.tone(110, 0.4, { type: "sine", gain: 0.05 });
+      i++;
+    }, 480);
+  },
+  stopMusic() { if (this.musicTimer) { clearInterval(this.musicTimer); this.musicTimer = null; } },
+};
+
+/* ================= STATE ================= */
+const state = {
+  score: 0, combo: 0, bestCombo: 0,
+  cells: [],            /* cells[layer][col] = { find: idx | -1, dug: bool, state: 'soil'|'empty'|'half'|'found' } */
+  foundCount: 0, results: [],   /* results[findIdx] = { attempts, pts } */
+  current: -1, attempts: 0, currentOrder: [],
+  tlLocked: [], tlMistakes: 0, tlScore: 0, started: false,
+};
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function updateStats() {
+  $("scorePill").textContent = "⭐ Skor: " + state.score;
+  $("findsPill").textContent = "🏺 Temuan: " + state.foundCount + "/15";
+}
+function showScreen(id) {
+  ["screen-start", "screen-dig", "screen-timeline", "screen-final"].forEach(s => $(s).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ================= DIG SITE ================= */
+function buildCells() {
+  /* 3 artefak per lapisan, posisi diacak setiap permainan baru */
+  state.cells = LAYERS.map((L, li) => {
+    const findsHere = FINDS.map((f, fi) => ({ f, fi })).filter(x => x.f.layer === li).map(x => x.fi);
+    const cols = shuffle([0, 1, 2, 3, 4]).slice(0, 3);
+    const row = [];
+    for (let c = 0; c < 5; c++) {
+      const k = cols.indexOf(c);
+      row.push({ find: k === -1 ? -1 : findsHere[k], dug: false, st: "soil" });
+    }
+    return row;
+  });
+}
+function renderDig() {
+  let html = "";
+  for (let li = 4; li >= 0; li--) { /* lapisan paling atas (Logam) dulu, Paleolitikum paling bawah */
+    const L = LAYERS[li];
+    const done = state.cells[li].filter(c => c.st === "found").length;
+    html += `<div class="layer" style="background:${L.color}">
+      <div class="layer-head"><b>${L.emoji} ${L.name}</b><span>${L.sub} • ${L.depth}</span><span class="done">${done}/3 terkatalog</span></div>
+      <div class="cells">`;
+    for (let c = 0; c < 5; c++) {
+      const cell = state.cells[li][c];
+      let cls = "cell", inner = "🟫";
+      if (cell.st === "empty") { cls += " dug"; inner = "🕳️"; }
+      else if (cell.st === "half") { cls += " half"; inner = "🏺"; }
+      else if (cell.st === "found") { cls += " found"; inner = FINDS[cell.find].svg(); }
+      html += `<button class="${cls}" data-layer="${li}" data-cell="${c}" aria-label="Kotak gali lapisan ${L.name} ${c + 1}">${inner}</button>`;
+    }
+    html += `</div></div>`;
+  }
+  $("digSite").innerHTML = html;
+  $("timelineBtn").classList.toggle("hidden", state.foundCount < 15);
+}
+function loadDig() {
+  renderDig();
+  showScreen("screen-dig");
+}
+function digCell(li, c) {
+  const cell = state.cells[li][c];
+  if (!cell || cell.dug) return;
+  AudioSys.init();
+  cell.dug = true;
+  if (cell.find === -1) {
+    cell.st = "empty";
+    AudioSys.dig();
+    $("digMsg").textContent = "🕳️ Tidak ada artefak di sini — hanya tanah. Coba kotak lain!";
+  } else {
+    cell.st = "half";
+    AudioSys.dig();
+    openFind(cell.find);
+  }
+  renderDig();
+}
+function resetGame() {
+  state.score = 0; state.combo = 0; state.bestCombo = 0;
+  state.foundCount = 0; state.results = []; state.current = -1; state.attempts = 0;
+  state.tlLocked = []; state.tlMistakes = 0; state.tlScore = 0;
+  buildCells();
+  updateStats();
+  $("digMsg").textContent = "Ketuk kotak tanah untuk menggali!";
+}
+
+/* ================= FIND MODAL (kuas + identifikasi) ================= */
+function openFind(findIdx) {
+  const f = FINDS[findIdx];
+  state.current = findIdx; state.attempts = 0;
+  state.currentOrder = shuffle([0, 1, 2, 3, 4]);
+  $("findTitle").textContent = "🏺 Artefak Ditemukan!";
+  $("findSvgWrap").innerHTML = f.svg() + `<div class="dirt" id="dirtLayer">🪨 Tertutup tanah...</div>`;
+  $("brushArea").classList.remove("hidden");
+  $("qArea").classList.add("hidden");
+  $("qFeedback").innerHTML = "";
+  $("findCloseBtn").classList.add("hidden");
+  $("findModal").classList.remove("hidden");
+}
+function brushArtifact() {
+  AudioSys.init(); AudioSys.brush();
+  const d = $("dirtLayer"); if (d) d.remove();
+  $("brushArea").classList.add("hidden");
+  const f = FINDS[state.current];
+  $("qText").textContent = f.q;
+  const letters = ["A", "B", "C", "D", "E"];
+  $("qOpts").innerHTML = state.currentOrder.map(oi =>
+    `<button class="opt" data-opt="${oi}"><b>${letters[oi]}.</b> ${f.opts[oi]}</button>`).join("");
+  $("qArea").classList.remove("hidden");
+}
+function chooseOption(optIdx, btn) {
+  const f = FINDS[state.current];
+  if (optIdx === f.correct) {
+    const firstTry = state.attempts === 0;
+    const newCombo = firstTry ? state.combo + 1 : 0;
+    let pts;
+    if (firstTry) { pts = 100 + 25 * Math.min(newCombo - 1, 4); state.combo = newCombo; }
+    else if (state.attempts === 1) { pts = 50; state.combo = 0; }
+    else { pts = 25; state.combo = 0; }
+    state.bestCombo = Math.max(state.bestCombo, state.combo);
+    state.score += pts;
+    updateStats();
+    AudioSys.chime();
+    if (btn) btn.classList.add("right");
+    document.querySelectorAll("#qOpts .opt").forEach(b => { b.disabled = true; });
+    state.results[state.current] = { attempts: state.attempts, pts };
+    state.foundCount++;
+    const cell = findCellOf(state.current);
+    if (cell) cell.st = "found";
+    $("qFeedback").innerHTML = `<div class="fb fb-ok"><h3 style="margin:0 0 4px">✅ Benar! +${pts} poin ${state.combo >= 2 ? "— Kombo ×" + state.combo + " 🔥" : ""}</h3>
+      <p style="margin:0"><b>${f.name}</b> — ${f.period} • ${f.site}<br>${f.exp}</p></div>`;
+    $("findTitle").textContent = "🏺 " + f.name + " Terkatalog!";
+    $("findCloseBtn").classList.remove("hidden");
+    renderDig();
+  } else {
+    AudioSys.thud();
+    state.attempts++;
+    state.combo = 0;
+    updateStats();
+    if (btn) { btn.disabled = true; btn.classList.add("wrong"); }
+    $("qFeedback").innerHTML = `<div class="fb fb-bad"><h3 style="margin:0 0 4px">💥 Belum tepat!</h3>
+      <p style="margin:0">Artefak masih terkubur — coba lagi! Perhatikan petunjuk di Buku Lapangan.</p></div>`;
+  }
+}
+function findCellOf(findIdx) {
+  for (let li = 0; li < 5; li++) for (let c = 0; c < 5; c++) {
+    if (state.cells[li][c].find === findIdx) return state.cells[li][c];
+  }
+  return null;
+}
+function closeFind() {
+  $("findModal").classList.add("hidden");
+  state.current = -1;
+  renderDig();
+  if (state.foundCount >= 15) {
+    $("digMsg").textContent = "🎉 Semua 15 artefak sudah terkatalog! Lanjut ke Tantangan Garis Waktu.";
+    AudioSys.fanfare();
+    startTimeline();
+  }
+}
+
+/* ================= JURNAL & BUKU LAPANGAN ================= */
+function renderJournal() {
+  $("journalCount").textContent = "Temuan terkatalog: " + state.foundCount + " / 15";
+  let html = "";
+  FINDS.forEach((f, i) => {
+    const r = state.results[i];
+    if (!r) return;
+    html += `<div class="journal-item">${f.svg()}
+      <p style="margin:8px 0 0"><b>${i + 1}. ${f.name}</b> — ${f.period}</p>
+      <p class="meta">📍 ${f.site} • Lapisan ${LAYERS[f.layer].name} • Fungsi: ${f.func}<br>✅ Diidentifikasi dalam ${r.attempts + 1} percobaan • +${r.pts} poin</p></div>`;
+  });
+  $("journalList").innerHTML = html || `<p class="muted">Belum ada temuan. Gali situsnya dulu!</p>`;
+}
+function openJournal() { renderJournal(); $("journalOverlay").classList.remove("hidden"); }
+function openGuide() { $("guideBody").innerHTML = GUIDE_HTML; $("guideOverlay").classList.remove("hidden"); }
+
+/* ================= TANTANGAN GARIS WAKTU ================= */
+function startTimeline() {
+  state.tlLocked = [];
+  state.tlMistakes = 0;
+  state.tlScore = 0;
+  const order = shuffle([0, 1, 2, 3, 4]);
+  $("tlChips").innerHTML = order.map(li =>
+    `<button class="tl-chip" data-layer="${li}">${LAYERS[li].emoji} ${LAYERS[li].name}</button>`).join("");
+  renderTlSlots();
+  $("tlMsg").textContent = "Zaman paling tua dulu: zaman apa?";
+  $("tlNextBtn").classList.add("hidden");
+  showScreen("screen-timeline");
+}
+function renderTlSlots() {
+  let html = "";
+  for (let i = 0; i < 5; i++) {
+    const li = state.tlLocked[i];
+    html += li === undefined
+      ? `<div class="tl-slot">${i + 1}. ...</div>`
+      : `<div class="tl-slot filled">${i + 1}. ${LAYERS[li].name}</div>`;
+  }
+  $("tlSlots").innerHTML = html;
+}
+function tapTimeline(li, btn) {
+  const next = CHRONO[state.tlLocked.length];
+  if (li === next) {
+    state.tlLocked.push(li);
+    state.tlScore += 20;
+    if (btn) { btn.disabled = true; btn.classList.add("locked"); }
+    AudioSys.chime();
+    renderTlSlots();
+    if (state.tlLocked.length === 5) {
+      if (state.tlMistakes === 0) { state.tlScore += 100; $("tlMsg").textContent = "🎉 Sempurna! Urutan garis waktu benar semua — bonus +100 poin!"; }
+      else $("tlMsg").textContent = "🎉 Garis waktu lengkap! Urutannya: Paleolitikum → Mesolitikum → Neolitikum → Megalitikum → Logam.";
+      state.score += state.tlScore;
+      updateStats();
+      AudioSys.fanfare();
+      $("tlNextBtn").classList.remove("hidden");
+    } else {
+      $("tlMsg").textContent = "✅ Benar! " + LAYERS[li].name + " sudah terkunci. Zaman berikutnya?";
+    }
+  } else {
+    state.tlMistakes++;
+    AudioSys.thud();
+    if (btn) { btn.classList.remove("shake"); void btn.offsetWidth; btn.classList.add("shake"); }
+    $("tlMsg").textContent = "💥 Bukan itu — " + LAYERS[li].name + " bukan urutan berikutnya. Ingat: paling tua dulu!";
+  }
+}
+
+/* ================= LAPORAN AKHIR ================= */
+function showFinal() {
+  const firstTry = state.results.filter(r => r && r.attempts === 0).length;
+  $("finalScore").textContent = state.score + " poin";
+  $("finalStats").textContent = "Temuan terkatalog: 15/15  •  Benar di percobaan pertama: " + firstTry + "/15  •  Kombo terbaik: ×" + state.bestCombo + "  •  Garis waktu: " + (state.tlMistakes === 0 ? "sempurna (+100 bonus)" : "selesai dengan " + state.tlMistakes + "× salah ketuk");
+  let html = "<h3 style='text-align:center;margin-bottom:12px'>📋 Katalog Temuan</h3>";
+  FINDS.forEach((f, i) => {
+    const r = state.results[i] || { attempts: 0, pts: 0 };
+    html += `<div class="revitem">${f.svg()}
+      <p style="margin:8px 0 0"><b>${i + 1}. ${f.name}</b> — ${f.period} • Lapisan ${LAYERS[f.layer].name}</p>
+      <p class="meta">📍 ${f.site} • Fungsi: ${f.func}</p>
+      <p style="margin:4px 0 0">${f.exp}</p>
+      <p class="meta">+${r.pts} poin (${r.attempts === 0 ? "percobaan pertama ✅" : "setelah " + r.attempts + "× salah"})</p></div>`;
+  });
+  $("reviewBox").innerHTML = html;
+  AudioSys.fanfare();
+  showScreen("screen-final");
+}
+
+/* ================= WIRING ================= */
+$("startChips").innerHTML = LAYERS.map(L => `<span class="lchip" style="background:${L.color}">${L.emoji} ${L.name}</span>`).join("");
+$("startBtn").addEventListener("click", () => {
+  AudioSys.init();
+  if (AudioSys.musicOn) AudioSys.startMusic();
+  state.started = true;
+  resetGame();
+  loadDig();
+});
+$("guideBtn").addEventListener("click", openGuide);
+$("guideBtn2").addEventListener("click", openGuide);
+$("closeGuideBtn").addEventListener("click", () => $("guideOverlay").classList.add("hidden"));
+$("closeGuideBtn2").addEventListener("click", () => $("guideOverlay").classList.add("hidden"));
+$("guideOverlay").addEventListener("click", e => { if (e.target === $("guideOverlay")) $("guideOverlay").classList.add("hidden"); });
+$("journalBtn").addEventListener("click", openJournal);
+$("closeJournalBtn").addEventListener("click", () => $("journalOverlay").classList.add("hidden"));
+$("closeJournalBtn2").addEventListener("click", () => $("journalOverlay").classList.add("hidden"));
+$("journalOverlay").addEventListener("click", e => { if (e.target === $("journalOverlay")) $("journalOverlay").classList.add("hidden"); });
+$("soundBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.sfxOn = !AudioSys.sfxOn;
+  $("soundBtn").textContent = AudioSys.sfxOn ? "🔊" : "🔇";
+  $("soundBtn").classList.toggle("off", !AudioSys.sfxOn);
+  if (AudioSys.sfxOn) AudioSys.chime();
+});
+$("musicBtn").addEventListener("click", () => {
+  AudioSys.init();
+  AudioSys.musicOn = !AudioSys.musicOn;
+  $("musicBtn").textContent = AudioSys.musicOn ? "🎵" : "🚫";
+  $("musicBtn").classList.toggle("off", !AudioSys.musicOn);
+  if (AudioSys.musicOn) AudioSys.startMusic(); else AudioSys.stopMusic();
+});
+$("digSite").addEventListener("click", e => {
+  const t = e.target.closest("[data-layer]");
+  if (!t) return;
+  digCell(parseInt(t.dataset.layer, 10), parseInt(t.dataset.cell, 10));
+});
+$("brushBtn").addEventListener("click", brushArtifact);
+$("qOpts").addEventListener("click", e => {
+  const t = e.target.closest("[data-opt]");
+  if (!t || t.disabled) return;
+  chooseOption(parseInt(t.dataset.opt, 10), t);
+});
+$("findCloseBtn").addEventListener("click", closeFind);
+$("timelineBtn").addEventListener("click", startTimeline);
+$("tlChips").addEventListener("click", e => {
+  const t = e.target.closest("[data-layer]");
+  if (!t || t.disabled) return;
+  tapTimeline(parseInt(t.dataset.layer, 10), t);
+});
+$("tlNextBtn").addEventListener("click", showFinal);
+$("printBtn").addEventListener("click", () => window.print());
+$("againBtn").addEventListener("click", () => { resetGame(); showScreen("screen-start"); });
+</script>
+</body>
+</html>
