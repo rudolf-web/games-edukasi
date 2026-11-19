@@ -120,6 +120,18 @@
   .btn-ghost:active{transform:translateY(3px);box-shadow:0 3px 0 var(--line)}
   .btn-block{width:100%}
   .btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  /* ---------- Player name ---------- */
+  .name-box{margin-bottom:18px}
+  .name-box label{display:block;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dark);margin-bottom:8px}
+  .name-box input{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-size:16px;font-family:inherit;color:var(--ink);background:#fff}
+  .name-box input:focus{outline:none;border-color:var(--amber)}
+  .name-error{color:var(--red);font-size:14px;font-weight:700;margin-top:8px}
+  .name-saved{font-size:15px;color:var(--muted)}
+  .name-saved b{color:var(--ink)}
+  .name-change{color:var(--amber-dark);font-size:14px;font-weight:800;text-decoration:underline;margin-left:6px}
+  .final-player{font-size:15px;color:var(--muted);margin-bottom:8px}
+  .final-player b{color:var(--ink)}
+
 
   /* ---------- Start screen ---------- */
   .howto{
@@ -249,12 +261,6 @@
     opacity:.65;box-shadow:0 5px 0 #CBD5E1;
   }
   .answer-btn:disabled{cursor:default}
-  .hint-line{
-    display:none;margin-top:16px;padding:12px 16px;border-radius:12px;
-    background:#FEF3C7;border:1px solid #F5DFA8;color:#7A4A00;
-    font-size:15.5px;font-weight:700;
-  }
-  .hint-line.show{display:block;animation:rise .3s ease both}
   .feedback{
     display:none;margin-top:20px;border-radius:14px;padding:20px;
     background:#E7F6EE;border:2px solid var(--green);
@@ -379,7 +385,7 @@
   /* ---------- Print ---------- */
   @media print{
     body{background:#fff}
-    .game-header,footer,#confettiCanvas,.final-actions,.btn,.hint-line,.feedback .btn{display:none !important}
+    .game-header,footer,#confettiCanvas,.final-actions,.btn,.feedback .btn{display:none !important}
     main{max-width:100%;padding:0}
     .card{box-shadow:none;border:none;padding:0}
     .screen{display:none !important}
@@ -427,14 +433,21 @@
           How to play
         </h2>
         <ul>
-          <li>Read each question and tap one of the four answers (A&ndash;D).</li>
-          <li>First try correct: 100 points, plus a combo bonus up to 100.</li>
-          <li>Wrong answer? That button greys out &mdash; try again for fewer points.</li>
+          <li>Tap one answer (A&ndash;D). One tap only &mdash; once you tap, the answer locks and you move on.</li>
+          <li>Correct: 100 points, plus a combo bonus up to 100.</li>
+          <li>Wrong: 0 points and your combo resets.</li>
           <li>Earn 3 stars with 1,200 points or more.</li>
         </ul>
       </div>
 
       <div class="best-line" id="bestLine">Best score: <b>Not played yet</b></div>
+
+      <div class="name-box" id="nameBox">
+        <label for="nameInput">Your name</label>
+        <input id="nameInput" type="text" maxlength="30" placeholder="Type your name" autocomplete="off">
+        <div class="name-error" id="nameError" hidden>Please type your name to play.</div>
+        <div class="name-saved" id="nameSaved" hidden>Playing as: <b id="nameSavedText"></b> <button class="name-change" id="nameChangeBtn" type="button">Change</button></div>
+      </div>
 
       <button class="btn btn-amber btn-block" id="playBtn" type="button">
         <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5-13-7.5z"/></svg>
@@ -485,7 +498,6 @@
       <h2 id="qText"></h2>
       <div class="q-visual" id="qVisual" style="display:none"></div>
       <div class="answers" id="answersBox"></div>
-      <div class="hint-line" id="hintLine">Not quite &mdash; try again! Work out the discount first, then subtract it from the old price.</div>
       <div class="feedback" id="feedbackBox">
         <h3>
           <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
@@ -511,6 +523,7 @@
       <div class="final-score"><span id="finalScore">0</span> <small>points</small></div>
       <div class="final-stars" id="finalStars" aria-label="Stars earned"></div>
       <p class="final-msg" id="finalMsg"></p>
+      <p class="final-player" id="finalPlayer"></p>
       <p class="final-best" id="finalBest"></p>
       <div class="final-actions">
         <button class="btn btn-amber" id="printBtn" type="button">
@@ -550,6 +563,9 @@
   var GAME_NUMBER = 8;
   var BEST_KEY = "percentQuest_best_8";
   var MUTE_KEY = "percentQuest_muted";
+  var GAME_TITLE = "Discounts";
+  var PLAYER_KEY = "percentQuest_player";
+  var RESULTS_KEY = "percentQuest_results";
 
   var QUESTIONS = [
     { q:"A $80 shirt is 25% off. What is the sale price?",
@@ -599,13 +615,22 @@
 
   /* ================= State ================= */
   var current = 0;        /* index of current question (0-based) */
-  var attempts = 0;       /* attempts on the current question */
+  var answered = false;   /* true once the current question has been answered */
   var score = 0;
-  var combo = 0;          /* consecutive 1st-try correct answers */
+  var combo = 0;          /* consecutive correct answers */
   var results = [];       /* per-question record for the review */
 
   /* ================= Helpers ================= */
   function $(id){ return document.getElementById(id); }
+  function escapeHtml(s){
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
 
   /* The ONE screen switcher. Every transition in this file goes through here. */
   function showScreen(name){
@@ -745,6 +770,46 @@
       el.innerHTML = 'Best score: <b>Not played yet</b>';
     }
   }
+  /* ================= Player name ================= */
+  function readPlayer(){
+    try{
+      var raw = localStorage.getItem(PLAYER_KEY);
+      return raw ? raw.trim() : "";
+    }catch(e){ return ""; }
+  }
+  function savePlayer(name){
+    try{ localStorage.setItem(PLAYER_KEY, name); }catch(e){}
+  }
+  function renderNameBox(){
+    var saved = readPlayer();
+    var label = document.querySelector("#nameBox label");
+    var input = $("nameInput");
+    var savedEl = $("nameSaved");
+    if(saved){
+      if(label) label.style.display = "none";
+      input.style.display = "none";
+      $("nameError").hidden = true;
+      $("nameSavedText").textContent = saved;
+      savedEl.hidden = false;
+    }else{
+      if(label) label.style.display = "";
+      input.style.display = "";
+      savedEl.hidden = true;
+    }
+  }
+
+  /* ================= Result record ================= */
+  function saveRecord(record){
+    try{
+      var raw = localStorage.getItem(RESULTS_KEY);
+      var arr = raw ? JSON.parse(raw) : [];
+      if(!Array.isArray(arr)) arr = [];
+      arr.push(record);
+      if(arr.length > 200) arr = arr.slice(arr.length - 200);
+      localStorage.setItem(RESULTS_KEY, JSON.stringify(arr));
+    }catch(e){}
+  }
+
 
   /* ================= Start screen visual (see initStartVisuals) ================= */
   function initStartVisuals(){
@@ -769,10 +834,10 @@
   /* ================= Game flow ================= */
   function startGame(){
     current = 0;
-    attempts = 0;
     score = 0;
     combo = 0;
     results = [];
+    $("nameError").hidden = true;
     $("scoreNow").textContent = "0";
     $("comboChip").innerHTML = "";
     loadQuestion();
@@ -781,7 +846,7 @@
 
   function loadQuestion(){
     var q = QUESTIONS[current];
-    attempts = 0;
+    answered = false;
     $("qEyebrow").textContent = "Question " + (current + 1);
     $("qCountLabel").textContent = "Question " + (current + 1) + " of " + QUESTIONS.length;
     $("ringNum").textContent = (current + 1) + "/" + QUESTIONS.length;
@@ -792,7 +857,6 @@
     var vis = $("qVisual");
     if(q.visual){ vis.style.display = "block"; vis.textContent = q.visual; }
     else { vis.style.display = "none"; vis.textContent = ""; }
-    $("hintLine").classList.remove("show");
     $("feedbackBox").classList.remove("show");
 
     var box = $("answersBox");
@@ -810,51 +874,43 @@
   }
 
   function onAnswer(idx, btn){
+    if(answered) return;
+    answered = true;
     var q = QUESTIONS[current];
-    attempts++;
-    if(idx === q.correct){
-      var points;
-      var bonus = 0;
-      if(attempts === 1){
-        bonus = Math.min(10 * combo, 100);
-        points = 100 + bonus;
-        combo++;
-      }else if(attempts === 2){
-        points = 50;
-        combo = 0;
-      }else{
-        points = 25;
-        combo = 0;
-      }
+    var points = 0;
+    var bonus = 0;
+    var isCorrect = idx === q.correct;
+    $("answersBox").querySelectorAll(".answer-btn").forEach(function(b){ b.disabled = true; });
+    if(isCorrect){
+      bonus = Math.min(10 * combo, 100);
+      points = 100 + bonus;
+      combo++;
       score += points;
-      results.push({
-        q: q.q, options: q.options.slice(), correct: q.correct,
-        picked: idx, attempts: attempts, points: points, working: q.working
-      });
       btn.classList.add("correct");
-      $("answersBox").querySelectorAll(".answer-btn").forEach(function(b){ b.disabled = true; });
-      $("hintLine").classList.remove("show");
-      $("scoreNow").textContent = score;
-      $("comboChip").innerHTML = combo > 0 ? '<span class="combo-chip">Combo x' + combo + '</span>' : "";
-      var fb = $("feedbackBox");
-      $("feedbackTitle").textContent = attempts === 1 ? "Correct!" : "Correct — nice recovery!";
-      $("feedbackPoints").textContent = "+" + points + " points" +
-        (attempts === 1 && bonus > 0 ? " (100 + " + bonus + " combo bonus)" : "") +
-        (attempts === 2 ? " (second try)" : "") +
-        (attempts >= 3 ? " (third try or later)" : "");
-      $("feedbackWorking").innerHTML = "<b>Working:</b> " + q.working;
-      var nextBtn = $("nextBtn");
-      nextBtn.innerHTML = (current === QUESTIONS.length - 1)
-        ? 'See your results <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
-        : 'Next question <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-      fb.classList.add("show");
       playCorrect();
     }else{
+      points = 0;
+      combo = 0;
       btn.classList.add("wrong-pick");
-      btn.disabled = true;
-      $("hintLine").classList.add("show");
+      $("answersBox").querySelectorAll(".answer-btn")[q.correct].classList.add("correct");
       playWrong();
     }
+    results.push({
+      q: q.q, options: q.options.slice(), correct: q.correct,
+      picked: idx, points: points, working: q.working
+    });
+    $("scoreNow").textContent = score;
+    $("comboChip").innerHTML = combo > 0 ? '<span class="combo-chip">Combo x' + combo + '</span>' : "";
+    var fb = $("feedbackBox");
+    $("feedbackTitle").textContent = isCorrect ? "Correct!" : "Not quite!";
+    $("feedbackPoints").textContent = "+" + points + " points" +
+      (isCorrect && bonus > 0 ? " (100 + " + bonus + " combo bonus)" : "");
+    $("feedbackWorking").innerHTML = "<b>Working:</b> " + q.working;
+    var nextBtn = $("nextBtn");
+    nextBtn.innerHTML = (current === QUESTIONS.length - 1)
+      ? 'See your results <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+      : 'Next question <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+    fb.classList.add("show");
   }
 
   function nextStep(){
@@ -878,6 +934,14 @@
   function finishGame(){
     var stars = starsFor(score);
     var saved = saveBest(score, stars);
+    var playerName = readPlayer() || "Player";
+    var correctCount = results.filter(function(r){ return r.picked === r.correct; }).length;
+    saveRecord({
+      name: playerName, game: GAME_NUMBER, gameTitle: GAME_TITLE,
+      score: score, correct: correctCount, total: QUESTIONS.length,
+      stars: stars, date: new Date().toISOString()
+    });
+    $("finalPlayer").innerHTML = 'Played by <b>' + escapeHtml(playerName) + '</b>';
     $("finalScore").textContent = score;
     $("finalStars").innerHTML = starsHtml(stars);
     var msg = stars === 3 ? "Outstanding! You have mastered the percentage formula."
@@ -904,9 +968,9 @@
       html += '<div class="review-item">' +
         '<div class="rq">Q' + (i + 1) + '. ' + r.q + '</div>' +
         '<div class="row yours">Your answer: <b>' + LETTERS[r.picked] + ' — ' + r.options[r.picked] + '</b>' +
-          '<span class="tag ' + (ok ? "ok" : "miss") + '">' + (ok ? "Correct" : "Wrong first") + '</span></div>' +
+          '<span class="tag ' + (ok ? "ok" : "miss") + '">' + (ok ? "Correct" : "Wrong") + '</span></div>' +
         '<div class="row correct">Correct answer: <b>' + LETTERS[r.correct] + ' — ' + r.options[r.correct] + '</b></div>' +
-        '<div class="row">Points earned: <b>+' + r.points + '</b> &nbsp;&middot;&nbsp; Tries: <b>' + r.attempts + '</b></div>' +
+        '<div class="row">Points earned: <b>+' + r.points + '</b></div>' +
         '<div class="working"><b>Working:</b> ' + r.working + '</div>' +
       '</div>';
     });
@@ -937,7 +1001,30 @@
     initSoundToggle();
     initStartVisuals();
     renderBestLine();
-    $("playBtn").addEventListener("click", function(){ playClick(); startGame(); });
+    renderNameBox();
+    $("playBtn").addEventListener("click", function(){
+      playClick();
+      if(readPlayer()){
+        startGame();
+        return;
+      }
+      var name = $("nameInput").value.trim();
+      if(!name){
+        $("nameError").hidden = false;
+        $("nameInput").focus();
+        return;
+      }
+      savePlayer(name);
+      renderNameBox();
+      startGame();
+    });
+    $("nameChangeBtn").addEventListener("click", function(){
+      var oldName = readPlayer();
+      try{ localStorage.removeItem(PLAYER_KEY); }catch(e){}
+      renderNameBox();
+      $("nameInput").value = oldName;
+      $("nameInput").focus();
+    });
     $("nextBtn").addEventListener("click", nextStep);
     $("againBtn").addEventListener("click", function(){ playClick(); startGame(); });
     $("printBtn").addEventListener("click", function(){ window.print(); });

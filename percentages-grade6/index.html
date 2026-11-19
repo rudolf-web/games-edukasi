@@ -225,6 +225,94 @@
   .btn-block{width:100%}
   .btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 
+  /* ---------- Hub sections: name, results, leaderboard ---------- */
+  .hub-section{margin-top:48px}
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-card);
+    padding:24px;
+  }
+  .name-row{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+  .name-row input{
+    flex:1 1 240px;
+    font-family:inherit;font-size:16px;color:var(--ink);
+    padding:13px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;
+  }
+  .name-row input:focus{outline:3px solid rgba(242,160,7,.45);border-color:var(--amber)}
+  .field-error{color:#B42318;font-size:14px;font-weight:700;margin-top:12px}
+  .name-saved{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .name-saved p{font-size:17px}
+  .link-btn{
+    color:var(--amber-dark);font-size:15px;font-weight:800;
+    text-decoration:underline;text-underline-offset:3px;padding:4px 0;
+  }
+  .link-btn:hover{color:var(--navy)}
+  .stat-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;
+    margin-bottom:8px;
+  }
+  .result-stat{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-card);
+    padding:20px;
+  }
+  .result-stat span{
+    display:block;font-size:13px;font-weight:700;letter-spacing:.6px;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .result-stat b{display:block;font-size:26px;font-weight:900;line-height:1.2;margin-top:8px;word-break:break-word}
+  .result-stat small{display:block;font-size:14px;color:var(--muted);margin-top:6px;line-height:1.4}
+  .results-subhead{font-size:20px;font-weight:800;margin:24px 0 12px}
+  .recent-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+  .recent-item{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    padding:16px 18px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .recent-main{min-width:0}
+  .recent-main b{display:block;font-size:16px;font-weight:800}
+  .recent-main span{font-size:14px;color:var(--muted)}
+  .recent-score{text-align:right;flex:0 0 auto}
+  .recent-score b{display:block;font-size:17px;font-weight:900}
+  .recent-score span{font-size:13px;color:var(--muted)}
+  .empty-state{
+    color:var(--muted);
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-card);
+    padding:24px;
+  }
+  .board-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .board-controls label{font-size:15px;font-weight:800}
+  .board-controls select{
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);
+    padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;
+    max-width:100%;
+  }
+  .board-controls select:focus{outline:3px solid rgba(242,160,7,.45);border-color:var(--amber)}
+  .board-table-wrap{overflow-x:auto}
+  .board-table{width:100%;border-collapse:collapse;min-width:520px}
+  .board-table th{
+    background:var(--navy);color:#fff;text-align:left;
+    padding:12px 14px;font-size:14px;font-weight:800;white-space:nowrap;
+  }
+  .board-table th:first-child{border-top-left-radius:12px}
+  .board-table th:last-child{border-top-right-radius:12px}
+  .board-table td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:15px}
+  .board-table tr:last-child td{border-bottom:none}
+  .board-table .rank-cell{font-weight:900;text-align:center;width:64px}
+  .board-table tr.rank-1 .rank-cell{background:var(--amber);color:var(--navy)}
+  .board-table tr.rank-1 td{font-weight:700}
+  .fine-print{font-size:13px;color:var(--muted);margin-top:16px}
+
   /* ---------- Footer ---------- */
   footer{
     background:var(--navy);color:#B9C6D6;margin-top:56px;
@@ -317,6 +405,67 @@
   <p class="section-intro">Start with Game 1 and work your way through the quest, or jump to any game. Each game has 10 questions, no timer, and stars to earn.</p>
 
   <div class="card-grid" id="cardGrid"><!-- cards injected by JS --></div>
+
+  <section class="hub-section" aria-labelledby="playerHeading">
+    <div class="section-head">
+      <h2 id="playerHeading">Your name</h2>
+      <p>Your name is saved on this device and shown with your results.</p>
+    </div>
+    <div class="panel">
+      <div id="hubNameRow" class="name-row">
+        <input id="hubNameInput" type="text" maxlength="30" placeholder="Type your name" autocomplete="name">
+        <button id="hubNameSave" class="btn btn-amber" type="button">Save</button>
+      </div>
+      <p id="hubNameError" class="field-error" role="alert" hidden>Please type your name.</p>
+      <div id="hubNameSaved" class="name-saved" hidden>
+        <p>Playing as: <b id="hubNameSavedText"></b></p>
+        <button id="hubNameChange" class="link-btn" type="button">Not you? Change name</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="hub-section" id="myResults" aria-labelledby="resultsHeading">
+    <div class="section-head">
+      <h2 id="resultsHeading">My Results</h2>
+      <p>Your recap from games played on this device.</p>
+    </div>
+    <p id="myResultsEmpty" class="empty-state">No results yet — play a game to see your recap here.</p>
+    <div id="myResultsContent" hidden>
+      <div class="stat-grid" id="myResultsStats"></div>
+      <h3 class="results-subhead">Recent results</h3>
+      <ul id="recentList" class="recent-list"></ul>
+    </div>
+  </section>
+
+  <section class="hub-section" id="leaderboard" aria-labelledby="boardHeading">
+    <div class="section-head">
+      <h2 id="boardHeading">Leaderboard</h2>
+      <p>Best scores on this device.</p>
+    </div>
+    <div class="panel">
+      <div class="board-controls">
+        <label for="boardView">View</label>
+        <select id="boardView">
+          <option value="overall">Overall</option>
+          <option value="1">Game 1 — The Percentage Formula</option>
+          <option value="2">Game 2 — Fractions to Percentages</option>
+          <option value="3">Game 3 — Decimals to Percentages</option>
+          <option value="4">Game 4 — Percent of a Number</option>
+          <option value="5">Game 5 — Finding the Whole</option>
+          <option value="6">Game 6 — Percentage Increase</option>
+          <option value="7">Game 7 — Percentage Decrease</option>
+          <option value="8">Game 8 — Discounts</option>
+          <option value="9">Game 9 — Percentages in Real Life</option>
+          <option value="10">Game 10 — Percentage Master Challenge</option>
+        </select>
+      </div>
+      <div id="boardTableWrap" class="board-table-wrap" hidden>
+        <table class="board-table" id="boardTable"></table>
+      </div>
+      <p id="boardEmpty" class="empty-state">No scores yet — play a game to appear here.</p>
+      <p class="fine-print">Scores are saved in this browser on this device only.</p>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -497,12 +646,261 @@
     });
   }
 
+  /* ---------------- Player name, results & leaderboard ---------------- */
+  function escapeHtml(value){
+    return String(value == null ? "" : value).replace(/[&<>"']/g, function(ch){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch];
+    });
+  }
+  function readPlayerName(){
+    try{
+      var name = localStorage.getItem("percentQuest_player");
+      return name ? name.trim() : "";
+    }catch(e){ return ""; }
+  }
+  function readResults(){
+    try{
+      var raw = localStorage.getItem("percentQuest_results");
+      if(!raw) return [];
+      var parsed = JSON.parse(raw);
+      if(!Array.isArray(parsed)) return [];
+      return parsed.filter(function(r){
+        return r && typeof r === "object" && typeof r.score === "number" && isFinite(r.score);
+      });
+    }catch(e){ return []; }
+  }
+  function recordDateMs(r){
+    var ms = new Date(r.date).getTime();
+    return isNaN(ms) ? 0 : ms;
+  }
+  function formatResultDate(value){
+    var ms = new Date(value).getTime();
+    if(isNaN(ms)) return "";
+    return new Date(value).toLocaleString("en-GB", {
+      day:"numeric", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit"
+    });
+  }
+  function displayName(r){
+    var name = r && typeof r.name === "string" ? r.name.trim() : "";
+    return name || "Player";
+  }
+  function gameNumberOf(r){
+    if(typeof r.game === "number" && r.game >= 1 && r.game <= 10) return r.game;
+    if(typeof r.game === "string"){
+      var s = r.game.trim();
+      var m = s.match(/(\d+)/);
+      if(m){
+        var n = parseInt(m[1], 10);
+        if(n >= 1 && n <= 10) return n;
+      }
+    }
+    if(typeof r.gameTitle === "string"){
+      for(var i = 0; i < GAMES.length; i++){
+        if(GAMES[i].title.toLowerCase() === r.gameTitle.trim().toLowerCase()) return GAMES[i].n;
+      }
+    }
+    return null;
+  }
+  function gameTitleOf(r){
+    if(typeof r.gameTitle === "string" && r.gameTitle.trim()) return r.gameTitle.trim();
+    var n = gameNumberOf(r);
+    if(n) return GAMES[n - 1].title;
+    return "Game";
+  }
+  function starCount(r){
+    return typeof r.stars === "number" && isFinite(r.stars) ? r.stars : 0;
+  }
+  /* A record is "better" on higher score, then higher stars, then earlier date. */
+  function isBetterRecord(a, b){
+    if(a.score !== b.score) return a.score > b.score;
+    if(starCount(a) !== starCount(b)) return starCount(a) > starCount(b);
+    return recordDateMs(a) < recordDateMs(b);
+  }
+
+  function initPlayerName(){
+    var input = document.getElementById("hubNameInput");
+    var saveBtn = document.getElementById("hubNameSave");
+    var row = document.getElementById("hubNameRow");
+    var savedBox = document.getElementById("hubNameSaved");
+    var savedText = document.getElementById("hubNameSavedText");
+    var changeBtn = document.getElementById("hubNameChange");
+    var errorEl = document.getElementById("hubNameError");
+    function showSaved(name){
+      row.hidden = true;
+      errorEl.hidden = true;
+      savedText.textContent = name;
+      savedBox.hidden = false;
+    }
+    function showInput(prefill){
+      savedBox.hidden = true;
+      errorEl.hidden = true;
+      row.hidden = false;
+      input.value = prefill || "";
+      input.focus();
+    }
+    function saveName(){
+      var name = input.value.trim();
+      if(!name){
+        errorEl.hidden = false;
+        input.focus();
+        return;
+      }
+      errorEl.hidden = true;
+      try{ localStorage.setItem("percentQuest_player", name); }catch(e){}
+      showSaved(name);
+    }
+    var saved = readPlayerName();
+    if(saved) showSaved(saved); else showInput("");
+    saveBtn.addEventListener("click", saveName);
+    input.addEventListener("keydown", function(e){ if(e.key === "Enter") saveName(); });
+    changeBtn.addEventListener("click", function(){ showInput(savedText.textContent); });
+  }
+
+  function renderResults(){
+    var records = readResults();
+    var emptyEl = document.getElementById("myResultsEmpty");
+    var contentEl = document.getElementById("myResultsContent");
+    var statsEl = document.getElementById("myResultsStats");
+    var listEl = document.getElementById("recentList");
+    if(!records.length){
+      emptyEl.hidden = false;
+      contentEl.hidden = true;
+      statsEl.innerHTML = "";
+      listEl.innerHTML = "";
+      return;
+    }
+    emptyEl.hidden = true;
+    contentEl.hidden = false;
+    var totalPoints = 0, totalCorrect = 0, totalQuestions = 0;
+    var best = records[0];
+    records.forEach(function(r){
+      totalPoints += r.score;
+      if(typeof r.correct === "number" && isFinite(r.correct)) totalCorrect += r.correct;
+      if(typeof r.total === "number" && isFinite(r.total)) totalQuestions += r.total;
+      if(isBetterRecord(r, best)) best = r;
+    });
+    var average = Math.round(totalPoints / records.length);
+    var bestDate = formatResultDate(best.date);
+    statsEl.innerHTML =
+      '<div class="result-stat"><span>Total games played</span><b>' + records.length + '</b></div>' +
+      '<div class="result-stat"><span>Total points</span><b>' + totalPoints + '</b></div>' +
+      '<div class="result-stat"><span>Correct answers</span><b>' + totalCorrect + ' / ' + totalQuestions + '</b></div>' +
+      '<div class="result-stat"><span>Average score</span><b>' + average + '</b></div>' +
+      '<div class="result-stat"><span>Best game</span><b>' + escapeHtml(gameTitleOf(best)) + '</b><small>' + best.score + ' points' + (bestDate ? ' &middot; ' + escapeHtml(bestDate) : '') + '</small></div>';
+    var recent = records.slice().sort(function(a, b){ return recordDateMs(b) - recordDateMs(a); }).slice(0, 10);
+    var html = "";
+    recent.forEach(function(r){
+      var dateText = formatResultDate(r.date);
+      html +=
+        '<li class="recent-item">' +
+          '<div class="recent-main"><b>' + escapeHtml(displayName(r)) + '</b>' +
+          '<span>' + escapeHtml(gameTitleOf(r)) + '</span> ' + starsHtml(starCount(r)) + '</div>' +
+          '<div class="recent-score"><b>' + r.score + ' points</b>' +
+          (dateText ? '<span>' + escapeHtml(dateText) + '</span>' : '') + '</div>' +
+        '</li>';
+    });
+    listEl.innerHTML = html;
+  }
+
+  function renderLeaderboard(){
+    var view = document.getElementById("boardView").value;
+    var records = readResults();
+    var table = document.getElementById("boardTable");
+    var wrap = document.getElementById("boardTableWrap");
+    var emptyEl = document.getElementById("boardEmpty");
+    var rowsHtml = "", headHtml = "";
+    if(view === "overall"){
+      var players = {};
+      records.forEach(function(r){
+        var name = displayName(r);
+        var gameNum = gameNumberOf(r);
+        if(!gameNum) return;
+        if(!players[name]) players[name] = { name:name, bestByGame:{}, firstDate:recordDateMs(r) };
+        var p = players[name];
+        var ms = recordDateMs(r);
+        if(ms && (!p.firstDate || ms < p.firstDate)) p.firstDate = ms;
+        if(!p.bestByGame[gameNum] || isBetterRecord(r, p.bestByGame[gameNum])) p.bestByGame[gameNum] = r;
+      });
+      var overall = Object.keys(players).map(function(name){
+        var p = players[name], total = 0, stars = 0, games = 0;
+        Object.keys(p.bestByGame).forEach(function(k){
+          total += p.bestByGame[k].score;
+          stars += starCount(p.bestByGame[k]);
+          games++;
+        });
+        return { name:name, total:total, games:games, stars:stars, firstDate:p.firstDate };
+      });
+      overall.sort(function(a, b){
+        if(b.total !== a.total) return b.total - a.total;
+        if(b.games !== a.games) return b.games - a.games;
+        return a.firstDate - b.firstDate;
+      });
+      if(!overall.length){
+        wrap.hidden = true; emptyEl.hidden = false; table.innerHTML = "";
+        return;
+      }
+      headHtml = '<tr><th>Rank</th><th>Name</th><th>Total points</th><th>Games completed</th><th>Total stars</th></tr>';
+      overall.forEach(function(p, i){
+        rowsHtml += '<tr' + (i === 0 ? ' class="rank-1"' : '') + '>' +
+          '<td class="rank-cell">' + (i + 1) + '</td>' +
+          '<td>' + escapeHtml(p.name) + '</td>' +
+          '<td>' + p.total + '</td>' +
+          '<td>' + p.games + '/10</td>' +
+          '<td>' + p.stars + '</td></tr>';
+      });
+    }else{
+      var gameNum = parseInt(view, 10);
+      var bestByPlayer = {};
+      records.forEach(function(r){
+        if(gameNumberOf(r) !== gameNum) return;
+        var name = displayName(r);
+        if(!bestByPlayer[name] || isBetterRecord(r, bestByPlayer[name])) bestByPlayer[name] = r;
+      });
+      var perGame = Object.keys(bestByPlayer).map(function(name){
+        return { name:name, best:bestByPlayer[name] };
+      });
+      perGame.sort(function(a, b){
+        if(b.best.score !== a.best.score) return b.best.score - a.best.score;
+        if(starCount(b.best) !== starCount(a.best)) return starCount(b.best) - starCount(a.best);
+        return recordDateMs(a.best) - recordDateMs(b.best);
+      });
+      if(!perGame.length){
+        wrap.hidden = true; emptyEl.hidden = false; table.innerHTML = "";
+        return;
+      }
+      headHtml = '<tr><th>Rank</th><th>Name</th><th>Best score</th><th>Stars</th><th>Date</th></tr>';
+      perGame.forEach(function(row, i){
+        rowsHtml += '<tr' + (i === 0 ? ' class="rank-1"' : '') + '>' +
+          '<td class="rank-cell">' + (i + 1) + '</td>' +
+          '<td>' + escapeHtml(row.name) + '</td>' +
+          '<td>' + row.best.score + '</td>' +
+          '<td>' + starsHtml(starCount(row.best)) + '</td>' +
+          '<td>' + escapeHtml(formatResultDate(row.best.date)) + '</td></tr>';
+      });
+    }
+    table.innerHTML = '<thead>' + headHtml + '</thead><tbody>' + rowsHtml + '</tbody>';
+    wrap.hidden = false;
+    emptyEl.hidden = true;
+  }
+
+  function initLeaderboard(){
+    var select = document.getElementById("boardView");
+    select.addEventListener("change", function(){
+      renderLeaderboard();
+      renderResults();
+    });
+    renderLeaderboard();
+  }
+
   /* ---------------- Init ---------------- */
   document.addEventListener("DOMContentLoaded", function(){
     buildCards();
     updateProgress();
     initSoundToggle();
     initParallax();
+    initPlayerName();
+    renderResults();
+    initLeaderboard();
   });
 })();
 </script>
