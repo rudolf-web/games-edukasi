@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game 2 — Fractions to Percentages | Percent Quest</title>
+<style>
+  :root{
+    --navy:#10233F;
+    --navy-deep:#0B1A2E;
+    --amber:#F2A007;
+    --amber-dark:#C77F00;
+    --amber-light:#FFD166;
+    --bg:#F4F6F8;
+    --ink:#1B2A41;
+    --muted:#5A6B80;
+    --card:#FFFFFF;
+    --line:#E2E8F0;
+    --green:#2E9E6B;
+    --green-dark:#1F7A52;
+    --red:#C0392B;
+    --shadow-card:0 10px 30px rgba(16,35,63,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  a{text-decoration:none;color:inherit}
+
+  /* ---------- Header ---------- */
+  .game-header{
+    background:var(--navy);color:#fff;
+    box-shadow:0 4px 16px rgba(11,26,46,.35);
+  }
+  .header-inner{
+    max-width:860px;margin:0 auto;padding:14px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .game-title{font-size:18px;font-weight:800;line-height:1.2}
+  .game-title small{display:block;font-size:12px;font-weight:600;color:#B9C6D6;letter-spacing:1.5px;text-transform:uppercase}
+  .header-actions{display:flex;gap:10px;align-items:center}
+  .icon-btn{
+    width:44px;height:44px;border-radius:12px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.18);
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:transform .15s ease,background .15s ease;
+    box-shadow:0 4px 0 rgba(0,0,0,.25);
+  }
+  .icon-btn:hover{background:rgba(255,255,255,.18)}
+  .icon-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+  .icon-btn svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .icon-btn .icon-off{display:none}
+  .icon-btn.muted .icon-on{display:none}
+  .icon-btn.muted .icon-off{display:block}
+  .home-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.18);
+    color:#fff;font-size:15px;font-weight:700;
+    padding:10px 16px;border-radius:12px;
+    box-shadow:0 4px 0 rgba(0,0,0,.25);
+    transition:transform .15s ease,background .15s ease;
+  }
+  .home-btn:hover{background:rgba(255,255,255,.18)}
+  .home-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+  .home-btn svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- Layout / screens ---------- */
+  main{flex:1;width:100%;max-width:860px;margin:0 auto;padding:28px 20px 48px}
+  .screen{display:none}
+  .screen.active{display:block;animation:screenIn .45s ease both}
+  @keyframes screenIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow-card);
+    padding:32px;
+  }
+  .eyebrow{
+    font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--amber-dark);
+    margin-bottom:10px;
+  }
+  h1{font-size:clamp(30px,5vw,42px);line-height:1.1;font-weight:900;letter-spacing:-.4px}
+  h1 span{color:var(--amber-dark)}
+  .subtitle{font-size:18px;color:var(--muted);margin:12px 0 24px;max-width:560px}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    font-size:17px;font-weight:800;
+    padding:15px 26px;border-radius:14px;
+    transition:transform .12s ease,box-shadow .12s ease,background .15s ease;
+  }
+  .btn-amber{background:var(--amber);color:var(--navy);box-shadow:0 6px 0 var(--amber-dark)}
+  .btn-amber:hover{background:#FFB524}
+  .btn-amber:active{transform:translateY(3px);box-shadow:0 3px 0 var(--amber-dark)}
+  .btn-navy{background:var(--navy);color:#fff;box-shadow:0 6px 0 var(--navy-deep)}
+  .btn-navy:hover{background:#16345C}
+  .btn-navy:active{transform:translateY(3px);box-shadow:0 3px 0 var(--navy-deep)}
+  .btn-green{background:var(--green);color:#fff;box-shadow:0 6px 0 var(--green-dark)}
+  .btn-green:hover{background:#35B57C}
+  .btn-green:active{transform:translateY(3px);box-shadow:0 3px 0 var(--green-dark)}
+  .btn-ghost{
+    background:#fff;color:var(--navy);
+    border:2px solid var(--line);
+    box-shadow:0 6px 0 var(--line);
+  }
+  .btn-ghost:hover{border-color:var(--navy)}
+  .btn-ghost:active{transform:translateY(3px);box-shadow:0 3px 0 var(--line)}
+  .btn-block{width:100%}
+  .btn svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- Start screen ---------- */
+  .howto{
+    background:#FFF8E6;border:1px solid #F5DFA8;border-radius:14px;
+    padding:18px 20px;margin-bottom:24px;
+  }
+  .howto h2{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .howto h2 svg{width:20px;height:20px;stroke:var(--amber-dark);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .howto ul{list-style:none}
+  .howto li{padding:5px 0 5px 26px;position:relative;font-size:15.5px}
+  .howto li::before{
+    content:"";position:absolute;left:4px;top:13px;
+    width:8px;height:8px;border-radius:50%;background:var(--amber);
+    box-shadow:0 0 0 3px rgba(242,160,7,.25);
+  }
+  .best-line{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-size:15px;color:var(--muted);margin-bottom:22px;
+  }
+  .best-line b{color:var(--ink);font-size:17px}
+  .stars-inline{display:inline-flex;gap:2px;vertical-align:-3px}
+  .stars-inline svg{width:18px;height:18px}
+  .star-on{fill:var(--amber);stroke:var(--amber-dark)}
+  .star-off{fill:#DCE3EA;stroke:#B9C6D6}
+
+  /* pie visual */
+  .visual-box{margin-top:28px;border-top:1px solid var(--line);padding-top:24px}
+  .visual-box h2{font-size:18px;font-weight:800;margin-bottom:6px}
+  .visual-box p{color:var(--muted);font-size:15px;margin-bottom:16px}
+  .pie-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pie-svg{width:220px;height:220px}
+  .pie-bg{fill:#EDF1F5;stroke:var(--navy);stroke-width:2}
+  .pie-arc{fill:none;stroke:var(--amber);stroke-width:80;transition:stroke-dasharray .4s ease}
+  .pie-hole{fill:#fff;stroke:#E2E8F0;stroke-width:1}
+  .pie-label{font-size:22px;font-weight:900;fill:var(--navy)}
+  .grid-controls{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}
+  .pct-btn{
+    padding:10px 18px;border-radius:12px;font-size:15px;font-weight:800;
+    background:#fff;color:var(--navy);border:2px solid var(--line);
+    box-shadow:0 4px 0 var(--line);
+    transition:transform .12s ease,box-shadow .12s ease,background .15s ease,border-color .15s ease;
+  }
+  .pct-btn:hover{border-color:var(--amber)}
+  .pct-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--line)}
+  .pct-btn.active{background:var(--amber);border-color:var(--amber-dark);color:var(--navy);box-shadow:0 4px 0 var(--amber-dark)}
+  .grid-readout{font-size:16px;font-weight:800;color:var(--navy)}
+  .grid-readout span{color:var(--amber-dark)}
+  /* ---------- Question screen ---------- */
+  .progress-row{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+  .ring-wrap{position:relative;width:64px;height:64px;flex:0 0 auto}
+  .ring-wrap svg{transform:rotate(-90deg)}
+  .ring-bg{fill:none;stroke:#E2E8F0;stroke-width:6}
+  .ring-fg{fill:none;stroke:var(--amber);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .5s ease}
+  .ring-num{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:900;color:var(--navy);
+  }
+  .progress-text{flex:1}
+  .progress-text .qcount{font-size:17px;font-weight:800}
+  .progress-text .score-line{font-size:14px;color:var(--muted)}
+  .progress-text .score-line b{color:var(--ink)}
+  .linear-track{height:8px;border-radius:999px;background:#E2E8F0;overflow:hidden;margin-top:8px}
+  .linear-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--amber),var(--amber-light));transition:width .5s ease}
+  .question-card h2{font-size:clamp(21px,3.4vw,26px);font-weight:800;line-height:1.35;margin-bottom:8px}
+  .question-card .q-visual{
+    background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:12px;
+    padding:16px 18px;margin:14px 0 6px;font-size:16px;color:var(--ink);
+  }
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+  .answer-btn{
+    display:flex;align-items:center;gap:14px;text-align:left;
+    background:#fff;border:2px solid var(--line);border-radius:14px;
+    padding:16px 18px;font-size:17px;font-weight:700;color:var(--ink);
+    box-shadow:0 5px 0 var(--line);
+    transition:transform .12s ease,box-shadow .12s ease,border-color .15s ease,background .15s ease,opacity .2s ease;
+  }
+  .answer-btn:hover:not(:disabled){border-color:var(--amber);transform:translateY(-2px);box-shadow:0 7px 0 var(--line)}
+  .answer-btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+  .answer-btn .key{
+    flex:0 0 auto;width:36px;height:36px;border-radius:10px;
+    background:var(--navy);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:900;
+    box-shadow:0 3px 0 rgba(11,26,46,.35);
+  }
+  .answer-btn.correct{
+    background:#E7F6EE;border-color:var(--green);color:#14532D;
+    box-shadow:0 5px 0 var(--green-dark);
+  }
+  .answer-btn.correct .key{background:var(--green);box-shadow:0 3px 0 var(--green-dark)}
+  .answer-btn.wrong-pick{
+    background:#F1F3F5;border-color:#CBD5E1;color:#94A3B8;
+    opacity:.65;box-shadow:0 5px 0 #CBD5E1;
+  }
+  .answer-btn:disabled{cursor:default}
+  .hint-line{
+    display:none;margin-top:16px;padding:12px 16px;border-radius:12px;
+    background:#FEF3C7;border:1px solid #F5DFA8;color:#7A4A00;
+    font-size:15.5px;font-weight:700;
+  }
+  .hint-line.show{display:block;animation:rise .3s ease both}
+  .feedback{
+    display:none;margin-top:20px;border-radius:14px;padding:20px;
+    background:#E7F6EE;border:2px solid var(--green);
+    animation:rise .35s ease both;
+  }
+  .feedback.show{display:block}
+  .feedback h3{color:var(--green-dark);font-size:19px;font-weight:900;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .feedback h3 svg{width:22px;height:22px;stroke:var(--green-dark);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .feedback .points{font-size:16px;font-weight:800;color:var(--ink);margin-bottom:8px}
+  .feedback .working{font-size:15.5px;color:#334155}
+  .feedback .working b{color:var(--ink)}
+  .feedback .btn{margin-top:16px}
+  .combo-chip{
+    display:inline-block;font-size:13px;font-weight:800;color:var(--amber-dark);
+    background:#FFF6E0;border:1px solid #F5DFA8;border-radius:999px;padding:3px 10px;margin-left:8px;
+  }
+
+  /* ---------- Final screen ---------- */
+  .final-card{text-align:center}
+  .final-card .trophy{
+    width:84px;height:84px;margin:0 auto 16px;border-radius:50%;
+    background:#FFF6E0;border:2px solid #F5DFA8;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 24px rgba(16,35,63,.12),inset 0 -4px 0 rgba(242,160,7,.25);
+  }
+  .final-card .trophy svg{width:44px;height:44px;stroke:var(--amber-dark);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .final-score{font-size:clamp(44px,8vw,64px);font-weight:900;line-height:1;color:var(--navy)}
+  .final-score small{font-size:20px;font-weight:800;color:var(--muted)}
+  .final-stars{display:flex;justify-content:center;gap:6px;margin:14px 0 6px}
+  .final-stars svg{width:44px;height:44px;animation:pop .5s ease both}
+  .final-stars svg:nth-child(2){animation-delay:.15s}
+  .final-stars svg:nth-child(3){animation-delay:.3s}
+  @keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+  .final-msg{font-size:18px;color:var(--muted);margin-bottom:8px}
+  .final-best{font-size:15px;color:var(--muted);margin-bottom:24px}
+  .final-best b{color:var(--ink)}
+  .final-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:28px}
+  .review{text-align:left;border-top:1px solid var(--line);padding-top:24px}
+  .review h2{font-size:20px;font-weight:900;margin-bottom:4px}
+  .review p{color:var(--muted);font-size:15px;margin-bottom:18px}
+  .review-item{
+    border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;
+    background:#F8FAFC;
+  }
+  .review-item .rq{font-weight:800;font-size:16px;margin-bottom:8px}
+  .review-item .row{font-size:15px;padding:2px 0}
+  .review-item .row b{font-weight:800}
+  .review-item .row.yours b{color:var(--navy)}
+  .review-item .row.correct b{color:var(--green-dark)}
+  .review-item .row .tag{
+    display:inline-block;font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
+    padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:1px;
+  }
+  .review-item .row .tag.ok{background:#DCFCE7;color:#166534}
+  .review-item .row .tag.miss{background:#FEE2E2;color:#991B1B}
+  .review-item .working{font-size:14.5px;color:var(--muted);margin-top:6px}
+  .review-item .working b{color:var(--ink)}
+
+  /* Confetti */
+  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:100}
+
+  footer{
+    background:var(--navy);color:#B9C6D6;margin-top:auto;
+  }
+  .footer-inner{
+    max-width:860px;margin:0 auto;padding:20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px;
+  }
+  .footer-inner strong{color:#fff}
+
+  @media (max-width:640px){
+    .card{padding:22px}
+    .answers{grid-template-columns:1fr}
+    .flip-card{height:150px}
+    .flip-back .formula{font-size:18px}
+    .final-actions .btn{flex:1 1 100%}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{background:#fff}
+    .game-header,footer,#confettiCanvas,.final-actions,.btn,.hint-line,.feedback .btn{display:none !important}
+    main{max-width:100%;padding:0}
+    .card{box-shadow:none;border:none;padding:0}
+    .screen{display:none !important}
+    .screen.active{display:block !important}
+    .review-item{break-inside:avoid;border:1px solid #999;background:#fff}
+    .final-card{text-align:left}
+    .final-stars{justify-content:flex-start}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confettiCanvas" aria-hidden="true"></canvas>
+
+<header class="game-header">
+  <div class="header-inner">
+    <div class="game-title">
+      <small>Percent Quest &middot; Game 2 of 10</small>
+      Fractions to Percentages
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="Toggle sound" title="Toggle sound">
+        <svg class="icon-on" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg class="icon-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9 5 6M21 9l-5 6"/></svg>
+      </button>
+      <a class="home-btn" href="index.html">
+        <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Home
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ============ SCREEN 1 : START ============ -->
+  <section class="screen active" id="screenStart" aria-label="Start screen">
+    <div class="card">
+      <div class="eyebrow">Game 2 &middot; Fractions to Percentages</div>
+      <h1>Turn <span>fractions</span><br>into percentages.</h1>
+      <p class="subtitle">Ten questions. Divide the top number by the bottom number, then multiply by 100. No timer &mdash; take your time and get it right.</p>
+
+      <div class="howto">
+        <h2>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          How to play
+        </h2>
+        <ul>
+          <li>Read each question and tap one of the four answers (A&ndash;D).</li>
+          <li>First try correct: 100 points, plus a combo bonus up to 100.</li>
+          <li>Wrong answer? That button greys out &mdash; try again for fewer points.</li>
+          <li>Earn 3 stars with 1,200 points or more.</li>
+        </ul>
+      </div>
+
+      <div class="best-line" id="bestLine">Best score: <b>Not played yet</b></div>
+
+      <button class="btn btn-amber btn-block" id="playBtn" type="button">
+        <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5-13-7.5z"/></svg>
+        Play Game 2
+      </button>
+
+      <div class="visual-box">
+        <h2>Try it: shade the pie</h2>
+        <p>Tap a fraction and watch the pie fill up. A fraction of a whole circle is a percentage of 100%.</p>
+        <div class="pie-wrap">
+          <svg class="pie-svg" viewBox="0 0 200 200" role="img" aria-label="Pie circle showing a fraction shaded">
+            <circle class="pie-bg" cx="100" cy="100" r="80"></circle>
+            <circle class="pie-arc" id="pieArc" cx="100" cy="100" r="40" transform="rotate(-90 100 100)" style="stroke-dasharray:0 251.33"></circle>
+            <circle class="pie-hole" cx="100" cy="100" r="30"></circle>
+            <text class="pie-label" id="pieLabel" x="100" y="107" text-anchor="middle">0%</text>
+          </svg>
+          <div class="grid-controls">
+            <button class="pct-btn" type="button" data-frac="1/2" data-pct="50">1/2</button>
+            <button class="pct-btn" type="button" data-frac="1/4" data-pct="25">1/4</button>
+            <button class="pct-btn" type="button" data-frac="3/4" data-pct="75">3/4</button>
+            <span class="grid-readout" id="pieReadout">Tap a fraction to shade the pie</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2 : QUESTION ============ -->
+  <section class="screen" id="screenQuestion" aria-label="Question screen">
+    <div class="progress-row">
+      <div class="ring-wrap" aria-hidden="true">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle class="ring-bg" cx="32" cy="32" r="26"></circle>
+          <circle class="ring-fg" id="ringFg" cx="32" cy="32" r="26"></circle>
+        </svg>
+        <div class="ring-num" id="ringNum">1/10</div>
+      </div>
+      <div class="progress-text">
+        <div class="qcount" id="qCountLabel">Question 1 of 10</div>
+        <div class="score-line">Score: <b id="scoreNow">0</b><span id="comboChip"></span></div>
+        <div class="linear-track"><div class="linear-fill" id="linearFill"></div></div>
+      </div>
+    </div>
+
+    <div class="card question-card">
+      <div class="eyebrow" id="qEyebrow">Question 1</div>
+      <h2 id="qText"></h2>
+      <div class="q-visual" id="qVisual" style="display:none"></div>
+      <div class="answers" id="answersBox"></div>
+      <div class="hint-line" id="hintLine">Not quite &mdash; try again! Divide the top number by the bottom number, then multiply by 100.</div>
+      <div class="feedback" id="feedbackBox">
+        <h3>
+          <svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          <span id="feedbackTitle">Correct!</span>
+        </h3>
+        <div class="points" id="feedbackPoints"></div>
+        <div class="working" id="feedbackWorking"></div>
+        <button class="btn btn-green" id="nextBtn" type="button">
+          Next question
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 3 : FINAL ============ -->
+  <section class="screen" id="screenFinal" aria-label="Final screen">
+    <div class="card final-card">
+      <div class="trophy" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9"/><path d="M12 3v9h9"/></svg>
+      </div>
+      <div class="eyebrow">Game complete</div>
+      <div class="final-score"><span id="finalScore">0</span> <small>points</small></div>
+      <div class="final-stars" id="finalStars" aria-label="Stars earned"></div>
+      <p class="final-msg" id="finalMsg"></p>
+      <p class="final-best" id="finalBest"></p>
+      <div class="final-actions">
+        <button class="btn btn-amber" id="printBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+          Print review
+        </button>
+        <button class="btn btn-navy" id="againBtn" type="button">
+          <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.4M3 4v5h5"/></svg>
+          Play again
+        </button>
+        <a class="btn btn-ghost" href="index.html">
+          <svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+          Home
+        </a>
+      </div>
+      <div class="review">
+        <h2>Review your answers</h2>
+        <p>Every question, your answer, the correct answer and the working.</p>
+        <div id="reviewList"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>Percent Quest</strong> &nbsp;&middot;&nbsp; Game 2 &mdash; Fractions to Percentages</div>
+    <div>Made for Grade 6 &middot; English &middot; Works offline</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= Data ================= */
+  var GAME_NUMBER = 2;
+  var BEST_KEY = "percentQuest_best_2";
+  var MUTE_KEY = "percentQuest_muted";
+
+  var QUESTIONS = [
+    { q:"What is 1/2 as a percentage?",
+      options:["25%","50%","20%","5%"],
+      correct:1,
+      working:"1 ÷ 2 = 0.5 = 50%." },
+    { q:"What is 1/4 as a percentage?",
+      options:["50%","4%","25%","40%"],
+      correct:2,
+      working:"1 ÷ 4 = 0.25 = 25%." },
+    { q:"What is 3/4 as a percentage?",
+      options:["75%","25%","34%","70%"],
+      correct:0,
+      working:"3 ÷ 4 = 0.75 = 75%." },
+    { q:"What is 1/5 as a percentage?",
+      options:["5%","15%","50%","20%"],
+      correct:3,
+      working:"1 ÷ 5 = 0.2 = 20%." },
+    { q:"What is 2/5 as a percentage?",
+      options:["20%","40%","25%","60%"],
+      correct:1,
+      working:"2 ÷ 5 = 0.4 = 40%." },
+    { q:"What is 3/5 as a percentage?",
+      options:["40%","35%","60%","50%"],
+      correct:2,
+      working:"3 ÷ 5 = 0.6 = 60%." },
+    { q:"What is 4/5 as a percentage?",
+      options:["80%","40%","45%","20%"],
+      correct:0,
+      working:"4 ÷ 5 = 0.8 = 80%." },
+    { q:"What is 1/10 as a percentage?",
+      options:["1%","20%","5%","10%"],
+      correct:3,
+      working:"1 ÷ 10 = 0.1 = 10%." },
+    { q:"What is 3/10 as a percentage?",
+      options:["3%","70%","30%","10%"],
+      correct:2,
+      working:"3 ÷ 10 = 0.3 = 30%." },
+    { q:"What is 7/10 as a percentage?",
+      options:["70%","7%","30%","17%"],
+      correct:0,
+      working:"7 ÷ 10 = 0.7 = 70%." }
+  ];
+
+  var LETTERS = ["A","B","C","D"];
+  var RING_C = 2 * Math.PI * 26; /* circumference for r=26 ring */
+
+  /* ================= State ================= */
+  var current = 0;        /* index of current question (0-based) */
+  var attempts = 0;       /* attempts on the current question */
+  var score = 0;
+  var combo = 0;          /* consecutive 1st-try correct answers */
+  var results = [];       /* per-question record for the review */
+
+  /* ================= Helpers ================= */
+  function $(id){ return document.getElementById(id); }
+
+  /* The ONE screen switcher. Every transition in this file goes through here. */
+  function showScreen(name){
+    var screens = { start:"screenStart", question:"screenQuestion", final:"screenFinal" };
+    Object.keys(screens).forEach(function(k){
+      $(screens[k]).classList.toggle("active", k === name);
+    });
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+
+  /* ================= Sound (Web Audio only) ================= */
+  var audioCtx = null;
+  function isMuted(){
+    try{ return localStorage.getItem(MUTE_KEY) === "1"; }catch(e){ return false; }
+  }
+  function ensureAudio(){
+    if(!audioCtx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      audioCtx = new AC();
+    }
+    if(audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+  function tone(freq, startAt, dur, type, vol){
+    var ctx = ensureAudio();
+    if(!ctx) return;
+    var t = ctx.currentTime + startAt;
+    var osc = ctx.createOscillator();
+    var g = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(Math.min(vol || 0.3, 0.9), t + 0.015);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g); g.connect(ctx.destination);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  }
+  function playCorrect(){
+    if(isMuted()) return;
+    tone(523.25, 0, 0.16, "sine", 0.35);   /* C5 */
+    tone(783.99, 0.12, 0.22, "sine", 0.35); /* G5 */
+  }
+  function playWrong(){
+    if(isMuted()) return;
+    tone(110, 0, 0.28, "triangle", 0.4);    /* low thud */
+    tone(82.4, 0.02, 0.3, "sine", 0.35);
+  }
+  function playWin(){
+    if(isMuted()) return;
+    var notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach(function(f, i){ tone(f, i * 0.13, 0.3, "sine", 0.35); });
+  }
+  function playClick(){
+    if(isMuted()) return;
+    tone(660, 0, 0.1, "sine", 0.22);
+  }
+
+  /* ================= Confetti ================= */
+  var CONF_COLORS = ["#F2A007","#10233F","#2E9E6B","#FFD166","#3E7CB1","#E4572E"];
+  function fireConfetti(){
+    var canvas = $("confettiCanvas");
+    var ctx = canvas.getContext("2d");
+    if(!ctx) return;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var pieces = [];
+    for(var i = 0; i < 140; i++){
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: -20 - Math.random() * canvas.height * 0.25,
+        w: 6 + Math.random() * 7,
+        h: 8 + Math.random() * 8,
+        vy: 2 + Math.random() * 3.2,
+        vx: -1 + Math.random() * 2,
+        rot: Math.random() * Math.PI,
+        vr: -0.08 + Math.random() * 0.16,
+        color: CONF_COLORS[i % CONF_COLORS.length]
+      });
+    }
+    var start = null;
+    function frame(ts){
+      if(start === null) start = ts;
+      var elapsed = ts - start;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(function(p){
+        p.y += p.vy; p.x += p.vx; p.rot += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if(elapsed < 3500){
+        requestAnimationFrame(frame);
+      }else{
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ================= Best score ================= */
+  function readBest(){
+    try{
+      var raw = localStorage.getItem(BEST_KEY);
+      if(!raw) return null;
+      var d = JSON.parse(raw);
+      if(typeof d.score !== "number" || typeof d.stars !== "number") return null;
+      return d;
+    }catch(e){ return null; }
+  }
+  function saveBest(scoreVal, starsVal){
+    var prev = readBest();
+    var next = {
+      score: Math.max(scoreVal, prev ? prev.score : 0),
+      stars: Math.max(starsVal, prev ? prev.stars : 0)
+    };
+    try{ localStorage.setItem(BEST_KEY, JSON.stringify(next)); }catch(e){}
+    return next;
+  }
+  function starsHtml(n){
+    var out = "";
+    for(var i = 1; i <= 3; i++){
+      var cls = i <= n ? "star-on" : "star-off";
+      out += '<svg viewBox="0 0 24 24" class="' + cls + '" stroke-width="1.5"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4 6.2 20.5l1.1-6.5L2.6 9.4l6.5-.9L12 2.6z"/></svg>';
+    }
+    return out;
+  }
+  function renderBestLine(){
+    var best = readBest();
+    var el = $("bestLine");
+    if(best){
+      el.innerHTML = 'Best score: <b>' + best.score + ' points</b><span class="stars-inline">' + starsHtml(best.stars) + '</span>';
+    }else{
+      el.innerHTML = 'Best score: <b>Not played yet</b>';
+    }
+  }
+
+  /* ================= Start screen visual ================= */
+  function initStartVisuals(){
+    var C = 2 * Math.PI * 40; /* circumference for r=40 pie arc */
+    var arc = $("pieArc");
+    document.querySelectorAll(".pct-btn").forEach(function(b){
+      b.addEventListener("click", function(){
+        playClick();
+        var pct = parseInt(b.getAttribute("data-pct"), 10);
+        var frac = b.getAttribute("data-frac");
+        arc.style.strokeDasharray = (C * pct / 100) + " " + C;
+        $("pieLabel").textContent = pct + "%";
+        $("pieReadout").innerHTML = frac + ' of the circle shaded &mdash; <span>' + pct + '%</span>';
+        document.querySelectorAll(".pct-btn").forEach(function(x){
+          x.classList.toggle("active", x === b);
+        });
+      });
+    });
+  }
+
+  /* ================= Game flow ================= */
+  function startGame(){
+    current = 0;
+    attempts = 0;
+    score = 0;
+    combo = 0;
+    results = [];
+    $("scoreNow").textContent = "0";
+    $("comboChip").innerHTML = "";
+    loadQuestion();
+    showScreen("question");
+  }
+
+  function loadQuestion(){
+    var q = QUESTIONS[current];
+    attempts = 0;
+    $("qEyebrow").textContent = "Question " + (current + 1);
+    $("qCountLabel").textContent = "Question " + (current + 1) + " of " + QUESTIONS.length;
+    $("ringNum").textContent = (current + 1) + "/" + QUESTIONS.length;
+    $("ringFg").style.strokeDasharray = RING_C;
+    $("ringFg").style.strokeDashoffset = RING_C * (1 - (current + 1) / QUESTIONS.length);
+    $("linearFill").style.width = ((current + 1) / QUESTIONS.length * 100) + "%";
+    $("qText").textContent = q.q;
+    var vis = $("qVisual");
+    if(q.visual){ vis.style.display = "block"; vis.textContent = q.visual; }
+    else { vis.style.display = "none"; vis.textContent = ""; }
+    $("hintLine").classList.remove("show");
+    $("feedbackBox").classList.remove("show");
+
+    var box = $("answersBox");
+    var html = "";
+    q.options.forEach(function(opt, i){
+      html += '<button class="answer-btn" type="button" data-i="' + i + '">' +
+                '<span class="key">' + LETTERS[i] + '</span>' +
+                '<span>' + opt + '</span>' +
+              '</button>';
+    });
+    box.innerHTML = html;
+    box.querySelectorAll(".answer-btn").forEach(function(btn){
+      btn.addEventListener("click", function(){ onAnswer(parseInt(btn.getAttribute("data-i"), 10), btn); });
+    });
+  }
+
+  function onAnswer(idx, btn){
+    var q = QUESTIONS[current];
+    attempts++;
+    if(idx === q.correct){
+      var points;
+      var bonus = 0;
+      if(attempts === 1){
+        bonus = Math.min(10 * combo, 100);
+        points = 100 + bonus;
+        combo++;
+      }else if(attempts === 2){
+        points = 50;
+        combo = 0;
+      }else{
+        points = 25;
+        combo = 0;
+      }
+      score += points;
+      results.push({
+        q: q.q, options: q.options.slice(), correct: q.correct,
+        picked: idx, attempts: attempts, points: points, working: q.working
+      });
+      btn.classList.add("correct");
+      $("answersBox").querySelectorAll(".answer-btn").forEach(function(b){ b.disabled = true; });
+      $("hintLine").classList.remove("show");
+      $("scoreNow").textContent = score;
+      $("comboChip").innerHTML = combo > 0 ? '<span class="combo-chip">Combo x' + combo + '</span>' : "";
+      var fb = $("feedbackBox");
+      $("feedbackTitle").textContent = attempts === 1 ? "Correct!" : "Correct — nice recovery!";
+      $("feedbackPoints").textContent = "+" + points + " points" +
+        (attempts === 1 && bonus > 0 ? " (100 + " + bonus + " combo bonus)" : "") +
+        (attempts === 2 ? " (second try)" : "") +
+        (attempts >= 3 ? " (third try or later)" : "");
+      $("feedbackWorking").innerHTML = "<b>Working:</b> " + q.working;
+      var nextBtn = $("nextBtn");
+      nextBtn.innerHTML = (current === QUESTIONS.length - 1)
+        ? 'See your results <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'
+        : 'Next question <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+      fb.classList.add("show");
+      playCorrect();
+    }else{
+      btn.classList.add("wrong-pick");
+      btn.disabled = true;
+      $("hintLine").classList.add("show");
+      playWrong();
+    }
+  }
+
+  function nextStep(){
+    playClick();
+    if(current < QUESTIONS.length - 1){
+      current++;
+      loadQuestion();
+      showScreen("question");
+    }else{
+      finishGame();
+    }
+  }
+
+  function starsFor(total){
+    if(total >= 1200) return 3;
+    if(total >= 800) return 2;
+    if(total >= 400) return 1;
+    return 0;
+  }
+
+  function finishGame(){
+    var stars = starsFor(score);
+    var saved = saveBest(score, stars);
+    $("finalScore").textContent = score;
+    $("finalStars").innerHTML = starsHtml(stars);
+    var msg = stars === 3 ? "Outstanding! You have mastered fractions to percentages."
+      : stars === 2 ? "Great work! You know fractions to percentages well."
+      : stars === 1 ? "Good start! Play again to earn more stars."
+      : "Keep practising &mdash; fractions to percentages will click with another try.";
+    $("finalMsg").textContent = msg;
+    $("finalBest").innerHTML = "Best score: <b>" + saved.score + " points</b> &nbsp;&middot;&nbsp; Best stars: <b>" + saved.stars + " / 3</b>";
+    renderReview();
+    showScreen("final");
+    if(stars >= 2){
+      fireConfetti();
+      playWin();
+    }else{
+      playCorrect();
+    }
+  }
+
+  function renderReview(){
+    var list = $("reviewList");
+    var html = "";
+    results.forEach(function(r, i){
+      var ok = r.picked === r.correct;
+      html += '<div class="review-item">' +
+        '<div class="rq">Q' + (i + 1) + '. ' + r.q + '</div>' +
+        '<div class="row yours">Your answer: <b>' + LETTERS[r.picked] + ' — ' + r.options[r.picked] + '</b>' +
+          '<span class="tag ' + (ok ? "ok" : "miss") + '">' + (ok ? "Correct" : "Wrong first") + '</span></div>' +
+        '<div class="row correct">Correct answer: <b>' + LETTERS[r.correct] + ' — ' + r.options[r.correct] + '</b></div>' +
+        '<div class="row">Points earned: <b>+' + r.points + '</b> &nbsp;&middot;&nbsp; Tries: <b>' + r.attempts + '</b></div>' +
+        '<div class="working"><b>Working:</b> ' + r.working + '</div>' +
+      '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  /* ================= Sound toggle ================= */
+  function applyMuteUI(){
+    $("soundToggle").classList.toggle("muted", isMuted());
+  }
+  function initSoundToggle(){
+    applyMuteUI();
+    $("soundToggle").addEventListener("click", function(){
+      var muted = !isMuted();
+      try{ localStorage.setItem(MUTE_KEY, muted ? "1" : "0"); }catch(e){}
+      applyMuteUI();
+      if(!muted) playClick();
+    });
+  }
+
+  /* ================= Wire up ================= */
+  document.addEventListener("DOMContentLoaded", function(){
+    /* First user gesture creates/resumes the AudioContext (mobile-safe). */
+    document.addEventListener("pointerdown", function once(){
+      ensureAudio();
+      document.removeEventListener("pointerdown", once);
+    });
+    initSoundToggle();
+    initStartVisuals();
+    renderBestLine();
+    $("playBtn").addEventListener("click", function(){ playClick(); startGame(); });
+    $("nextBtn").addEventListener("click", nextStep);
+    $("againBtn").addEventListener("click", function(){ playClick(); startGame(); });
+    $("printBtn").addEventListener("click", function(){ window.print(); });
+    /* Progress ring: set circumference once so dashoffset math is exact. */
+    $("ringFg").style.strokeDasharray = RING_C;
+    $("ringFg").style.strokeDashoffset = RING_C;
+  });
+})();
+</script>
+</body>
+</html>
