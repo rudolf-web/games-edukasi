@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Balloon — Angles in Figures</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #BFE3FF 0%, #E8F6FF 55%, #D6F0FF 100%);
+    color: #10233F;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .sky { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .balloon { position: absolute; bottom: -140px; opacity: .55; animation: floatUp linear infinite; }
+  .balloon svg { display: block; }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-55vh) rotate(3deg); }
+    100% { transform: translateY(-115vh) rotate(-3deg); }
+  }
+  .app { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
+  header { text-align: center; margin-bottom: 20px; }
+  .logo { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  h1 { font-size: 34px; margin: 10px 0 4px; line-height: 1.15; }
+  .subtitle { color: #3D5A80; font-size: 17px; margin: 4px 0 0; }
+  .tag {
+    display: inline-block; background: #FFF3D6; color: #8A5A00; font-weight: 700;
+    font-size: 13px; padding: 5px 12px; border-radius: 999px; letter-spacing: .4px;
+  }
+  .progress-card {
+    background: #FFFFFF; border-radius: 20px; padding: 18px 20px;
+    box-shadow: 0 10px 30px rgba(16, 35, 63, .12); margin-bottom: 16px;
+  }
+  .progress-head { display: flex; justify-content: space-between; font-weight: 800; font-size: 15px; }
+  .progress { height: 14px; background: #DCEBF8; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #F2A007, #FF6B6B); border-radius: 999px; transition: width .4s ease; }
+  .cards { display: grid; gap: 16px; }
+  @media (min-width: 560px) { .cards { grid-template-columns: 1fr 1fr; } }
+  .game-card {
+    display: block; background: #FFFFFF; border-radius: 20px; padding: 22px 20px;
+    box-shadow: 0 10px 30px rgba(16, 35, 63, .12); text-decoration: none; color: #10233F;
+    transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .game-card:hover { transform: translateY(-3px); box-shadow: 0 16px 34px rgba(16, 35, 63, .18); }
+  .game-card:active { transform: translateY(2px); }
+  .game-icon { margin-bottom: 10px; }
+  .game-card h2 { font-size: 21px; margin: 0 0 4px; }
+  .game-card p { margin: 4px 0; color: #3D5A80; line-height: 1.45; font-size: 15px; }
+  .game-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .q-count { font-weight: 800; font-size: 14px; background: #EAF3FB; padding: 5px 10px; border-radius: 999px; }
+  .best { font-weight: 800; font-size: 14px; color: #B97A00; }
+  .play-btn {
+    display: inline-block; margin-top: 14px; font-weight: 800; font-size: 16px; color: #10233F;
+    background: linear-gradient(180deg, #FFD166, #F2A007); padding: 11px 22px; border-radius: 14px;
+    box-shadow: 0 5px 0 #B97A00;
+  }
+  footer { text-align: center; color: #3D5A80; font-size: 14px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<div class="app">
+  <header>
+    <div class="logo">
+      <svg width="44" height="54" viewBox="0 0 34 42" aria-hidden="true"><ellipse cx="17" cy="14" rx="15" ry="13" fill="#FF6B6B" stroke="#10233F" stroke-width="1.5"/><path d="M17 27 L15 34 L19 34 Z" fill="#FF6B6B" stroke="#10233F" stroke-width="1.2"/><path d="M17 34 C 14 38, 20 39, 17 42" fill="none" stroke="#10233F" stroke-width="1.5"/></svg>
+      <svg width="40" height="50" viewBox="0 0 34 42" aria-hidden="true"><ellipse cx="17" cy="14" rx="15" ry="13" fill="#2EC4B6" stroke="#10233F" stroke-width="1.5"/><path d="M17 27 L15 34 L19 34 Z" fill="#2EC4B6" stroke="#10233F" stroke-width="1.2"/><path d="M17 34 C 14 38, 20 39, 17 42" fill="none" stroke="#10233F" stroke-width="1.5"/></svg>
+      <svg width="44" height="54" viewBox="0 0 34 42" aria-hidden="true"><ellipse cx="17" cy="14" rx="15" ry="13" fill="#FFD166" stroke="#10233F" stroke-width="1.5"/><path d="M17 27 L15 34 L19 34 Z" fill="#FFD166" stroke="#10233F" stroke-width="1.2"/><path d="M17 34 C 14 38, 20 39, 17 42" fill="none" stroke="#10233F" stroke-width="1.5"/></svg>
+    </div>
+    <h1>Battle Balloon<br>Angles in Figures</h1>
+    <p class="subtitle">Grade 6 &middot; Pop the balloons and find the missing angles!</p>
+  </header>
+
+  <div class="progress-card">
+    <div class="progress-head"><span>Your Progress</span><span id="progress-text">0 / 40 correct</span></div>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div class="cards">
+    <a class="game-card" href="game-01-triangles.html">
+      <div class="game-icon">
+        <svg width="64" height="52" viewBox="0 0 320 220" aria-hidden="true"><polygon points="160,30 60,190 260,190" fill="#FFF8E6" stroke="#10233F" stroke-width="10"/><text x="140" y="120" font-size="72" fill="#F2A007" font-weight="bold">?</text></svg>
+      </div>
+      <h2>Triangles</h2>
+      <p>Angles in a triangle, isosceles, right, equilateral and exterior angles.</p>
+      <div class="game-meta"><span class="q-count">10 questions</span><span class="best" data-best-key="battleBalloon_best_triangles">Best: 0 / 10</span></div>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="game-02-parallelograms.html">
+      <div class="game-icon">
+        <svg width="72" height="52" viewBox="0 0 320 220" aria-hidden="true"><polygon points="90,190 230,190 270,40 130,40" fill="#EAF0F8" stroke="#10233F" stroke-width="10"/><text x="150" y="140" font-size="72" fill="#F2A007" font-weight="bold">?</text></svg>
+      </div>
+      <h2>Parallelograms</h2>
+      <p>Opposite angles are equal and adjacent angles add up to 180&deg;.</p>
+      <div class="game-meta"><span class="q-count">10 questions</span><span class="best" data-best-key="battleBalloon_best_parallelograms">Best: 0 / 10</span></div>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="game-03-trapeziums.html">
+      <div class="game-icon">
+        <svg width="72" height="52" viewBox="0 0 320 220" aria-hidden="true"><polygon points="100,40 220,40 270,190 50,190" fill="#FFF8E6" stroke="#10233F" stroke-width="10"/><text x="140" y="140" font-size="72" fill="#F2A007" font-weight="bold">?</text></svg>
+      </div>
+      <h2>Trapeziums</h2>
+      <p>Angles on the same leg add up to 180&deg;, and base angles in an isosceles trapezium.</p>
+      <div class="game-meta"><span class="q-count">10 questions</span><span class="best" data-best-key="battleBalloon_best_trapeziums">Best: 0 / 10</span></div>
+      <span class="play-btn">Play</span>
+    </a>
+
+    <a class="game-card" href="game-04-combined.html">
+      <div class="game-icon">
+        <svg width="72" height="52" viewBox="0 0 320 220" aria-hidden="true"><rect x="110" y="30" width="90" height="90" fill="#EAF0F8" stroke="#10233F" stroke-width="10"/><polygon points="110,120 200,120 155,190" fill="#FFF8E6" stroke="#10233F" stroke-width="10"/><text x="140" y="100" font-size="56" fill="#F2A007" font-weight="bold">?</text></svg>
+      </div>
+      <h2>Combined Figures</h2>
+      <p>Triangles, squares and parallelograms joined together &mdash; solve step by step.</p>
+      <div class="game-meta"><span class="q-count">10 questions</span><span class="best" data-best-key="battleBalloon_best_combined">Best: 0 / 10</span></div>
+      <span class="play-btn">Play</span>
+    </a>
+  </div>
+
+  <footer>Battle Balloon &middot; Angles in Figures &middot; Grade 6</footer>
+</div>
+<script>
+"use strict";
+(function () {
+  var keys = ["battleBalloon_best_triangles", "battleBalloon_best_parallelograms", "battleBalloon_best_trapeziums", "battleBalloon_best_combined"];
+  var total = 0;
+  for (var i = 0; i < keys.length; i++) {
+    var v = 0;
+    try { v = parseInt(localStorage.getItem(keys[i]), 10) || 0; } catch (e) { v = 0; }
+    if (v > 10) v = 10;
+    total += v;
+    var el = document.querySelector('[data-best-key="' + keys[i] + '"]');
+    if (el) el.textContent = "Best: " + v + " / 10";
+  }
+  document.getElementById("progress-text").textContent = total + " / 40 correct";
+  document.getElementById("progress-fill").style.width = (total / 40 * 100) + "%";
+  var colors = ["#FF6B6B", "#2EC4B6", "#7C6FF0", "#FF7AB8", "#FFD166", "#FF6B6B", "#2EC4B6", "#7C6FF0"];
+  var html = "";
+  for (var j = 0; j < 8; j++) {
+    var left = 2 + j * 12 + (j % 2) * 4;
+    var size = 34 + (j % 3) * 12;
+    var dur = 16 + (j % 4) * 6;
+    html += '<div class="balloon" style="left:' + left + '%;animation-duration:' + dur + 's;animation-delay:' + (-j * 3) + 's">' +
+      '<svg width="' + size + '" height="' + Math.round(size * 1.25) + '" viewBox="0 0 34 42"><ellipse cx="17" cy="14" rx="15" ry="13" fill="' + colors[j] + '" stroke="#10233F" stroke-width="1"/><path d="M17 27 L15 33 L19 33 Z" fill="' + colors[j] + '" stroke="#10233F" stroke-width="1"/><path d="M17 33 C 14 37, 20 38, 17 41" fill="none" stroke="#10233F" stroke-width="1.2"/></svg></div>';
+  }
+  document.getElementById("sky").innerHTML = html;
+})();
+</script>
+</body>
+</html>

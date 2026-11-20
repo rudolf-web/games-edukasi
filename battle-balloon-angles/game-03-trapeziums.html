@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Battle Balloon — Trapeziums</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(180deg, #BFE3FF 0%, #E8F6FF 55%, #D6F0FF 100%);
+    color: #10233F;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* ---------- floating balloon sky ---------- */
+  .sky { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .balloon { position: absolute; bottom: -140px; opacity: .55; animation: floatUp linear infinite; }
+  .balloon svg { display: block; }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-55vh) rotate(3deg); }
+    100% { transform: translateY(-115vh) rotate(-3deg); }
+  }
+  body.fever .balloon { opacity: .9; animation-duration: 9s !important; }
+  body.fever .balloon.extra { display: block; }
+  .balloon.extra { display: none; }
+  /* ---------- layout ---------- */
+  .app { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 16px 16px 48px; }
+  header.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; color: #10233F; }
+  .brand svg { flex: none; }
+  .icon-btn {
+    background: #FFFFFF; border: 2px solid #10233F; border-radius: 12px;
+    width: 44px; height: 44px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #10233F; transition: transform .08s, box-shadow .08s;
+  }
+  .icon-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #10233F; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card {
+    background: #FFFFFF; border-radius: 20px; padding: 24px 20px;
+    box-shadow: 0 10px 30px rgba(16, 35, 63, .12);
+  }
+  h1 { font-size: 30px; margin: 6px 0 4px; line-height: 1.15; }
+  h2 { font-size: 22px; margin: 0 0 10px; }
+  h3 { font-size: 18px; margin: 0 0 6px; }
+  p { margin: 8px 0; line-height: 1.5; }
+  .subtitle { color: #3D5A80; font-size: 16px; }
+  .tag {
+    display: inline-block; background: #FFF3D6; color: #8A5A00; font-weight: 700;
+    font-size: 13px; padding: 5px 12px; border-radius: 999px; letter-spacing: .4px;
+  }
+  /* ---------- 3D buttons ---------- */
+  .btn {
+    display: block; width: 100%; border: none; cursor: pointer;
+    font-family: inherit; font-weight: 800; font-size: 18px; color: #10233F;
+    background: linear-gradient(180deg, #FFD166, #F2A007);
+    padding: 15px 20px; border-radius: 16px;
+    box-shadow: 0 6px 0 #B97A00, 0 10px 18px rgba(16, 35, 63, .18);
+    transition: transform .08s, box-shadow .08s; text-align: center; text-decoration: none;
+  }
+  .btn:active { transform: translateY(5px); box-shadow: 0 1px 0 #B97A00; }
+  .btn.secondary {
+    background: linear-gradient(180deg, #FFFFFF, #EAF3FB);
+    box-shadow: 0 6px 0 #9DB8D2, 0 10px 18px rgba(16, 35, 63, .12);
+  }
+  .btn.secondary:active { box-shadow: 0 1px 0 #9DB8D2; }
+  .btn-row { display: flex; gap: 12px; margin-top: 12px; }
+  .btn-row .btn { flex: 1; }
+  .stack > * + * { margin-top: 12px; }
+  /* ---------- answer balloons ---------- */
+  .options { display: grid; gap: 12px; margin-top: 16px; }
+  .opt {
+    display: flex; align-items: center; gap: 14px; width: 100%; border: none; cursor: pointer;
+    font-family: inherit; font-size: 20px; font-weight: 800; color: #FFFFFF;
+    padding: 16px 18px; border-radius: 18px; text-align: left;
+    transition: transform .08s, box-shadow .08s, filter .15s, opacity .15s;
+  }
+  .opt .letter {
+    flex: none; width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(255, 255, 255, .28); display: flex; align-items: center; justify-content: center;
+    font-size: 19px;
+  }
+  .opt-a { background: linear-gradient(180deg, #FF8A8A, #FF6B6B); box-shadow: 0 6px 0 #C94B4B, 0 10px 16px rgba(16,35,63,.18); }
+  .opt-b { background: linear-gradient(180deg, #4ED6C8, #2EC4B6); box-shadow: 0 6px 0 #1E8A80, 0 10px 16px rgba(16,35,63,.18); }
+  .opt-c { background: linear-gradient(180deg, #9A8CFF, #7C6FF0); box-shadow: 0 6px 0 #5748C4, 0 10px 16px rgba(16,35,63,.18); }
+  .opt-d { background: linear-gradient(180deg, #FF96C6, #FF7AB8); box-shadow: 0 6px 0 #C94F8C, 0 10px 16px rgba(16,35,63,.18); }
+  .opt:not(:disabled):active { transform: translateY(5px); box-shadow: 0 1px 0 rgba(0,0,0,.35); }
+  .opt:disabled { cursor: default; }
+  .opt.wrong { filter: grayscale(1); opacity: .45; }
+  .opt.right { outline: 4px solid #2EC4B6; outline-offset: 2px; animation: pop .35s ease; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
+  /* ---------- question screen ---------- */
+  .meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .stage-badge {
+    background: #10233F; color: #FFD166; font-weight: 800; font-size: 13px;
+    padding: 6px 12px; border-radius: 999px; letter-spacing: .5px;
+  }
+  .qcount { font-weight: 800; font-size: 15px; }
+  .progress { height: 12px; background: #DCEBF8; border-radius: 999px; overflow: hidden; margin: 10px 0 16px; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #F2A007, #FF6B6B); border-radius: 999px; transition: width .3s ease; }
+  .diagram { background: #FFFFFF; border: 2px solid #E3EEF8; border-radius: 16px; padding: 8px; margin: 12px 0 4px; }
+  .diagram svg { width: 100%; height: auto; display: block; border-radius: 10px; }
+  .qtext { font-size: 19px; font-weight: 700; line-height: 1.45; margin: 12px 0 4px; }
+  .hint { color: #3D5A80; font-size: 14px; }
+  .feedback {
+    display: none; margin-top: 16px; background: #E9FBF4; border: 2px solid #2EC4B6;
+    border-radius: 16px; padding: 16px;
+  }
+  .feedback.show { display: block; }
+  .feedback h3 { color: #0E7A6E; }
+  .working { font-size: 17px; font-weight: 700; background: #FFFFFF; border-radius: 10px; padding: 10px 12px; margin: 8px 0 12px; }
+  .points { font-weight: 800; color: #B97A00; }
+  /* ---------- fever ---------- */
+  .fever-badge {
+    display: none; text-align: center; font-weight: 900; font-size: 18px; letter-spacing: 1px;
+    color: #FFFFFF; background: linear-gradient(90deg, #FF6B6B, #F2A007, #FF7AB8);
+    border-radius: 999px; padding: 8px 14px; margin-bottom: 12px;
+    animation: feverPulse .7s ease-in-out infinite alternate;
+    box-shadow: 0 0 22px rgba(242, 160, 7, .8);
+  }
+  body.fever .fever-badge { display: block; }
+  @keyframes feverPulse { from { transform: scale(1); } to { transform: scale(1.04); } }
+  /* ---------- concept rules ---------- */
+  .rule { border: 2px solid #E3EEF8; border-radius: 16px; padding: 14px; margin-bottom: 14px; }
+  .rule h3 { color: #10233F; }
+  .rule svg { width: 100%; height: auto; display: block; border-radius: 10px; margin-top: 8px; }
+  .rule-num {
+    display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+    border-radius: 50%; background: #F2A007; color: #FFFFFF; font-size: 15px; font-weight: 800; margin-right: 6px;
+  }
+  /* ---------- final screen ---------- */
+  .big-score { font-size: 52px; font-weight: 900; line-height: 1; margin: 6px 0; }
+  .big-score small { font-size: 24px; color: #3D5A80; }
+  .review-item { border: 2px solid #E3EEF8; border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+  .review-item .ans { font-weight: 800; color: #0E7A6E; }
+  .review-item .wk { font-size: 14px; color: #3D5A80; }
+  .review-item .first { font-size: 13px; font-weight: 700; color: #B97A00; }
+  /* ---------- how to play ---------- */
+  .howto-list { margin: 10px 0 0; padding-left: 22px; line-height: 1.7; font-size: 16px; }
+  .home-link { display: inline-block; margin-top: 16px; font-weight: 700; color: #10233F; text-decoration: none; }
+  .best-line { font-weight: 800; color: #B97A00; }
+  @media print {
+    body { background: #FFFFFF; }
+    .sky, header.topbar, .btn, .home-link { display: none !important; }
+    .screen { display: none !important; }
+    #screen-final { display: block !important; }
+    .card { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg width="34" height="42" viewBox="0 0 34 42" aria-hidden="true"><ellipse cx="17" cy="14" rx="15" ry="13" fill="#FF6B6B" stroke="#10233F" stroke-width="1.5"/><path d="M17 27 L15 34 L19 34 Z" fill="#FF6B6B" stroke="#10233F" stroke-width="1.2"/><path d="M17 34 C 14 38, 20 39, 17 42" fill="none" stroke="#10233F" stroke-width="1.5"/></svg>
+      <span>Battle Balloon</span>
+    </div>
+    <button class="icon-btn" id="sound-toggle" type="button" aria-label="Toggle sound">
+      <svg id="sound-icon-on" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10233F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="#F2A007"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      <svg id="sound-icon-off" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10233F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="#B0BEC5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+    </button>
+  </header>
+
+  <!-- ============ START SCREEN ============ -->
+  <section id="screen-start" class="screen active">
+    <div class="card stack" style="text-align:center">
+      <span class="tag">ANGLES IN FIGURES &middot; GRADE 6</span>
+      <h1>Battle Balloon<br>Trapeziums</h1>
+      <p class="subtitle">Pop the balloons, find the missing angles, and win the sky festival!</p>
+      <p class="best-line" id="best-line">Best score: 0 / 10</p>
+      <button class="btn" id="btn-play" type="button">Play</button>
+      <button class="btn secondary" id="btn-concept" type="button">Learn the Rules</button>
+      <button class="btn secondary" id="btn-howto" type="button">How to Play</button>
+      <a class="home-link" href="index.html">&larr; Back to Hub</a>
+    </div>
+  </section>
+
+  <!-- ============ CONCEPT SCREEN ============ -->
+  <section id="screen-concept" class="screen">
+    <div class="card">
+      <h2>Learn the Rules</h2>
+      <p class="subtitle">Nine angle rules you need for this battle.</p>
+      <div id="concept-list"></div>
+      <button class="btn" id="btn-concept-back" type="button">Back</button>
+    </div>
+  </section>
+
+  <!-- ============ HOW TO PLAY SCREEN ============ -->
+  <section id="screen-howto" class="screen">
+    <div class="card">
+      <h2>How to Play</h2>
+      <ol class="howto-list">
+        <li>Tap a balloon to answer. No aiming, no dragging.</li>
+        <li>A wrong balloon pops grey and stays out &mdash; keep trying until you get it right.</li>
+        <li>First try: 100 points plus a combo bonus (up to 200). Second try: 50 points. Third try or later: 25 points.</li>
+        <li>Answer three questions in a row on the first try to enter FEVER MODE &mdash; faster beat and a balloon frenzy.</li>
+        <li>There is no timer. Take your time and think.</li>
+        <li>10 questions in 2 stages: Balloon Meadow, then Rainbow Sky.</li>
+      </ol>
+      <div style="margin-top:16px"><button class="btn" id="btn-howto-back" type="button">Back</button></div>
+    </div>
+  </section>
+
+  <!-- ============ QUESTION SCREEN ============ -->
+  <section id="screen-question" class="screen">
+    <div class="fever-badge" id="fever-badge">FEVER MODE</div>
+    <div class="card">
+      <div class="meta">
+        <span class="qcount" id="q-count">Question 1 of 10</span>
+        <span class="stage-badge" id="stage-name">Balloon Meadow</span>
+      </div>
+      <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="diagram" id="diagram"></div>
+      <p class="qtext" id="q-text"></p>
+      <p class="hint" id="q-hint"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <h3 id="feedback-title">Correct!</h3>
+        <p class="points" id="feedback-points"></p>
+        <p style="font-weight:700">Working:</p>
+        <div class="working" id="feedback-working"></div>
+        <button class="btn" id="btn-next" type="button">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STAGE TRANSITION SCREEN ============ -->
+  <section id="screen-stage" class="screen">
+    <div class="card stack" style="text-align:center">
+      <span class="tag">STAGE 1 COMPLETE</span>
+      <h1 id="stage-title">Stage 2: Rainbow Sky</h1>
+      <p class="subtitle" id="stage-text">You cleared Balloon Meadow! The balloons are rising higher &mdash; five more questions in the Rainbow Sky.</p>
+      <p class="best-line" id="stage-score"></p>
+      <button class="btn" id="btn-stage-continue" type="button">Continue to Stage 2</button>
+    </div>
+  </section>
+
+  <!-- ============ FINAL SCREEN ============ -->
+  <section id="screen-final" class="screen">
+    <div class="card">
+      <div style="text-align:center">
+        <span class="tag">BATTLE COMPLETE</span>
+        <h2 style="margin-top:10px">Your Result</h2>
+        <div class="big-score"><span id="final-correct">0</span><small> / 10 correct</small></div>
+        <p class="best-line" id="final-points"></p>
+        <p class="best-line" id="final-best"></p>
+      </div>
+      <h3 style="margin-top:20px">Review</h3>
+      <div id="review-list"></div>
+      <div class="stack" style="margin-top:16px">
+        <button class="btn" id="btn-print" type="button">Print</button>
+        <button class="btn secondary" id="btn-again" type="button">Play Again</button>
+        <a class="btn secondary" href="index.html">Home</a>
+      </div>
+    </div>
+  </section>
+</div>
+<script>
+"use strict";
+/* ============================================================
+   BATTLE BALLOON — GAME CONFIG (replace for other games)
+   ============================================================ */
+var GAME_TITLE = "Trapeziums";
+var BEST_KEY = "battleBalloon_best_trapeziums";
+var STAGE_NAMES = ["Balloon Meadow", "Rainbow Sky"];
+var STAGE_SIZE = 5;
+
+/* REPLACE QUESTIONS HERE */
+var QUESTIONS = [
+  {
+    n: 1,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 115 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">115°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["65°", "115°", "90°", "80°"],
+    correct: 0,
+    working: "180 - 115 = 65",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 2,
+    section: "Trapeziums",
+    q: "In an isosceles trapezium, one base angle is 70 degrees. What is the other base angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="110,60 210,60 260,170 60,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="92" y1="100" x2="102" y2="118" stroke="#F2A007" stroke-width="3"/><line x1="228" y1="100" x2="218" y2="118" stroke="#F2A007" stroke-width="3"/><text x="72" y="158" font-size="16" fill="#10233F" font-weight="bold">70°</text><text x="228" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="192" font-size="15" fill="#10233F">A</text><text x="262" y="192" font-size="15" fill="#10233F">B</text><text x="262" y="48" font-size="15" fill="#10233F">C</text><text x="102" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["50°", "90°", "70°", "110°"],
+    correct: 2,
+    working: "Base angles in an isosceles trapezium are equal, so the other base angle is 70°.",
+    hint: "In an isosceles trapezium, the base angles are equal."
+  },
+  {
+    n: 3,
+    section: "Trapeziums",
+    q: "In a trapezium, an angle on a leg is 100 degrees. What is the angle next to it on the same leg?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="108" y="88" font-size="16" fill="#10233F" font-weight="bold">100°</text><text x="62" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["100°", "80°", "90°", "60°"],
+    correct: 1,
+    working: "180 - 100 = 80",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 4,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 70 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">70°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["70°", "110°", "90°", "180°"],
+    correct: 1,
+    working: "180 - 70 = 110",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 5,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 125 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">125°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["125°", "90°", "65°", "55°"],
+    correct: 3,
+    working: "180 - 125 = 55",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 6,
+    section: "Trapeziums",
+    q: "In an isosceles trapezium, one base angle is 80 degrees. What is the other base angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="110,60 210,60 260,170 60,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="92" y1="100" x2="102" y2="118" stroke="#F2A007" stroke-width="3"/><line x1="228" y1="100" x2="218" y2="118" stroke="#F2A007" stroke-width="3"/><text x="72" y="158" font-size="16" fill="#10233F" font-weight="bold">80°</text><text x="228" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="192" font-size="15" fill="#10233F">A</text><text x="262" y="192" font-size="15" fill="#10233F">B</text><text x="262" y="48" font-size="15" fill="#10233F">C</text><text x="102" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["80°", "100°", "90°", "60°"],
+    correct: 0,
+    working: "Base angles in an isosceles trapezium are equal, so the other base angle is 80°.",
+    hint: "In an isosceles trapezium, the base angles are equal."
+  },
+  {
+    n: 7,
+    section: "Trapeziums",
+    q: "In an isosceles trapezium, the top angle is 120 degrees. What is the bottom base angle on the same leg?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="110,60 210,60 260,170 60,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="92" y1="100" x2="102" y2="118" stroke="#F2A007" stroke-width="3"/><line x1="228" y1="100" x2="218" y2="118" stroke="#F2A007" stroke-width="3"/><text x="108" y="88" font-size="16" fill="#10233F" font-weight="bold">120°</text><text x="72" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="192" font-size="15" fill="#10233F">A</text><text x="262" y="192" font-size="15" fill="#10233F">B</text><text x="262" y="48" font-size="15" fill="#10233F">C</text><text x="102" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["120°", "60°", "90°", "180°"],
+    correct: 1,
+    working: "180 - 120 = 60",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 8,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 95 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">95°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["95°", "90°", "85°", "180°"],
+    correct: 2,
+    working: "180 - 95 = 85",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 9,
+    section: "Trapeziums",
+    q: "In an isosceles trapezium, one base angle is 55 degrees. What is the top angle on the same leg?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="110,60 210,60 260,170 60,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="92" y1="100" x2="102" y2="118" stroke="#F2A007" stroke-width="3"/><line x1="228" y1="100" x2="218" y2="118" stroke="#F2A007" stroke-width="3"/><text x="72" y="158" font-size="16" fill="#10233F" font-weight="bold">55°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="192" font-size="15" fill="#10233F">A</text><text x="262" y="192" font-size="15" fill="#10233F">B</text><text x="262" y="48" font-size="15" fill="#10233F">C</text><text x="102" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["55°", "90°", "65°", "125°"],
+    correct: 3,
+    working: "180 - 55 = 125",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 10,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 140 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">140°</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["40°", "140°", "90°", "180°"],
+    correct: 0,
+    working: "180 - 140 = 40",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  }
+];
+/* END REPLACE QUESTIONS HERE */
+
+var CONCEPT_RULES = [
+  { title: "Angles in a Triangle", text: "The three angles in a triangle add up to 180°.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">50°</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">60°</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">70°</text><text x="110" y="132" font-size="13" fill="#10233F">50 + 60 + 70 = 180</text></svg>' },
+  { title: "Isosceles Triangle", text: "Two equal sides mean two equal base angles.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="122" y1="52" x2="134" y2="64" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="52" x2="186" y2="64" stroke="#F2A007" stroke-width="3"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">70°</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">70°</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">40°</text></svg>' },
+  { title: "Right Triangle", text: "One angle is 90°. The other two angles add up to 90°.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="70,110 70,20 230,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><rect x="70" y="90" width="20" height="20" fill="none" stroke="#10233F" stroke-width="2"/><text x="82" y="52" font-size="15" fill="#10233F" font-weight="bold">35°</text><text x="198" y="100" font-size="15" fill="#10233F" font-weight="bold">55°</text></svg>' },
+  { title: "Equilateral Triangle", text: "All sides are equal and all angles are 60°.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">60°</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">60°</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">60°</text></svg>' },
+  { title: "Exterior Angle", text: "The exterior angle equals the sum of the two opposite interior angles.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="80,100 200,100 140,30" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="200" y1="100" x2="260" y2="100" stroke="#10233F" stroke-width="2.5"/><text x="92" y="90" font-size="15" fill="#10233F" font-weight="bold">55°</text><text x="138" y="62" font-size="15" fill="#10233F" font-weight="bold">65°</text><text x="208" y="82" font-size="15" fill="#F2A007" font-weight="bold">120°</text></svg>' },
+  { title: "Parallelogram", text: "Opposite angles are equal. Adjacent angles add up to 180°.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,110 210,110 250,30 130,30" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><text x="102" y="98" font-size="15" fill="#10233F" font-weight="bold">70°</text><text x="178" y="98" font-size="15" fill="#10233F" font-weight="bold">110°</text><text x="218" y="58" font-size="15" fill="#10233F" font-weight="bold">70°</text><text x="138" y="58" font-size="15" fill="#10233F" font-weight="bold">110°</text></svg>' },
+  { title: "Trapezium", text: "Angles on the same leg, between the parallel sides, add up to 180°. In an isosceles trapezium, the base angles are equal.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,30 220,30 270,110 50,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="62" y="98" font-size="15" fill="#10233F" font-weight="bold">115°</text><text x="108" y="58" font-size="15" fill="#10233F" font-weight="bold">65°</text><text x="228" y="98" font-size="15" fill="#10233F" font-weight="bold">65°</text></svg>' },
+  { title: "Angles on a Straight Line", text: "Angles on a straight line add up to 180°.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><line x1="40" y1="100" x2="280" y2="100" stroke="#10233F" stroke-width="2.5"/><line x1="160" y1="100" x2="160" y2="30" stroke="#10233F" stroke-width="2.5"/><text x="92" y="88" font-size="15" fill="#10233F" font-weight="bold">120°</text><text x="172" y="88" font-size="15" fill="#10233F" font-weight="bold">60°</text><text x="110" y="125" font-size="13" fill="#10233F">120 + 60 = 180</text></svg>' },
+  { title: "Combined Figures", text: "Use the rules step by step: find one angle first, then use it to find the next angle.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><rect x="110" y="40" width="60" height="60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><polygon points="110,100 170,100 140,130" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="128" y="78" font-size="14" fill="#10233F" font-weight="bold">90°</text><text x="132" y="118" font-size="13" fill="#10233F" font-weight="bold">60°</text></svg>' }
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var state = { q: 0, attempts: 0, combo: 0, score: 0, correct: 0, results: [], locked: false };
+var soundOn = true;
+var audioCtx = null;
+var beatTimer = null;
+var beatStep = 0;
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/* ============================================================
+   SCREEN FLOW — every transition goes through showScreen().
+   Never switch screens by any other means.
+   ============================================================ */
+function showScreen(id) {
+  var screens = document.querySelectorAll(".screen");
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove("active");
+  $(id).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+function stageOf(index) { return index < STAGE_SIZE ? 0 : 1; }
+
+function loadQuestion(index) {
+  var q = QUESTIONS[index];
+  state.q = index;
+  state.attempts = 0;
+  state.locked = false;
+  $("q-count").textContent = "Question " + (index + 1) + " of " + QUESTIONS.length;
+  $("stage-name").textContent = STAGE_NAMES[stageOf(index)];
+  $("progress-fill").style.width = (index / QUESTIONS.length * 100) + "%";
+  $("diagram").innerHTML = q.svg;
+  $("q-text").textContent = q.q;
+  $("q-hint").textContent = "Hint: " + q.hint;
+  $("feedback").classList.remove("show");
+  var letters = ["A", "B", "C", "D"];
+  var optClasses = ["opt-a", "opt-b", "opt-c", "opt-d"];
+  var html = "";
+  for (var i = 0; i < q.options.length; i++) {
+    html += '<button type="button" class="opt ' + optClasses[i] + '" data-index="' + i + '">' +
+      '<span class="letter">' + letters[i] + '</span><span>' + esc(q.options[i]) + '</span></button>';
+  }
+  $("options").innerHTML = html;
+  var buttons = $("options").querySelectorAll(".opt");
+  for (var j = 0; j < buttons.length; j++) {
+    buttons[j].addEventListener("click", onAnswer);
+  }
+  updateFever();
+}
+
+function startGame() {
+  state = { q: 0, attempts: 0, combo: 0, score: 0, correct: 0, results: [], locked: false };
+  loadQuestion(0);
+  showScreen("screen-question");
+  startBeat();
+}
+
+function onAnswer(event) {
+  if (state.locked) return;
+  var btn = event.currentTarget;
+  var idx = parseInt(btn.getAttribute("data-index"), 10);
+  var q = QUESTIONS[state.q];
+  if (idx === q.correct) {
+    state.locked = true;
+    var points;
+    if (state.attempts === 0) {
+      state.combo += 1;
+      points = 100 + Math.min((state.combo - 1) * 25, 100);
+    } else {
+      state.combo = 0;
+      points = state.attempts === 1 ? 50 : 25;
+    }
+    state.score += points;
+    state.correct += 1;
+    state.results[state.q] = { firstTry: state.attempts === 0, attempts: state.attempts + 1, points: points };
+    btn.classList.add("right");
+    var others = $("options").querySelectorAll(".opt");
+    for (var i = 0; i < others.length; i++) others[i].disabled = true;
+    $("feedback-title").textContent = "Correct! Balloon popped!";
+    $("feedback-points").textContent = "+" + points + " points  •  Combo x" + state.combo + "  •  Total: " + state.score;
+    $("feedback-working").textContent = q.working;
+    $("feedback").classList.add("show");
+    playPop();
+    updateFever();
+  } else {
+    state.attempts += 1;
+    state.combo = 0;
+    btn.classList.add("wrong");
+    btn.disabled = true;
+    playThud();
+    updateFever();
+  }
+}
+
+function onNext() {
+  if (state.q === STAGE_SIZE - 1) {
+    /* End of Stage 1 -> stage transition screen (explicit showScreen). */
+    $("stage-title").textContent = "Stage 2: " + STAGE_NAMES[1];
+    $("stage-text").textContent = "You cleared " + STAGE_NAMES[0] + "! The balloons are rising higher — five more questions in the " + STAGE_NAMES[1] + ".";
+    $("stage-score").textContent = "Score so far: " + state.correct + " / " + STAGE_SIZE + " correct • " + state.score + " points";
+    showScreen("screen-stage");
+  } else if (state.q === QUESTIONS.length - 1) {
+    finishGame();
+  } else {
+    loadQuestion(state.q + 1);
+    showScreen("screen-question");
+  }
+}
+
+function finishGame() {
+  stopBeat();
+  var prev = 0;
+  try { prev = parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) { prev = 0; }
+  var best = Math.max(prev, state.correct);
+  try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {}
+  $("final-correct").textContent = state.correct;
+  $("final-points").textContent = "Total points: " + state.score;
+  $("final-best").textContent = "Best score: " + best + " / " + QUESTIONS.length;
+  var html = "";
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    var q = QUESTIONS[i];
+    var r = state.results[i] || { firstTry: false, attempts: 0, points: 0 };
+    html += '<div class="review-item"><strong>Q' + q.n + '.</strong> ' + esc(q.q) +
+      '<br><span class="ans">Answer: ' + esc(q.options[q.correct]) + '</span>' +
+      ' <span class="first">' + (r.firstTry ? 'First try!' : 'Solved in ' + r.attempts + ' tries') + '</span>' +
+      '<br><span class="wk">Working: ' + esc(q.working) + '</span></div>';
+  }
+  $("review-list").innerHTML = html;
+  showScreen("screen-final");
+}
+
+function updateFever() {
+  document.body.classList.toggle("fever", state.combo >= 3);
+  if (state.combo >= 3) startBeat(); else startBeat();
+}
+
+/* ============================================================
+   CONCEPT PAGE
+   ============================================================ */
+function renderConcept() {
+  var html = "";
+  for (var i = 0; i < CONCEPT_RULES.length; i++) {
+    var r = CONCEPT_RULES[i];
+    html += '<div class="rule"><h3><span class="rule-num">' + (i + 1) + '</span>' + esc(r.title) + '</h3>' +
+      '<p>' + esc(r.text) + '</p>' + r.svg + '</div>';
+  }
+  $("concept-list").innerHTML = html;
+}
+
+/* ============================================================
+   AUDIO — Web Audio, all levels capped at 0.9
+   ============================================================ */
+function ensureAudio() {
+  if (!audioCtx) {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    } catch (e) { audioCtx = null; }
+  }
+  if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+}
+function tone(freqStart, freqEnd, duration, type, volume) {
+  if (!soundOn || !audioCtx) return;
+  try {
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.setValueAtTime(freqStart, t);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), t + duration);
+    gain.gain.setValueAtTime(Math.min(volume, 0.9), t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + duration + 0.02);
+  } catch (e) {}
+}
+function playPop() {
+  ensureAudio();
+  tone(620, 180, 0.14, "sine", 0.9);
+  tone(1240, 900, 0.08, "triangle", 0.4);
+}
+function playThud() {
+  ensureAudio();
+  tone(180, 90, 0.18, "sine", 0.5);
+}
+function startBeat() {
+  stopBeat();
+  if (!soundOn) return;
+  ensureAudio();
+  var fever = state.combo >= 3;
+  var interval = fever ? 260 : 520;
+  beatTimer = setInterval(function () {
+    if (!soundOn || !audioCtx) return;
+    beatStep++;
+    if (beatStep % 2 === 1) tone(150, 70, 0.12, "sine", 0.35);
+    else tone(440, 440, 0.07, "triangle", 0.18);
+  }, interval);
+}
+function stopBeat() {
+  if (beatTimer) { clearInterval(beatTimer); beatTimer = null; }
+}
+
+/* ============================================================
+   SOUND TOGGLE (persisted)
+   ============================================================ */
+function applySoundIcon() {
+  $("sound-icon-on").style.display = soundOn ? "" : "none";
+  $("sound-icon-off").style.display = soundOn ? "none" : "";
+}
+function toggleSound() {
+  soundOn = !soundOn;
+  try { localStorage.setItem("battleBalloon_sound", soundOn ? "on" : "off"); } catch (e) {}
+  applySoundIcon();
+  if (soundOn) { ensureAudio(); playPop(); startBeat(); } else { stopBeat(); }
+}
+
+/* ============================================================
+   FLOATING BALLOONS (decorative sky)
+   ============================================================ */
+function buildSky() {
+  var colors = ["#FF6B6B", "#2EC4B6", "#7C6FF0", "#FF7AB8", "#FFD166", "#FF6B6B", "#2EC4B6", "#7C6FF0"];
+  var html = "";
+  for (var i = 0; i < 8; i++) {
+    var left = 2 + i * 12 + (i % 2) * 4;
+    var size = 34 + (i % 3) * 12;
+    var dur = 16 + (i % 4) * 6;
+    var delay = -i * 3;
+    var extra = i >= 5 ? " extra" : "";
+    html += '<div class="balloon' + extra + '" style="left:' + left + '%;animation-duration:' + dur + 's;animation-delay:' + delay + 's">' +
+      '<svg width="' + size + '" height="' + Math.round(size * 1.25) + '" viewBox="0 0 34 42"><ellipse cx="17" cy="14" rx="15" ry="13" fill="' + colors[i] + '" stroke="#10233F" stroke-width="1"/><path d="M17 27 L15 33 L19 33 Z" fill="' + colors[i] + '" stroke="#10233F" stroke-width="1"/><path d="M17 33 C 14 37, 20 38, 17 41" fill="none" stroke="#10233F" stroke-width="1.2"/></svg></div>';
+  }
+  $("sky").innerHTML = html;
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+function init() {
+  try { soundOn = localStorage.getItem("battleBalloon_sound") !== "off"; } catch (e) { soundOn = true; }
+  applySoundIcon();
+  buildSky();
+  renderConcept();
+  var best = 0;
+  try { best = parseInt(localStorage.getItem(BEST_KEY), 10) || 0; } catch (e) { best = 0; }
+  $("best-line").textContent = "Best score: " + best + " / " + QUESTIONS.length;
+  document.title = "Battle Balloon — " + GAME_TITLE;
+  $("btn-play").addEventListener("click", function () { ensureAudio(); startGame(); });
+  $("btn-concept").addEventListener("click", function () { showScreen("screen-concept"); });
+  $("btn-concept-back").addEventListener("click", function () { showScreen("screen-start"); });
+  $("btn-howto").addEventListener("click", function () { showScreen("screen-howto"); });
+  $("btn-howto-back").addEventListener("click", function () { showScreen("screen-start"); });
+  $("btn-next").addEventListener("click", onNext);
+  $("btn-stage-continue").addEventListener("click", function () {
+    loadQuestion(STAGE_SIZE);
+    showScreen("screen-question");
+  });
+  $("btn-print").addEventListener("click", function () { window.print(); });
+  $("btn-again").addEventListener("click", function () { startGame(); });
+  $("sound-toggle").addEventListener("click", toggleSound);
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+</script>
+</body>
+</html>
