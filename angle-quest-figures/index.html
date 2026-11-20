@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angle Quest — Finding Unknown Angles in Geometric Figures</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #10233F;
+    --navy2: #16305A;
+    --navy3: #0B1A30;
+    --amber: #F2A007;
+    --amber-dark: #C97F00;
+    --paper: #FFFFFF;
+    --ink: #10233F;
+    --muted: #5A6B84;
+    --line: #D9E2EE;
+    --green: #1E8E5A;
+    --red: #C0392B;
+    --cream: #FFF8E6;
+    --pale: #EAF0F8;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--navy3);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .bg-shapes { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+  .bg-shapes .shape { position: absolute; border: 2px solid rgba(242,160,7,0.18); }
+  .bg-shapes .tri { width: 0; height: 0; border-left: 70px solid transparent; border-right: 70px solid transparent; border-bottom: 120px solid rgba(242,160,7,0.10); border-top: none; }
+  .bg-shapes .circ { border-radius: 50%; border-color: rgba(255,255,255,0.10); }
+  .bg-shapes .sq { border-color: rgba(255,255,255,0.08); }
+  .app { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 20px 16px 48px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
+  }
+  .topbar .brand { color: #fff; font-weight: 800; letter-spacing: 1px; font-size: 15px; }
+  .topbar .brand span { color: var(--amber); }
+  .icon-btn {
+    background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 10px; padding: 8px 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.22); }
+  h1 { font-size: 44px; line-height: 1.05; color: var(--navy); text-align: center; }
+  h1 .accent { color: var(--amber); }
+  .subtitle { text-align: center; color: var(--muted); font-size: 17px; margin-top: 10px; line-height: 1.5; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; margin: 16px 0 4px; flex-wrap: wrap; }
+  .badge {
+    background: var(--pale); color: var(--navy); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700;
+  }
+  .badge.gold { background: var(--cream); border-color: var(--amber); color: var(--amber-dark); }
+  .btn {
+    display: block; width: 100%; border: none; cursor: pointer;
+    background: var(--amber); color: var(--navy); font-weight: 800; font-size: 18px;
+    padding: 16px 20px; border-radius: 12px;
+    box-shadow: 0 5px 0 var(--amber-dark);
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    text-align: center; text-decoration: none;
+  }
+  .btn:hover { filter: brightness(1.05); }
+  .btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--amber-dark); }
+  .btn.secondary {
+    background: var(--paper); color: var(--navy);
+    border: 2px solid var(--navy); box-shadow: 0 5px 0 var(--navy);
+  }
+  .btn.secondary:active { box-shadow: 0 1px 0 var(--navy); }
+  .btn.navy { background: var(--navy); color: #fff; box-shadow: 0 5px 0 #081426; }
+  .btn.navy:active { box-shadow: 0 1px 0 #081426; }
+  .btn-row { display: flex; gap: 12px; margin-top: 12px; }
+  .btn-row .btn { flex: 1; }
+  .stack { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+  .howto { margin-top: 24px; background: var(--pale); border-radius: 12px; padding: 18px 20px; }
+  .howto h2 { font-size: 18px; margin-bottom: 10px; color: var(--navy); }
+  .howto ol { margin-left: 20px; line-height: 1.7; color: #24344D; font-size: 15px; }
+  .best-line { text-align: center; margin-top: 14px; font-weight: 700; color: var(--amber-dark); font-size: 15px; }
+  .best-line:empty { display: none; }
+  .section-label {
+    display: inline-block; background: var(--navy); color: #fff; font-size: 13px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase; border-radius: 999px; padding: 6px 14px; margin-bottom: 12px;
+  }
+  .progress-wrap { margin: 10px 0 18px; }
+  .progress-text { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+  .progress-bar { height: 12px; background: var(--pale); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+  .progress-fill { height: 100%; width: 0%; background: var(--amber); border-radius: 999px; transition: width 0.3s ease; }
+  .diagram { border: 2px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 16px; background: #fff; }
+  .diagram svg { display: block; width: 100%; height: auto; }
+  .question-text { font-size: 20px; line-height: 1.5; font-weight: 700; color: var(--navy); margin-bottom: 18px; }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .opt {
+    display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer;
+    background: #fff; border: 2px solid var(--navy); border-radius: 12px; padding: 16px 14px;
+    font-size: 19px; font-weight: 800; color: var(--navy);
+    box-shadow: 0 4px 0 var(--navy); transition: transform 0.05s ease, box-shadow 0.05s ease;
+  }
+  .opt:hover:not(:disabled) { background: var(--cream); }
+  .opt:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--navy); }
+  .opt .letter {
+    flex: 0 0 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .opt.correct { background: #DFF5E9; border-color: var(--green); color: var(--green); box-shadow: 0 4px 0 var(--green); }
+  .opt.correct .letter { background: var(--green); }
+  .opt.wrong { background: #F2F2F2; border-color: #B9C2CF; color: #9AA5B5; box-shadow: 0 4px 0 #B9C2CF; cursor: not-allowed; }
+  .opt.wrong .letter { background: #B9C2CF; }
+  .opt:disabled { cursor: not-allowed; }
+  .hint-row { margin-top: 16px; }
+  .hint-btn {
+    background: none; border: none; color: var(--amber-dark); font-weight: 800; font-size: 15px;
+    cursor: pointer; text-decoration: underline; padding: 4px 0;
+  }
+  .hint-text {
+    display: none; margin-top: 8px; background: var(--cream); border-left: 4px solid var(--amber);
+    border-radius: 8px; padding: 12px 14px; font-size: 15px; line-height: 1.55; color: #4A3A00;
+  }
+  .hint-text.show { display: block; }
+  .feedback {
+    display: none; margin-top: 18px; border-radius: 12px; padding: 18px;
+    border: 2px solid var(--green); background: #EFFAF4;
+  }
+  .feedback.show { display: block; }
+  .feedback.try-again { border-color: var(--red); background: #FDF0EE; }
+  .feedback h3 { font-size: 18px; margin-bottom: 6px; }
+  .feedback.try-again h3 { color: var(--red); }
+  .feedback:not(.try-again) h3 { color: var(--green); }
+  .feedback p { font-size: 15px; line-height: 1.6; color: #24344D; }
+  .feedback .working { font-weight: 800; color: var(--navy); margin-top: 8px; font-size: 16px; }
+  .feedback .points { font-weight: 800; color: var(--amber-dark); margin-top: 6px; }
+  .feedback .btn { margin-top: 14px; }
+  .concept-grid { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+  .concept-card { border: 2px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .concept-card .diagram { border: none; border-bottom: 2px solid var(--line); border-radius: 0; margin-bottom: 0; }
+  .concept-card .concept-body { padding: 14px 16px; }
+  .concept-card h3 { font-size: 18px; color: var(--navy); margin-bottom: 6px; }
+  .concept-card p { font-size: 15px; line-height: 1.6; color: #24344D; }
+  .final-score { text-align: center; padding: 10px 0 4px; }
+  .final-score .big { font-size: 56px; font-weight: 900; color: var(--navy); line-height: 1; }
+  .final-score .big span { color: var(--amber); }
+  .final-score .sub { font-size: 18px; font-weight: 700; color: var(--muted); margin-top: 8px; }
+  .final-msg { text-align: center; font-size: 16px; line-height: 1.6; color: #24344D; margin: 12px 0 4px; }
+  .review-list { display: flex; flex-direction: column; gap: 14px; margin: 20px 0; }
+  .review-item { border: 2px solid var(--line); border-radius: 12px; overflow: hidden; text-align: left; }
+  .review-item .diagram { border: none; border-bottom: 2px solid var(--line); border-radius: 0; margin-bottom: 0; }
+  .review-body { padding: 14px 16px; }
+  .review-body .q-line { font-weight: 800; font-size: 15px; line-height: 1.5; color: var(--navy); margin-bottom: 8px; }
+  .review-body .ans { font-size: 15px; line-height: 1.6; color: #24344D; }
+  .review-body .ans .ok { color: var(--green); font-weight: 800; }
+  .review-body .ans .bad { color: var(--red); font-weight: 800; }
+  .review-body .working-line { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .review-tag {
+    display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.5px;
+    border-radius: 999px; padding: 4px 10px; margin-bottom: 8px; text-transform: uppercase;
+  }
+  .review-tag.right { background: #DFF5E9; color: var(--green); }
+  .review-tag.wrong { background: #FDE8E4; color: var(--red); }
+  .footer-note { text-align: center; color: rgba(255,255,255,0.65); font-size: 13px; margin-top: 22px; }
+  @media (max-width: 520px) {
+    h1 { font-size: 36px; }
+    .options { grid-template-columns: 1fr; }
+    .question-text { font-size: 18px; }
+    .card { padding: 22px 16px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .bg-shapes, .topbar, .no-print { display: none !important; }
+    .app { max-width: 100%; padding: 0; }
+    .card { box-shadow: none; border: none; padding: 0; }
+    .screen { display: none !important; }
+    .screen.active { display: block !important; }
+    .review-item { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-shapes" aria-hidden="true">
+  <div class="shape tri" style="top:6%;left:4%;transform:rotate(12deg);"></div>
+  <div class="shape circ" style="top:12%;right:6%;width:110px;height:110px;"></div>
+  <div class="shape sq" style="bottom:10%;left:8%;width:90px;height:90px;transform:rotate(20deg);"></div>
+  <div class="shape circ" style="bottom:16%;right:10%;width:60px;height:60px;"></div>
+  <div class="shape tri" style="top:48%;right:2%;transform:rotate(-18deg);"></div>
+  <div class="shape sq" style="top:38%;left:2%;width:56px;height:56px;transform:rotate(45deg);"></div>
+</div>
+
+<div class="app">
+
+  <!-- START SCREEN -->
+  <section class="screen active" id="screen-start">
+    <div class="topbar">
+      <div class="brand">ANGLE <span>QUEST</span></div>
+      <button class="icon-btn" id="btnSoundStart" type="button">Sound: On</button>
+    </div>
+    <div class="card">
+      <h1>Angle <span class="accent">Quest</span></h1>
+      <p class="subtitle">Finding Unknown Angles in Geometric Figures &mdash; Grade 6</p>
+      <div class="badge-row">
+        <span class="badge">20 Questions</span>
+        <span class="badge">Triangles</span>
+        <span class="badge">Parallelograms</span>
+        <span class="badge">Trapeziums</span>
+        <span class="badge gold">Combined Figures</span>
+      </div>
+      <div class="stack">
+        <button class="btn" id="btnPlay" type="button">Play</button>
+        <button class="btn secondary" id="btnRulesStart" type="button">Learn the Rules</button>
+      </div>
+      <p class="best-line" id="bestScore"></p>
+      <div class="howto">
+        <h2>How to Play</h2>
+        <ol>
+          <li>Look at the diagram and read the question carefully.</li>
+          <li>Tap one of the four answer buttons (A, B, C or D).</li>
+          <li>A wrong tap greys out that answer &mdash; try another one.</li>
+          <li>First try: 100 points plus a streak bonus (up to 200). Second try: 50 points. Third try or later: 25 points.</li>
+          <li>Answer all 20 questions, then review every answer on the final screen.</li>
+        </ol>
+      </div>
+    </div>
+    <p class="footer-note">Angle Quest &middot; Geometry Lab &middot; Grade 6 Mathematics</p>
+  </section>
+
+  <!-- CONCEPT PAGE -->
+  <section class="screen" id="screen-concepts">
+    <div class="topbar">
+      <div class="brand">ANGLE <span>QUEST</span></div>
+      <button class="icon-btn" id="btnSoundConcepts" type="button">Sound: On</button>
+    </div>
+    <div class="card">
+      <h1 style="font-size:32px;">Learn the Rules</h1>
+      <p class="subtitle">Nine angle rules you need for this quest. Read them, then start playing.</p>
+      <div class="concept-grid" id="conceptList"></div>
+      <div class="stack">
+        <button class="btn" id="btnConceptsStart" type="button">Start Playing</button>
+        <button class="btn secondary" id="btnConceptsBack" type="button">Back</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUESTION SCREEN -->
+  <section class="screen" id="screen-question">
+    <div class="topbar">
+      <div class="brand">ANGLE <span>QUEST</span></div>
+      <div>
+        <button class="icon-btn" id="btnRulesInGame" type="button">Rules</button>
+        <button class="icon-btn" id="btnSound" type="button">Sound: On</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="progress-wrap">
+        <div class="progress-text"><span id="progressText">Question 1 of 20</span><span id="scoreDisplay">Score: 0</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+      <span class="section-label" id="sectionLabel">Triangles</span>
+      <div class="diagram" id="diagramBox"></div>
+      <p class="question-text" id="questionText"></p>
+      <div class="options" id="optionsBox"></div>
+      <div class="hint-row">
+        <button class="hint-btn" id="btnHint" type="button">Show hint</button>
+        <p class="hint-text" id="hintText"></p>
+      </div>
+      <div class="feedback" id="feedbackBox">
+        <h3 id="feedbackTitle"></h3>
+        <p id="feedbackMessage"></p>
+        <p class="working" id="feedbackWorking"></p>
+        <p class="points" id="feedbackPoints"></p>
+        <button class="btn" id="btnNext" type="button">Next</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL SCREEN -->
+  <section class="screen" id="screen-final">
+    <div class="topbar no-print">
+      <div class="brand">ANGLE <span>QUEST</span></div>
+      <button class="icon-btn" id="btnSoundFinal" type="button">Sound: On</button>
+    </div>
+    <div class="card">
+      <h1 style="font-size:32px;">Quest Complete</h1>
+      <div class="final-score">
+        <div class="big"><span id="finalScore">0</span> points</div>
+        <div class="sub" id="finalCorrect">0 / 20 correct</div>
+      </div>
+      <p class="final-msg" id="finalMessage"></p>
+      <p class="best-line" id="finalBest"></p>
+      <div class="review-list" id="reviewList"></div>
+      <div class="stack no-print">
+        <button class="btn" id="btnPrint" type="button">Print Results</button>
+        <button class="btn navy" id="btnPlayAgain" type="button">Play Again</button>
+        <button class="btn secondary" id="btnHome" type="button">Home</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+var QUESTIONS = [
+  {
+    n: 1,
+    section: "Triangles",
+    q: "A triangle has angles of 50 degrees and 60 degrees. What is the third angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="60,180 260,180 178,39" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="72" y="168" font-size="16" fill="#10233F" font-weight="bold">50°</text><text x="228" y="168" font-size="16" fill="#10233F" font-weight="bold">60°</text><text x="170" y="72" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="200" font-size="15" fill="#10233F">A</text><text x="262" y="200" font-size="15" fill="#10233F">B</text><text x="174" y="28" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["60\u00b0", "70\u00b0", "80\u00b0", "110\u00b0"],
+    correct: 1,
+    working: "180 - (50 + 60) = 70",
+    hint: "The three angles in a triangle add up to 180 degrees."
+  },
+  {
+    n: 2,
+    section: "Triangles",
+    q: "An isosceles triangle has a vertex angle of 40 degrees. What is each base angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,40 60,180 260,180" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="122" y1="92" x2="134" y2="104" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="92" x2="186" y2="104" stroke="#F2A007" stroke-width="3"/><text x="152" y="72" font-size="16" fill="#10233F" font-weight="bold">40\u00b0</text><text x="72" y="168" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="232" y="168" font-size="16" fill="#10233F">?</text><text x="52" y="200" font-size="15" fill="#10233F">A</text><text x="262" y="200" font-size="15" fill="#10233F">B</text><text x="156" y="30" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["80\u00b0", "60\u00b0", "50\u00b0", "70\u00b0"],
+    correct: 3,
+    working: "(180 - 40) \u00f7 2 = 70",
+    hint: "The two base angles of an isosceles triangle are equal."
+  },
+  {
+    n: 3,
+    section: "Triangles",
+    q: "An isosceles triangle has a base angle of 65 degrees. What is the vertex angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,40 60,180 260,180" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="122" y1="92" x2="134" y2="104" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="92" x2="186" y2="104" stroke="#F2A007" stroke-width="3"/><text x="72" y="168" font-size="16" fill="#10233F" font-weight="bold">65\u00b0</text><text x="228" y="168" font-size="16" fill="#10233F" font-weight="bold">65\u00b0</text><text x="152" y="82" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="200" font-size="15" fill="#10233F">A</text><text x="262" y="200" font-size="15" fill="#10233F">B</text><text x="156" y="30" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["50\u00b0", "65\u00b0", "80\u00b0", "115\u00b0"],
+    correct: 0,
+    working: "180 - (65 + 65) = 50",
+    hint: "Add the two equal base angles first, then subtract from 180 degrees."
+  },
+  {
+    n: 4,
+    section: "Triangles",
+    q: "In a right triangle, one acute angle is 35 degrees. What is the other acute angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="70,170 70,50 250,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><rect x="70" y="150" width="20" height="20" fill="none" stroke="#10233F" stroke-width="2"/><text x="96" y="168" font-size="13" fill="#10233F" font-weight="bold">90°</text><text x="82" y="82" font-size="16" fill="#10233F" font-weight="bold">35\u00b0</text><text x="218" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="62" y="192" font-size="15" fill="#10233F">A</text><text x="62" y="40" font-size="15" fill="#10233F">B</text><text x="252" y="192" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["35\u00b0", "45\u00b0", "55\u00b0", "90\u00b0"],
+    correct: 2,
+    working: "180 - 90 - 35 = 55",
+    hint: "A right triangle has one angle of 90 degrees."
+  },
+  {
+    n: 5,
+    section: "Triangles",
+    q: "In an equilateral triangle, what is each angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,41 80,180 240,180" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="115" y1="108" x2="125" y2="114" stroke="#F2A007" stroke-width="3"/><line x1="195" y1="107" x2="205" y2="114" stroke="#F2A007" stroke-width="3"/><line x1="150" y1="180" x2="170" y2="180" stroke="#F2A007" stroke-width="3"/><text x="88" y="168" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="228" y="168" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="152" y="82" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="72" y="200" font-size="15" fill="#10233F">A</text><text x="232" y="200" font-size="15" fill="#10233F">B</text><text x="156" y="30" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["60\u00b0", "90\u00b0", "120\u00b0", "180\u00b0"],
+    correct: 0,
+    working: "180 \u00f7 3 = 60",
+    hint: "All three angles in an equilateral triangle are equal."
+  },
+  {
+    n: 6,
+    section: "Triangles",
+    q: "An isosceles triangle has two equal angles of 75 degrees. What is the third angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,40 60,180 260,180" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="122" y1="92" x2="134" y2="104" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="92" x2="186" y2="104" stroke="#F2A007" stroke-width="3"/><text x="72" y="168" font-size="16" fill="#10233F" font-weight="bold">75\u00b0</text><text x="228" y="168" font-size="16" fill="#10233F" font-weight="bold">75\u00b0</text><text x="152" y="82" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="200" font-size="15" fill="#10233F">A</text><text x="262" y="200" font-size="15" fill="#10233F">B</text><text x="156" y="30" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["15\u00b0", "75\u00b0", "30\u00b0", "105\u00b0"],
+    correct: 2,
+    working: "180 - 150 = 30",
+    hint: "Add the two equal angles first: 75 + 75 = 150."
+  },
+  {
+    n: 7,
+    section: "Triangles",
+    q: "The two opposite interior angles of a triangle are 55 degrees and 65 degrees. What is the exterior angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="80,170 230,170 162,53" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="230" y1="170" x2="295" y2="170" stroke="#10233F" stroke-width="2.5"/><text x="92" y="158" font-size="16" fill="#10233F" font-weight="bold">55°</text><text x="146" y="88" font-size="16" fill="#10233F" font-weight="bold">65°</text><text x="238" y="148" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="72" y="192" font-size="15" fill="#10233F">A</text><text x="222" y="192" font-size="15" fill="#10233F">B</text><text x="158" y="41" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["110\u00b0", "120\u00b0", "60\u00b0", "65\u00b0"],
+    correct: 1,
+    working: "55 + 65 = 120",
+    hint: "The exterior angle equals the sum of the two opposite interior angles."
+  },
+  {
+    n: 8,
+    section: "Triangles",
+    q: "In a right isosceles triangle, what is each acute angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="70,170 70,60 180,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><rect x="70" y="150" width="20" height="20" fill="none" stroke="#10233F" stroke-width="2"/><text x="96" y="168" font-size="13" fill="#10233F" font-weight="bold">90°</text><line x1="70" y1="105" x2="82" y2="117" stroke="#F2A007" stroke-width="3"/><line x1="115" y1="170" x2="127" y2="158" stroke="#F2A007" stroke-width="3"/><text x="82" y="92" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="148" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="62" y="192" font-size="15" fill="#10233F">A</text><text x="62" y="48" font-size="15" fill="#10233F">B</text><text x="182" y="192" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["90\u00b0", "60\u00b0", "30\u00b0", "45\u00b0"],
+    correct: 3,
+    working: "(180 - 90) \u00f7 2 = 45",
+    hint: "The two acute angles are equal, and they add up to 90 degrees."
+  },
+  {
+    n: 9,
+    section: "Parallelograms",
+    q: "In a parallelogram, one angle is 70 degrees. What is the opposite angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,170 230,170 270,60 130,60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><line x1="150" y1="60" x2="170" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="150" y1="170" x2="170" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="105" y1="140" x2="115" y2="120" stroke="#F2A007" stroke-width="3"/><line x1="245" y1="140" x2="255" y2="120" stroke="#F2A007" stroke-width="3"/><text x="102" y="158" font-size="16" fill="#10233F" font-weight="bold">70\u00b0</text><text x="238" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="192" font-size="15" fill="#10233F">A</text><text x="232" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="122" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["70\u00b0", "110\u00b0", "90\u00b0", "180\u00b0"],
+    correct: 0,
+    working: "Opposite angles in a parallelogram are equal, so the opposite angle is 70\u00b0.",
+    hint: "Opposite angles in a parallelogram are equal."
+  },
+  {
+    n: 10,
+    section: "Parallelograms",
+    q: "In a parallelogram, one angle is 110 degrees. What is the adjacent angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,170 230,170 270,60 130,60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><line x1="150" y1="60" x2="170" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="150" y1="170" x2="170" y2="170" stroke="#F2A007" stroke-width="3"/><text x="102" y="158" font-size="16" fill="#10233F" font-weight="bold">110\u00b0</text><text x="198" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="192" font-size="15" fill="#10233F">A</text><text x="232" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="122" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["55\u00b0", "80\u00b0", "70\u00b0", "110\u00b0"],
+    correct: 2,
+    working: "180 - 110 = 70",
+    hint: "Adjacent angles in a parallelogram add up to 180 degrees."
+  },
+  {
+    n: 11,
+    section: "Parallelograms",
+    q: "In a parallelogram, two adjacent angles are 75 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,170 230,170 270,60 130,60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><line x1="150" y1="60" x2="170" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="150" y1="170" x2="170" y2="170" stroke="#F2A007" stroke-width="3"/><text x="102" y="158" font-size="16" fill="#10233F" font-weight="bold">75\u00b0</text><text x="198" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="192" font-size="15" fill="#10233F">A</text><text x="232" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="122" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["75\u00b0", "105\u00b0", "90\u00b0", "180\u00b0"],
+    correct: 1,
+    working: "180 - 75 = 105",
+    hint: "Adjacent angles in a parallelogram add up to 180 degrees."
+  },
+  {
+    n: 12,
+    section: "Parallelograms",
+    q: "In a parallelogram, one angle is 55 degrees. What is the largest angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,170 230,170 270,60 130,60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><line x1="150" y1="60" x2="170" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="150" y1="170" x2="170" y2="170" stroke="#F2A007" stroke-width="3"/><text x="102" y="158" font-size="16" fill="#10233F" font-weight="bold">55\u00b0</text><text x="198" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="192" font-size="15" fill="#10233F">A</text><text x="232" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="122" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["55\u00b0", "70\u00b0", "90\u00b0", "125\u00b0"],
+    correct: 3,
+    working: "180 - 55 = 125",
+    hint: "The largest angle is adjacent to the 55 degree angle."
+  },
+  {
+    n: 13,
+    section: "Trapeziums",
+    q: "In a trapezium, two angles on the same leg are 115 degrees and x. What is x?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="62" y="158" font-size="16" fill="#10233F" font-weight="bold">115\u00b0</text><text x="108" y="88" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["65\u00b0", "115\u00b0", "90\u00b0", "80\u00b0"],
+    correct: 0,
+    working: "180 - 115 = 65",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 14,
+    section: "Trapeziums",
+    q: "In an isosceles trapezium, one base angle is 70 degrees. What is the other base angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="110,60 210,60 260,170 60,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><line x1="92" y1="100" x2="102" y2="118" stroke="#F2A007" stroke-width="3"/><line x1="228" y1="100" x2="218" y2="118" stroke="#F2A007" stroke-width="3"/><text x="72" y="158" font-size="16" fill="#10233F" font-weight="bold">70\u00b0</text><text x="228" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="52" y="192" font-size="15" fill="#10233F">A</text><text x="262" y="192" font-size="15" fill="#10233F">B</text><text x="262" y="48" font-size="15" fill="#10233F">C</text><text x="102" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["50\u00b0", "90\u00b0", "70\u00b0", "110\u00b0"],
+    correct: 2,
+    working: "Base angles in an isosceles trapezium are equal, so the other base angle is 70\u00b0.",
+    hint: "In an isosceles trapezium, the base angles are equal."
+  },
+  {
+    n: 15,
+    section: "Trapeziums",
+    q: "In a trapezium, an angle on a leg is 100 degrees. What is the angle next to it on the same leg?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,60 220,60 270,170 50,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="60" x2="160" y2="60" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="108" y="88" font-size="16" fill="#10233F" font-weight="bold">100\u00b0</text><text x="62" y="158" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="42" y="192" font-size="15" fill="#10233F">A</text><text x="272" y="192" font-size="15" fill="#10233F">B</text><text x="272" y="48" font-size="15" fill="#10233F">C</text><text x="92" y="48" font-size="15" fill="#10233F">D</text></svg>',
+    options: ["100\u00b0", "80\u00b0", "90\u00b0", "60\u00b0"],
+    correct: 1,
+    working: "180 - 100 = 80",
+    hint: "Angles on the same leg of a trapezium add up to 180 degrees."
+  },
+  {
+    n: 16,
+    section: "Combined Figures",
+    q: "An isosceles triangle sits on a straight line. The exterior angle on the line is 120 degrees, so each base angle is 60 degrees. What is the vertex angle?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><line x1="40" y1="170" x2="290" y2="170" stroke="#10233F" stroke-width="2.5"/><polygon points="110,170 230,170 170,70" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="142" y1="132" x2="154" y2="142" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="132" x2="186" y2="142" stroke="#F2A007" stroke-width="3"/><text x="238" y="150" font-size="16" fill="#10233F" font-weight="bold">120\u00b0</text><text x="162" y="108" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="102" y="192" font-size="15" fill="#10233F">A</text><text x="232" y="192" font-size="15" fill="#10233F">B</text><text x="166" y="58" font-size="15" fill="#10233F">C</text></svg>',
+    options: ["30\u00b0", "90\u00b0", "120\u00b0", "60\u00b0"],
+    correct: 3,
+    working: "Base angle = 180 - 120 = 60; vertex = 180 - 60 - 60 = 60",
+    hint: "First find the base angle on the straight line, then use the triangle angle sum."
+  },
+  {
+    n: 17,
+    section: "Combined Figures",
+    q: "Square ABCD has an equilateral triangle ABE built on side AB outside the square. What is angle EBC?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><rect x="120" y="50" width="80" height="80" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><polygon points="120,130 200,130 160,199" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><rect x="188" y="118" width="12" height="12" fill="none" stroke="#10233F" stroke-width="2"/><text x="178" y="112" font-size="13" fill="#10233F" font-weight="bold">90\u00b0</text><text x="168" y="158" font-size="13" fill="#10233F" font-weight="bold">60\u00b0</text><text x="206" y="118" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="112" y="148" font-size="15" fill="#10233F">A</text><text x="202" y="148" font-size="15" fill="#10233F">B</text><text x="202" y="42" font-size="15" fill="#10233F">C</text><text x="112" y="42" font-size="15" fill="#10233F">D</text><text x="156" y="216" font-size="15" fill="#10233F">E</text></svg>',
+    options: ["150\u00b0", "90\u00b0", "60\u00b0", "120\u00b0"],
+    correct: 0,
+    working: "90 + 60 = 150",
+    hint: "Angle EBC is the square angle plus the triangle angle at B."
+  },
+  {
+    n: 18,
+    section: "Combined Figures",
+    q: "Parallelogram ABCD has angle DAB = 60 degrees. An isosceles triangle ABE is built on side AB with base angle BAE = 50 degrees. What is angle DAE?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,130 210,130 250,50 130,50" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><polygon points="90,130 210,130 150,205" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="160" y1="50" x2="180" y2="50" stroke="#F2A007" stroke-width="3"/><line x1="160" y1="130" x2="180" y2="130" stroke="#F2A007" stroke-width="3"/><text x="102" y="112" font-size="14" fill="#10233F" font-weight="bold">60\u00b0</text><text x="102" y="162" font-size="14" fill="#10233F" font-weight="bold">50\u00b0</text><text x="82" y="182" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="122" font-size="15" fill="#10233F">A</text><text x="212" y="122" font-size="15" fill="#10233F">B</text><text x="252" y="42" font-size="15" fill="#10233F">C</text><text x="122" y="42" font-size="15" fill="#10233F">D</text><text x="146" y="220" font-size="15" fill="#10233F">E</text></svg>',
+    options: ["50\u00b0", "60\u00b0", "110\u00b0", "120\u00b0"],
+    correct: 2,
+    working: "60 + 50 = 110",
+    hint: "Angle DAE is angle DAB plus angle BAE."
+  },
+  {
+    n: 19,
+    section: "Combined Figures",
+    q: "An isosceles trapezium has top angles of 110 degrees. An isosceles triangle sits on the top base with a base angle of 40 degrees. What is the angle between the triangle side and the trapezium leg at the shared vertex?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="120,70 200,70 236,170 84,170" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><polygon points="120,70 200,70 160,104" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><line x1="140" y1="70" x2="160" y2="70" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="170" x2="160" y2="170" stroke="#F2A007" stroke-width="3"/><text x="136" y="118" font-size="14" fill="#10233F" font-weight="bold">110°</text><text x="148" y="90" font-size="14" fill="#10233F" font-weight="bold">40°</text><text x="121" y="103" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="76" y="192" font-size="15" fill="#10233F">A</text><text x="228" y="192" font-size="15" fill="#10233F">B</text><text x="202" y="62" font-size="15" fill="#10233F">C</text><text x="112" y="62" font-size="15" fill="#10233F">D</text><text x="156" y="148" font-size="15" fill="#10233F">E</text></svg>',
+    options: ["110\u00b0", "70\u00b0", "40\u00b0", "30\u00b0"],
+    correct: 1,
+    working: "110 - 40 = 70",
+    hint: "Subtract the triangle base angle from the trapezium top angle."
+  },
+  {
+    n: 20,
+    section: "Combined Figures",
+    q: "Parallelogram ABCD has angle DAB = 70 degrees. Triangle ABE is built on side AB with angle AEB = 100 degrees and angle ABE = 50 degrees. What is angle DAE?",
+    svg: '<svg viewBox="0 0 320 220" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,130 210,130 237,55 117,55" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><polygon points="90,130 210,130 171,177" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="167" y1="55" x2="187" y2="55" stroke="#F2A007" stroke-width="3"/><line x1="140" y1="130" x2="160" y2="130" stroke="#F2A007" stroke-width="3"/><text x="104" y="106" font-size="14" fill="#10233F" font-weight="bold">70°</text><text x="174" y="144" font-size="14" fill="#10233F" font-weight="bold">50°</text><text x="150" y="164" font-size="14" fill="#10233F" font-weight="bold">100°</text><text x="114" y="126" font-size="20" fill="#F2A007" font-weight="bold">?</text><text x="82" y="122" font-size="15" fill="#10233F">A</text><text x="212" y="122" font-size="15" fill="#10233F">B</text><text x="239" y="47" font-size="15" fill="#10233F">C</text><text x="109" y="47" font-size="15" fill="#10233F">D</text><text x="167" y="196" font-size="15" fill="#10233F">E</text></svg>',
+    options: ["30\u00b0", "70\u00b0", "80\u00b0", "100\u00b0"],
+    correct: 3,
+    working: "Angle BAE = 180 - 100 - 50 = 30; angle DAE = 70 + 30 = 100",
+    hint: "First find angle BAE in the triangle, then add angle DAB."
+  }
+];
+
+var CONCEPT_RULES = [
+  {
+    title: "Angles in a Triangle",
+    text: "The three angles in a triangle add up to 180 degrees.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">50\u00b0</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">60\u00b0</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">70\u00b0</text><text x="110" y="132" font-size="13" fill="#10233F">50 + 60 + 70 = 180</text></svg>'
+  },
+  {
+    title: "Isosceles Triangle",
+    text: "Two equal sides mean two equal base angles.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="122" y1="52" x2="134" y2="64" stroke="#F2A007" stroke-width="3"/><line x1="198" y1="52" x2="186" y2="64" stroke="#F2A007" stroke-width="3"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">70\u00b0</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">70\u00b0</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">40\u00b0</text></svg>'
+  },
+  {
+    title: "Right Triangle",
+    text: "One angle is 90 degrees. The other two angles add up to 90 degrees.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="70,110 70,20 230,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><rect x="70" y="90" width="20" height="20" fill="none" stroke="#10233F" stroke-width="2"/><text x="82" y="52" font-size="15" fill="#10233F" font-weight="bold">35\u00b0</text><text x="198" y="100" font-size="15" fill="#10233F" font-weight="bold">55\u00b0</text></svg>'
+  },
+  {
+    title: "Equilateral Triangle",
+    text: "All sides are equal and all angles are 60 degrees.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="160,20 60,110 260,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="72" y="100" font-size="15" fill="#10233F" font-weight="bold">60\u00b0</text><text x="228" y="100" font-size="15" fill="#10233F" font-weight="bold">60\u00b0</text><text x="152" y="52" font-size="15" fill="#10233F" font-weight="bold">60\u00b0</text></svg>'
+  },
+  {
+    title: "Exterior Angle",
+    text: "The exterior angle equals the sum of the two opposite interior angles.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="80,100 200,100 140,30" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><line x1="200" y1="100" x2="260" y2="100" stroke="#10233F" stroke-width="2.5"/><text x="92" y="90" font-size="15" fill="#10233F" font-weight="bold">55\u00b0</text><text x="138" y="62" font-size="15" fill="#10233F" font-weight="bold">65\u00b0</text><text x="208" y="82" font-size="15" fill="#F2A007" font-weight="bold">120\u00b0</text></svg>'
+  },
+  {
+    title: "Parallelogram",
+    text: "Opposite angles are equal. Adjacent angles add up to 180 degrees.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="90,110 210,110 250,30 130,30" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><text x="102" y="98" font-size="15" fill="#10233F" font-weight="bold">70\u00b0</text><text x="178" y="98" font-size="15" fill="#10233F" font-weight="bold">110\u00b0</text><text x="218" y="58" font-size="15" fill="#10233F" font-weight="bold">70\u00b0</text><text x="138" y="58" font-size="15" fill="#10233F" font-weight="bold">110\u00b0</text></svg>'
+  },
+  {
+    title: "Trapezium",
+    text: "Angles on the same leg, between the parallel sides, add up to 180 degrees. In an isosceles trapezium, the base angles are equal.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><polygon points="100,30 220,30 270,110 50,110" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="62" y="98" font-size="15" fill="#10233F" font-weight="bold">115\u00b0</text><text x="108" y="58" font-size="15" fill="#10233F" font-weight="bold">65\u00b0</text><text x="228" y="98" font-size="15" fill="#10233F" font-weight="bold">65\u00b0</text></svg>'
+  },
+  {
+    title: "Angles on a Straight Line",
+    text: "Angles on a straight line add up to 180 degrees.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><line x1="40" y1="100" x2="280" y2="100" stroke="#10233F" stroke-width="2.5"/><line x1="160" y1="100" x2="160" y2="30" stroke="#10233F" stroke-width="2.5"/><text x="92" y="88" font-size="15" fill="#10233F" font-weight="bold">120\u00b0</text><text x="172" y="88" font-size="15" fill="#10233F" font-weight="bold">60\u00b0</text><text x="110" y="125" font-size="13" fill="#10233F">120 + 60 = 180</text></svg>'
+  },
+  {
+    title: "Combined Figures",
+    text: "Use the rules step by step: find one angle first, then use it to find the next angle.",
+    svg: '<svg viewBox="0 0 320 140" style="background:#FFFFFF;font-family:Arial,sans-serif;"><rect x="110" y="40" width="60" height="60" fill="#EAF0F8" stroke="#10233F" stroke-width="2.5"/><polygon points="110,100 170,100 140,130" fill="#FFF8E6" stroke="#10233F" stroke-width="2.5"/><text x="128" y="78" font-size="14" fill="#10233F" font-weight="bold">90\u00b0</text><text x="132" y="118" font-size="13" fill="#10233F" font-weight="bold">60\u00b0</text></svg>'
+  }
+];
+
+/* ---------- State ---------- */
+var currentIndex = 0;
+var score = 0;
+var correctCount = 0;
+var streak = 0;
+var attempts = 0;
+var answers = [];
+var returnScreen = "start";
+var soundOn = true;
+
+try {
+  var savedSound = localStorage.getItem("angleQuest_sound");
+  if (savedSound === "off") { soundOn = false; }
+} catch (e) { soundOn = true; }
+
+/* ---------- Audio ---------- */
+var audioCtx = null;
+var masterGain = null;
+
+function getAudio() {
+  if (!soundOn) { return null; }
+  try {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { return null; }
+      audioCtx = new AC();
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = 0.9;
+      masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === "suspended") { audioCtx.resume(); }
+    return audioCtx;
+  } catch (e) { return null; }
+}
+
+function playTone(freq, startAt, duration, type, volume) {
+  var ctx = getAudio();
+  if (!ctx) { return; }
+  try {
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = type || "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime + startAt);
+    gain.gain.exponentialRampToValueAtTime(volume || 0.25, ctx.currentTime + startAt + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + startAt + duration);
+    osc.connect(gain);
+    gain.connect(masterGain);
+    osc.start(ctx.currentTime + startAt);
+    osc.stop(ctx.currentTime + startAt + duration + 0.05);
+  } catch (e) { /* audio is optional */ }
+}
+
+function playCorrect() {
+  playTone(523.25, 0, 0.18, "sine", 0.3);
+  playTone(659.25, 0.12, 0.18, "sine", 0.3);
+  playTone(783.99, 0.24, 0.32, "sine", 0.3);
+}
+
+function playWrong() {
+  playTone(180, 0, 0.25, "triangle", 0.3);
+  playTone(120, 0.1, 0.3, "triangle", 0.25);
+}
+
+function playWin() {
+  var notes = [523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5];
+  for (var i = 0; i < notes.length; i++) {
+    playTone(notes[i], i * 0.15, 0.25, "sine", 0.3);
+  }
+}
+
+/* ---------- Screen switching (single entry point) ---------- */
+var SCREENS = ["start", "concepts", "question", "final"];
+
+function showScreen(name) {
+  for (var i = 0; i < SCREENS.length; i++) {
+    var el = document.getElementById("screen-" + SCREENS[i]);
+    if (el) { el.classList.toggle("active", SCREENS[i] === name); }
+  }
+  window.scrollTo(0, 0);
+}
+
+/* ---------- Sound toggle ---------- */
+function updateSoundButtons() {
+  var label = soundOn ? "Sound: On" : "Sound: Off";
+  var ids = ["btnSound", "btnSoundStart", "btnSoundConcepts", "btnSoundFinal"];
+  for (var i = 0; i < ids.length; i++) {
+    var b = document.getElementById(ids[i]);
+    if (b) { b.textContent = label; }
+  }
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  try { localStorage.setItem("angleQuest_sound", soundOn ? "on" : "off"); } catch (e) {}
+  updateSoundButtons();
+  if (soundOn) { playCorrect(); }
+}
+
+/* ---------- Best score ---------- */
+function getBest() {
+  try {
+    var v = parseInt(localStorage.getItem("angleQuest_best"), 10);
+    return isNaN(v) ? 0 : v;
+  } catch (e) { return 0; }
+}
+
+function updateBestLine() {
+  var best = getBest();
+  var el = document.getElementById("bestScore");
+  if (el) { el.textContent = best > 0 ? "Best score: " + best + " points" : ""; }
+}
+
+/* ---------- Concept page ---------- */
+function renderConcepts() {
+  var list = document.getElementById("conceptList");
+  list.innerHTML = "";
+  for (var i = 0; i < CONCEPT_RULES.length; i++) {
+    var r = CONCEPT_RULES[i];
+    var card = document.createElement("div");
+    card.className = "concept-card";
+    var d = document.createElement("div");
+    d.className = "diagram";
+    d.innerHTML = r.svg;
+    var body = document.createElement("div");
+    body.className = "concept-body";
+    var h = document.createElement("h3");
+    h.textContent = (i + 1) + ". " + r.title;
+    var p = document.createElement("p");
+    p.textContent = r.text;
+    body.appendChild(h);
+    body.appendChild(p);
+    card.appendChild(d);
+    card.appendChild(body);
+    list.appendChild(card);
+  }
+}
+
+function showConcepts(from) {
+  returnScreen = from || "start";
+  renderConcepts();
+  showScreen("concepts");
+}
+
+function backFromConcepts() {
+  showScreen(returnScreen);
+}
+
+/* ---------- Game flow ---------- */
+function startGame() {
+  currentIndex = 0;
+  score = 0;
+  correctCount = 0;
+  streak = 0;
+  attempts = 0;
+  answers = [];
+  loadQuestion();
+  showScreen("question");
+}
+
+function loadQuestion() {
+  var q = QUESTIONS[currentIndex];
+  attempts = 0;
+  document.getElementById("progressText").textContent = "Question " + (currentIndex + 1) + " of " + QUESTIONS.length;
+  document.getElementById("scoreDisplay").textContent = "Score: " + score;
+  document.getElementById("progressFill").style.width = ((currentIndex) / QUESTIONS.length * 100) + "%";
+  document.getElementById("sectionLabel").textContent = q.section;
+  document.getElementById("diagramBox").innerHTML = q.svg;
+  document.getElementById("questionText").textContent = q.q;
+
+  var box = document.getElementById("optionsBox");
+  box.innerHTML = "";
+  var letters = ["A", "B", "C", "D"];
+  for (var i = 0; i < q.options.length; i++) {
+    (function (idx) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "opt";
+      var sp = document.createElement("span");
+      sp.className = "letter";
+      sp.textContent = letters[idx];
+      var tx = document.createElement("span");
+      tx.textContent = q.options[idx];
+      btn.appendChild(sp);
+      btn.appendChild(tx);
+      btn.addEventListener("click", function () { selectOption(idx, btn); });
+      box.appendChild(btn);
+    })(i);
+  }
+
+  var hintText = document.getElementById("hintText");
+  hintText.textContent = q.hint;
+  hintText.classList.remove("show");
+  document.getElementById("btnHint").textContent = "Show hint";
+
+  var fb = document.getElementById("feedbackBox");
+  fb.classList.remove("show", "try-again");
+}
+
+function selectOption(idx, btn) {
+  var q = QUESTIONS[currentIndex];
+  if (btn.disabled) { return; }
+  attempts++;
+  if (idx === q.correct) {
+    var points;
+    if (attempts === 1) {
+      var bonus = Math.min(10 * streak, 100);
+      points = 100 + bonus;
+      streak++;
+    } else if (attempts === 2) {
+      points = 50;
+    } else {
+      points = 25;
+    }
+    score += points;
+    correctCount++;
+    answers.push({ n: q.n, picked: idx, correct: q.correct, attempts: attempts, points: points });
+    var all = document.getElementById("optionsBox").querySelectorAll(".opt");
+    for (var i = 0; i < all.length; i++) { all[i].disabled = true; }
+    btn.classList.add("correct");
+    document.getElementById("scoreDisplay").textContent = "Score: " + score;
+    playCorrect();
+    var fb = document.getElementById("feedbackBox");
+    fb.classList.remove("try-again");
+    fb.classList.add("show");
+    document.getElementById("feedbackTitle").textContent = "Correct!";
+    document.getElementById("feedbackMessage").textContent = attempts === 1
+      ? "Well done — first try!"
+      : "Well done — you found it on try " + attempts + ".";
+    document.getElementById("feedbackWorking").textContent = "Working: " + q.working;
+    document.getElementById("feedbackPoints").textContent = "+" + points + " points";
+    var nextBtn0 = document.getElementById("btnNext");
+    nextBtn0.style.display = "";
+    nextBtn0.textContent = currentIndex === QUESTIONS.length - 1 ? "See Results" : "Next";
+  } else {
+    streak = 0;
+    btn.classList.add("wrong");
+    btn.disabled = true;
+    playWrong();
+    var fb2 = document.getElementById("feedbackBox");
+    fb2.classList.add("show", "try-again");
+    document.getElementById("feedbackTitle").textContent = "Not quite — try again.";
+    document.getElementById("feedbackMessage").textContent = "That answer is greyed out. Look at the diagram again and try another option.";
+    document.getElementById("feedbackWorking").textContent = "";
+    document.getElementById("feedbackPoints").textContent = "";
+    document.getElementById("btnNext").style.display = "none";
+  }
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < QUESTIONS.length) {
+    loadQuestion();
+    showScreen("question");
+  } else {
+    showFinal();
+  }
+}
+
+function showFinal() {
+  document.getElementById("progressFill").style.width = "100%";
+  document.getElementById("finalScore").textContent = score;
+  document.getElementById("finalCorrect").textContent = correctCount + " / " + QUESTIONS.length + " correct";
+  var msg;
+  if (correctCount === QUESTIONS.length) {
+    msg = "Perfect! You found every unknown angle. You are a true Angle Master.";
+  } else if (correctCount >= 16) {
+    msg = "Excellent work! You have a strong grip on angle rules.";
+  } else if (correctCount >= 12) {
+    msg = "Good work! Review the rules below and try again to beat your score.";
+  } else {
+    msg = "Good effort! Read the rules again and try another round — practice makes it click.";
+  }
+  document.getElementById("finalMessage").textContent = msg;
+
+  var best = getBest();
+  var isNewBest = score > best;
+  if (isNewBest) {
+    try { localStorage.setItem("angleQuest_best", String(score)); } catch (e) {}
+    best = score;
+  }
+  document.getElementById("finalBest").textContent = isNewBest
+    ? "New best score: " + best + " points!"
+    : "Best score: " + best + " points";
+
+  var list = document.getElementById("reviewList");
+  list.innerHTML = "";
+  var letters = ["A", "B", "C", "D"];
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    var q = QUESTIONS[i];
+    var a = answers[i];
+    var item = document.createElement("div");
+    item.className = "review-item";
+    var d = document.createElement("div");
+    d.className = "diagram";
+    d.innerHTML = q.svg;
+    var body = document.createElement("div");
+    body.className = "review-body";
+    var tag = document.createElement("span");
+    var wasRight = a && a.picked === q.correct;
+    tag.className = "review-tag " + (wasRight ? "right" : "wrong");
+    tag.textContent = wasRight ? "Correct" : "Missed";
+    var ql = document.createElement("p");
+    ql.className = "q-line";
+    ql.textContent = q.n + ". " + q.q;
+    var ans = document.createElement("p");
+    ans.className = "ans";
+    var correctText = letters[q.correct] + ". " + q.options[q.correct];
+    var pickedText = a ? letters[a.picked] + ". " + q.options[a.picked] : "No answer";
+    ans.innerHTML = "";
+    var c1 = document.createElement("span");
+    c1.textContent = "Correct answer: ";
+    var c2 = document.createElement("span");
+    c2.className = "ok";
+    c2.textContent = correctText;
+    var br = document.createElement("br");
+    var c3 = document.createElement("span");
+    c3.textContent = "Your answer: ";
+    var c4 = document.createElement("span");
+    c4.className = wasRight ? "ok" : "bad";
+    c4.textContent = pickedText;
+    ans.appendChild(c1); ans.appendChild(c2); ans.appendChild(br); ans.appendChild(c3); ans.appendChild(c4);
+    var wl = document.createElement("p");
+    wl.className = "working-line";
+    wl.textContent = "Working: " + q.working;
+    body.appendChild(tag);
+    body.appendChild(ql);
+    body.appendChild(ans);
+    body.appendChild(wl);
+    item.appendChild(d);
+    item.appendChild(body);
+    list.appendChild(item);
+  }
+
+  playWin();
+  showScreen("final");
+}
+
+function playAgain() {
+  startGame();
+}
+
+function goHome() {
+  updateBestLine();
+  showScreen("start");
+}
+
+/* ---------- Wiring ---------- */
+document.getElementById("btnPlay").addEventListener("click", startGame);
+document.getElementById("btnRulesStart").addEventListener("click", function () { showConcepts("start"); });
+document.getElementById("btnConceptsStart").addEventListener("click", startGame);
+document.getElementById("btnConceptsBack").addEventListener("click", backFromConcepts);
+document.getElementById("btnRulesInGame").addEventListener("click", function () { showConcepts("question"); });
+document.getElementById("btnNext").addEventListener("click", nextQuestion);
+document.getElementById("btnPlayAgain").addEventListener("click", playAgain);
+document.getElementById("btnHome").addEventListener("click", goHome);
+document.getElementById("btnPrint").addEventListener("click", function () { window.print(); });
+document.getElementById("btnHint").addEventListener("click", function () {
+  var h = document.getElementById("hintText");
+  var shown = h.classList.toggle("show");
+  document.getElementById("btnHint").textContent = shown ? "Hide hint" : "Show hint";
+});
+document.getElementById("btnSound").addEventListener("click", toggleSound);
+document.getElementById("btnSoundStart").addEventListener("click", toggleSound);
+document.getElementById("btnSoundConcepts").addEventListener("click", toggleSound);
+document.getElementById("btnSoundFinal").addEventListener("click", toggleSound);
+
+updateSoundButtons();
+updateBestLine();
+showScreen("start");
+</script>
+</body>
+</html>
